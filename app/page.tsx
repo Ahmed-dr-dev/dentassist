@@ -1,357 +1,350 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
       {/* Header */}
-      <header className="fixed w-full bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 z-50">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+      <header className="relative z-50 border-b border-gray-700/50 backdrop-blur-sm bg-gray-900/80">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="relative w-12 h-12 group-hover:scale-110 transition-transform">
+              <Image 
+                src="/logo1.png" 
+                alt="DentAssist Logo" 
+                width={48} 
+                height={48}
+                className="object-contain"
+              />
             </div>
-            <span className="text-xl font-bold text-white">DentAssist</span>
-          </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">DentAssist</span>
+          </Link>
           
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-gray-300 hover:text-white transition">Fonctionnalités</a>
-            <a href="#ai" className="text-gray-300 hover:text-white transition">IA</a>
-            <a href="#services" className="text-gray-300 hover:text-white transition">Services</a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition">Contact</a>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="text-gray-300 hover:text-white transition">
-              Connexion
+          <div className="flex items-center gap-6">
+            <a href="#home" className="text-gray-300 hover:text-white transition-colors">Accueil</a>
+            <Link href="/login" className="text-gray-300 hover:text-white transition-colors">Connexion</Link>
+            <Link href="/signup" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all hover:shadow-lg hover:shadow-blue-600/50">
+              S'inscrire
             </Link>
-            <Link href="/signup" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition">
-              Inscription
-            </Link>
+            <select className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none cursor-pointer hover:bg-gray-750 transition">
+              <option>🇫🇷 FR</option>
+              <option>🇬🇧 EN</option>
+              <option>🇸🇦 AR</option>
+            </select>
           </div>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section id="home" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
-                Plateforme Intelligente avec IA
+          <div className="space-y-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 px-4 py-2 rounded-full">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span className="text-blue-300 text-sm font-medium">Plateforme Dentaire Intelligente</span>
               </div>
-              <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
-                Gestion Intelligente de Votre Cabinet Dentaire
+            
+            <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
+              Réservez votre rendez-vous
+              <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                dentaire facilement
+              </span>
               </h1>
-              <p className="text-xl text-gray-300 mb-8">
-                Optimisez votre pratique avec l'IA : gestion des patients, rendez-vous intelligents, 
-                assistance vocale et support multilingue.
-              </p>
+            
+            <p className="text-xl text-gray-300 leading-relaxed">
+              Gérez vos rendez-vous et visites en une seule plateforme simple. Profitez d'une réservation de soins dentaires sans tracas avec des confirmations instantanées.
+            </p>
+            
               <div className="flex flex-wrap gap-4">
-                <Link href="/signup" className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-500 transition font-medium text-lg">
-                  Commencer Maintenant
+              <Link href="/signup" className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg text-lg font-medium overflow-hidden transition-all hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105">
+                <span className="relative z-10">Prendre rendez-vous</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </Link>
+              <Link href="/login" className="px-8 py-4 border-2 border-gray-600 text-gray-300 rounded-lg text-lg font-medium hover:border-blue-500 hover:text-white transition-all hover:shadow-lg">
+                Connexion
                 </Link>
-                <button className="border-2 border-gray-600 text-gray-200 px-8 py-4 rounded-lg hover:border-gray-500 transition font-medium text-lg">
-                  Voir la Démo
-                </button>
+            </div>
+
+            <div className="flex items-center gap-8 pt-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">500+</div>
+                <div className="text-sm text-gray-400">Patients satisfaits</div>
+              </div>
+              <div className="w-px h-12 bg-gray-700"></div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">50+</div>
+                <div className="text-sm text-gray-400">Dentistes experts</div>
+              </div>
+              <div className="w-px h-12 bg-gray-700"></div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">98%</div>
+                <div className="text-sm text-gray-400">Satisfaction</div>
               </div>
             </div>
+          </div>
+
+          {/* Hero Illustration */}
+          <div className="relative lg:h-[500px] flex items-center justify-center">
             <div className="relative">
-              <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 shadow-xl">
-                <div className="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {/* Main Card */}
+              <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-700 backdrop-blur-sm hover:scale-105 transition-transform duration-500">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Prochain Rendez-vous</p>
-                      <p className="font-semibold text-white">Aujourd'hui, 14:30</p>
+                      <div className="text-sm text-gray-400">Prochain rendez-vous</div>
+                      <div className="text-xl font-bold text-white">Aujourd'hui, 14:30</div>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
+                  
+                  <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
                       <span className="text-gray-400">Patient</span>
-                      <span className="font-medium text-gray-200">Ahmed Benali</span>
+                      <span className="text-white font-medium">Ahmed Benali</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Type</span>
-                      <span className="font-medium text-gray-200">Détartrage</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Service</span>
+                      <span className="text-blue-400 font-medium">Détartrage</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Statut</span>
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-green-400 font-medium">Confirmé</span>
+                      </span>
                     </div>
                   </div>
+                  
+                  <button className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
+                    Voir les détails
+                  </button>
                 </div>
+              </div>
+
+              {/* Floating Elements */}
+              <div className="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-bounce">
+                ✓ Confirmé
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-pulse">
+                🔔 Rappel configuré
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-800 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* How It Works */}
+      <section className="relative z-10 py-24 bg-gray-800/30 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Fonctionnalités Principales</h2>
-            <p className="text-xl text-gray-300">Tout ce dont vous avez besoin pour gérer votre cabinet</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Comment ça marche</h2>
+            <p className="text-xl text-gray-400">Trois étapes simples pour votre sourire parfait</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            {/* Connection Lines */}
+            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600"></div>
+            
             {[
               {
+                step: 1,
                 icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 ),
-                title: "Gestion des Patients",
-                description: "Profils complets, historique médical, ordonnances et facturation centralisés"
+                title: "Créez un compte",
+                description: "Inscrivez-vous rapidement avec vos informations de base et commencez en quelques minutes"
               },
               {
+                step: 2,
                 icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 ),
-                title: "Rendez-vous en Ligne",
-                description: "Calendrier dynamique avec confirmation instantanée et rappels automatiques"
+                title: "Choisissez dentiste et horaire",
+                description: "Sélectionnez parmi les créneaux disponibles qui correspondent parfaitement à votre emploi du temps"
               },
               {
+                step: 3,
                 icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 ),
-                title: "Dossiers Médicaux",
-                description: "Accès sécurisé aux historiques, traitements et documents médicaux"
-              },
-              {
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                ),
-                title: "Facturation",
-                description: "Génération automatique de factures et suivi des paiements"
-              },
-              {
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                ),
-                title: "Notifications Intelligentes",
-                description: "Rappels automatiques et recommandations personnalisées"
-              },
-              {
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                ),
-                title: "Statistiques & Rapports",
-                description: "Tableaux de bord avec insights sur votre activité"
+                title: "Confirmez le rendez-vous",
+                description: "Recevez une confirmation instantanée et des rappels automatiques"
               }
-            ].map((feature, idx) => (
-              <div key={idx} className="bg-gray-700 p-6 rounded-xl shadow-sm hover:shadow-md hover:bg-gray-600 transition border border-gray-600">
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center mb-4">
-                  {feature.icon}
+            ].map((item, idx) => (
+              <div key={idx} className="relative group">
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 text-center hover:border-blue-500 transition-all hover:shadow-2xl hover:shadow-blue-600/20 hover:-translate-y-2 duration-300">
+                  <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform">
+                    <div className="text-white">{item.icon}</div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      {item.step}
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{item.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-gray-300">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* AI Features Section */}
-      <section id="ai" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-7xl mx-auto">
+      {/* Services */}
+      <section id="services" className="relative z-10 py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Intelligence Artificielle</h2>
-            <p className="text-xl text-gray-300">Des algorithmes intelligents pour optimiser votre pratique</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Nos services</h2>
+            <p className="text-xl text-gray-400">Soins dentaires complets pour vos besoins</p>
           </div>
           
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div className="space-y-8">
-              {[
-                {
-                  title: "Optimisation des Rendez-vous",
-                  description: "L'IA analyse la durée des soins, les retards et propose les meilleurs créneaux horaires automatiquement"
-                },
-                {
-                  title: "Détection d'Incohérences",
-                  description: "Identification automatique des anomalies dans les dossiers médicaux et alertes en temps réel"
-                },
-                {
-                  title: "Recommandations Personnalisées",
-                  description: "Suggestions de traitements et rappels pour soins périodiques basés sur l'historique patient"
-                },
-                {
-                  title: "Prédiction de Charge",
-                  description: "Anticipation des journées chargées et suggestions de réorganisation du planning"
-                }
-              ].map((item, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold">
-                      {idx + 1}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                    <p className="text-gray-300">{item.description}</p>
-                  </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                ),
+                title: "Consultation",
+                description: "Examen dentaire général et conseils d'experts",
+                color: "from-blue-600 to-blue-500"
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ),
+                title: "Détartrage",
+                description: "Nettoyage et polissage professionnels",
+                color: "from-green-600 to-green-500"
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                ),
+                title: "Extraction",
+                description: "Extraction dentaire sûre si nécessaire",
+                color: "from-orange-600 to-orange-500"
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                ),
+                title: "Blanchiment",
+                description: "Éclaircissez votre sourire professionnellement",
+                color: "from-purple-600 to-purple-500"
+              }
+            ].map((service, idx) => (
+              <div key={idx} className="group relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 hover:border-transparent transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity`}></div>
+                <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl shadow-lg mb-6 text-white group-hover:scale-110 transition-transform`}>
+                  {service.icon}
                 </div>
-              ))}
-            </div>
-            
-            <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 border border-gray-600">
-              <div className="bg-gray-700 rounded-xl p-6 shadow-lg mb-4 border border-gray-600">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-gray-300">Efficacité du Planning</span>
-                  <span className="text-2xl font-bold text-green-400">+42%</span>
-                </div>
-                <div className="w-full bg-gray-600 rounded-full h-3">
-                  <div className="bg-green-500 h-3 rounded-full" style={{width: '85%'}}></div>
-                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
+                <p className="text-gray-400 leading-relaxed">{service.description}</p>
               </div>
-              
-              <div className="bg-gray-700 rounded-xl p-6 shadow-lg border border-gray-600">
-                <h4 className="font-semibold text-white mb-4">Recommandations IA</h4>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 text-sm">
-                    <span className="text-green-400">✓</span>
-                    <span className="text-gray-300">3 patients nécessitent un rappel détartrage</span>
-                  </div>
-                  <div className="flex items-start gap-3 text-sm">
-                    <span className="text-yellow-400">⚠</span>
-                    <span className="text-gray-300">Jeudi surchargé : +2h prévues</span>
-                  </div>
-                  <div className="flex items-start gap-3 text-sm">
-                    <span className="text-blue-400">ℹ</span>
-                    <span className="text-gray-300">Créneaux optimaux : 9h-11h disponibles</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Advanced Services Section */}
-      <section id="services" className="py-20 bg-gray-800 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* Why Choose Us */}
+      <section className="relative z-10 py-24 bg-gray-800/30 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Services Avancés</h2>
-            <p className="text-xl text-gray-300">Une expérience unique et accessible pour tous</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Pourquoi choisir DentAssist</h2>
+            <p className="text-xl text-gray-400">Découvrez l'avenir des soins dentaires</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gray-700 p-8 rounded-xl shadow-sm text-center border border-gray-600 hover:bg-gray-600 transition">
-              <div className="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
+            {[
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                ),
+                title: "Réservation facile",
+                description: "Réservez des rendez-vous en quelques clics avec notre interface intuitive",
+                gradient: "from-yellow-600 to-orange-600"
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                ),
+                title: "Rappels intelligents",
+                description: "Ne manquez jamais un rendez-vous avec des notifications et rappels automatiques",
+                gradient: "from-blue-600 to-purple-600"
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                ),
+                title: "Dossiers sécurisés",
+                description: "Vos données médicales sont cryptées et protégées avec une sécurité de niveau entreprise",
+                gradient: "from-green-600 to-emerald-600"
+              }
+            ].map((feature, idx) => (
+              <div key={idx} className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 text-center hover:border-gray-600 transition-all">
+                  <div className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl shadow-lg mb-6 text-white group-hover:scale-110 transition-transform`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Assistance Vocale</h3>
-              <p className="text-gray-300">Navigation et prise de rendez-vous par commande vocale interactive</p>
-            </div>
-            
-            <div className="bg-gray-700 p-8 rounded-xl shadow-sm text-center border border-gray-600 hover:bg-gray-600 transition">
-              <div className="w-16 h-16 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Support Multilingue</h3>
-              <p className="text-gray-300">Interface disponible en français, anglais, arabe et plus encore</p>
-            </div>
-            
-            <div className="bg-gray-700 p-8 rounded-xl shadow-sm text-center border border-gray-600 hover:bg-gray-600 transition">
-              <div className="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Redirection Intelligente</h3>
-              <p className="text-gray-300">Proposition automatique du dentiste disponible le plus proche</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Prêt à Transformer Votre Cabinet ?
-          </h2>
-          <p className="text-xl text-gray-300 mb-8">
-            Rejoignez les centaines de dentistes qui ont déjà optimisé leur pratique avec DentAssist
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/signup" className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-500 transition font-medium text-lg">
-              Créer un Compte Gratuit
-            </Link>
-            <button className="border-2 border-gray-600 text-gray-200 px-8 py-4 rounded-lg hover:border-gray-500 transition font-medium text-lg">
-              Planifier une Démo
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
-      <footer id="contact" className="bg-black text-white py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-xl font-bold">DentAssist</span>
+      <footer className="relative z-10 bg-black/40 backdrop-blur-sm border-t border-gray-700/50 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="relative w-12 h-12">
+                <Image 
+                  src="/logo1.png" 
+                  alt="DentAssist Logo" 
+                  width={48} 
+                  height={48}
+                  className="object-contain"
+                />
               </div>
-              <p className="text-gray-400 text-sm">
-                Plateforme intelligente de gestion de cabinet dentaire
-              </p>
+              <span className="text-xl font-bold">DentAssist</span>
             </div>
             
-            <div>
-              <h4 className="font-semibold mb-4">Produit</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Fonctionnalités</a></li>
-                <li><a href="#" className="hover:text-white transition">Tarifs</a></li>
-                <li><a href="#" className="hover:text-white transition">Démo</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Entreprise</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">À propos</a></li>
-                <li><a href="#" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition">Contact</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Légal</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Confidentialité</a></li>
-                <li><a href="#" className="hover:text-white transition">Conditions</a></li>
-                <li><a href="#" className="hover:text-white transition">RGPD</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-            <p>© 2025 DentAssist. Tous droits réservés.</p>
+            <p className="text-sm text-gray-400">© 2025 DentAssist. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
