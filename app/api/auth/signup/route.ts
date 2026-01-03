@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
+import { randomUUID } from 'crypto';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
@@ -29,39 +31,16 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient();
-
-    // Sign up the user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          role: role,
-        },
-      },
-    });
-
-    if (authError) {
-      return NextResponse.json(
-        { error: authError.message },
-        { status: 400 }
-      );
-    }
-
-    if (!authData.user) {
-      return NextResponse.json(
-        { error: 'User creation failed' },
-        { status: 500 }
-      );
-    }
+    const userId = randomUUID();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create profile
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
-        id: authData.user.id,
+        id: userId,
         email: email,
+        password: hashedPassword,
         full_name: fullName,
         role: role,
       });
@@ -78,7 +57,7 @@ export async function POST(request: Request) {
       const { error: patientError } = await supabase
         .from('patients')
         .insert({
-          user_id: authData.user.id,
+          user_id: userId,
           phone: phone,
         });
 
@@ -92,7 +71,7 @@ export async function POST(request: Request) {
       const { error: dentistError } = await supabase
         .from('dentists')
         .insert({
-          user_id: authData.user.id,
+          user_id: userId,
           specialty: specialty,
         });
 
@@ -108,8 +87,8 @@ export async function POST(request: Request) {
       {
         message: 'User created successfully',
         user: {
-          id: authData.user.id,
-          email: authData.user.email,
+          id: userId,
+          email: email,
           role: role,
         },
       },

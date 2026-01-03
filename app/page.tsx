@@ -61,85 +61,18 @@ export default function Home() {
               Gérez vos rendez-vous et visites en une seule plateforme simple. Profitez d'une réservation de soins dentaires sans tracas avec des confirmations instantanées.
             </p>
             
-              <div className="flex flex-wrap gap-4">
-              <Link href="/signup" className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg text-lg font-medium overflow-hidden transition-all hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105">
-                <span className="relative z-10">Prendre rendez-vous</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </Link>
-              <Link href="/login" className="px-8 py-4 border-2 border-gray-600 text-gray-300 rounded-lg text-lg font-medium hover:border-blue-500 hover:text-white transition-all hover:shadow-lg">
-                Connexion
-                </Link>
-            </div>
+         
 
-            <div className="flex items-center gap-8 pt-4">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white">500+</div>
-                <div className="text-sm text-gray-400">Patients satisfaits</div>
-              </div>
-              <div className="w-px h-12 bg-gray-700"></div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white">50+</div>
-                <div className="text-sm text-gray-400">Dentistes experts</div>
-              </div>
-              <div className="w-px h-12 bg-gray-700"></div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white">98%</div>
-                <div className="text-sm text-gray-400">Satisfaction</div>
-              </div>
-            </div>
+         
           </div>
 
           {/* Hero Illustration */}
           <div className="relative lg:h-[500px] flex items-center justify-center">
             <div className="relative">
               {/* Main Card */}
-              <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-700 backdrop-blur-sm hover:scale-105 transition-transform duration-500">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-400">Prochain rendez-vous</div>
-                      <div className="text-xl font-bold text-white">Aujourd'hui, 14:30</div>
-                    </div>
-                  </div>
-                  
-                  <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400">Patient</span>
-                      <span className="text-white font-medium">Ahmed Benali</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400">Service</span>
-                      <span className="text-blue-400 font-medium">Détartrage</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400">Statut</span>
-                      <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-green-400 font-medium">Confirmé</span>
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <button className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
-                    Voir les détails
-                  </button>
-                </div>
-              </div>
+          <Image src="/images-removebg-preview.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
 
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-bounce">
-                ✓ Confirmé
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-pulse">
-                🔔 Rappel configuré
-              </div>
+
             </div>
           </div>
         </div>
@@ -344,7 +277,7 @@ export default function Home() {
               <span className="text-xl font-bold">DentAssist</span>
             </div>
             
-            <p className="text-sm text-gray-400">© 2025 DentAssist. Tous droits réservés.</p>
+       
           </div>
         </div>
       </footer>

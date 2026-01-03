@@ -8,8 +8,20 @@ export default function DentistPatientsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  const [patients, setPatients] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPatient, setSelectedPatient] = useState<any>(null)
+  const [editingPatient, setEditingPatient] = useState<any>(null)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    fullName: '',
+    phone: ''
+  })
+  const [formError, setFormError] = useState('')
+  const [formLoading, setFormLoading] = useState(false)
 
   useEffect(() => {
     checkAuth()
@@ -28,6 +40,13 @@ export default function DentistPatientsPage() {
         return
       }
       setUser(data.user)
+      
+      // Fetch patients
+      const patientsResponse = await fetch('/api/patients')
+      if (patientsResponse.ok) {
+        const patientsData = await patientsResponse.json()
+        setPatients(patientsData.patients || [])
+      }
     } catch (error) {
       router.push('/login')
     } finally {
@@ -40,6 +59,88 @@ export default function DentistPatientsPage() {
     router.push('/login')
   }
 
+  const fetchPatients = async () => {
+    const patientsResponse = await fetch('/api/patients')
+    if (patientsResponse.ok) {
+      const patientsData = await patientsResponse.json()
+      setPatients(patientsData.patients || [])
+    }
+  }
+
+  const handleAddPatient = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormError('')
+    setFormLoading(true)
+
+    try {
+      const response = await fetch('/api/patients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la création')
+      }
+
+      setShowAddModal(false)
+      setFormData({ email: '', password: '', fullName: '', phone: '' })
+      await fetchPatients()
+    } catch (err: any) {
+      setFormError(err.message)
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleEditPatient = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormError('')
+    setFormLoading(true)
+
+    try {
+      const response = await fetch(`/api/patients/${editingPatient.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email || editingPatient.email,
+          password: formData.password || undefined,
+          fullName: formData.fullName || editingPatient.name,
+          phone: formData.phone || editingPatient.phone
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la modification')
+      }
+
+      setShowEditModal(false)
+      setEditingPatient(null)
+      setFormData({ email: '', password: '', fullName: '', phone: '' })
+      await fetchPatients()
+    } catch (err: any) {
+      setFormError(err.message)
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const openEditModal = (patient: any) => {
+    setSelectedPatient(null) // Close detail modal
+    setEditingPatient(patient)
+    setFormData({
+      email: patient.email,
+      password: '',
+      fullName: patient.name,
+      phone: patient.phone
+    })
+    setShowEditModal(true)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
@@ -47,39 +148,6 @@ export default function DentistPatientsPage() {
       </div>
     )
   }
-
-  const patients = [
-    {
-      id: 1,
-      name: 'Ahmed Benali',
-      email: 'ahmed@email.com',
-      phone: '0612345678',
-      lastVisit: '2024-12-10',
-      visits: 12,
-      allergies: 'Aucune',
-      bloodType: 'A+'
-    },
-    {
-      id: 2,
-      name: 'Sara El Amrani',
-      email: 'sara@email.com',
-      phone: '0623456789',
-      lastVisit: '2024-12-15',
-      visits: 8,
-      allergies: 'Pénicilline',
-      bloodType: 'O+'
-    },
-    {
-      id: 3,
-      name: 'Mohammed Tazi',
-      email: 'mohammed@email.com',
-      phone: '0634567890',
-      lastVisit: '2024-11-20',
-      visits: 5,
-      allergies: 'Latex',
-      bloodType: 'B+'
-    }
-  ]
 
   const filteredPatients = patients.filter(p =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -98,7 +166,10 @@ export default function DentistPatientsPage() {
             <h1 className="text-4xl font-bold text-white mb-2">Mes Patients</h1>
             <p className="text-gray-400">Gérez vos dossiers patients</p>
           </div>
-          <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-blue-600/50 transition">
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-blue-600/50 transition"
+          >
             + Nouveau patient
           </button>
         </div>
@@ -120,20 +191,33 @@ export default function DentistPatientsPage() {
         </div>
 
         {/* Patients Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPatients.map((patient) => (
+        {filteredPatients.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Aucun patient trouvé</h3>
+            <p className="text-gray-400">
+              {searchQuery ? 'Aucun patient ne correspond à votre recherche.' : 'Aucun patient n\'est encore inscrit.'}
+            </p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPatients.map((patient) => (
             <div
               key={patient.id}
               onClick={() => setSelectedPatient(patient)}
               className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-6 hover:border-blue-500 transition cursor-pointer"
             >
-              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                  {patient.name.charAt(0)}
+                  {patient.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-white mb-1">{patient.name}</h3>
-                  <p className="text-gray-400 text-sm">{patient.visits} visites</p>
+                  <p className="text-gray-400 text-sm">Patient</p>
                 </div>
               </div>
 
@@ -154,12 +238,13 @@ export default function DentistPatientsPage() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  Dernière visite: {new Date(patient.lastVisit).toLocaleDateString('fr-FR')}
+                  Inscrit le: {patient.createdAt ? new Date(patient.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
                 </div>
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* Patient Detail Modal */}
         {selectedPatient && (
@@ -186,25 +271,21 @@ export default function DentistPatientsPage() {
                   </div>
                 </div>
 
-                {/* Medical Info */}
+                {/* Patient Info */}
                 <div>
-                  <h4 className="text-xl font-bold text-white mb-4">Informations médicales</h4>
+                  <h4 className="text-xl font-bold text-white mb-4">Informations</h4>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                      <span className="text-gray-400 text-sm">Groupe sanguin</span>
-                      <p className="text-white font-medium text-lg mt-1">{selectedPatient.bloodType}</p>
+                      <span className="text-gray-400 text-sm">Email</span>
+                      <p className="text-white font-medium text-lg mt-1">{selectedPatient.email}</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                      <span className="text-gray-400 text-sm">Allergies</span>
-                      <p className="text-white font-medium text-lg mt-1">{selectedPatient.allergies}</p>
+                      <span className="text-gray-400 text-sm">Téléphone</span>
+                      <p className="text-white font-medium text-lg mt-1">{selectedPatient.phone}</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                      <span className="text-gray-400 text-sm">Nombre de visites</span>
-                      <p className="text-white font-medium text-lg mt-1">{selectedPatient.visits}</p>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                      <span className="text-gray-400 text-sm">Dernière visite</span>
-                      <p className="text-white font-medium text-lg mt-1">{new Date(selectedPatient.lastVisit).toLocaleDateString('fr-FR')}</p>
+                      <span className="text-gray-400 text-sm">Date d'inscription</span>
+                      <p className="text-white font-medium text-lg mt-1">{selectedPatient.createdAt ? new Date(selectedPatient.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</p>
                     </div>
                   </div>
                 </div>
@@ -217,11 +298,180 @@ export default function DentistPatientsPage() {
                   <button className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition">
                     Créer ordonnance
                   </button>
-                  <button className="px-6 py-3 border-2 border-gray-700 text-gray-300 rounded-lg hover:border-gray-600 transition">
+                  <button 
+                    onClick={() => openEditModal(selectedPatient)}
+                    className="px-6 py-3 border-2 border-gray-700 text-gray-300 rounded-lg hover:border-gray-600 transition"
+                  >
                     Modifier
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add Patient Modal */}
+        {showAddModal && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setShowAddModal(false); setFormError(''); setFormData({ email: '', password: '', fullName: '', phone: '' }) }}>
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Nouveau Patient</h2>
+                <button onClick={() => { setShowAddModal(false); setFormError(''); setFormData({ email: '', password: '', fullName: '', phone: '' }) }} className="text-gray-400 hover:text-white text-2xl">×</button>
+              </div>
+
+              <form onSubmit={handleAddPatient} className="space-y-4">
+                {formError && (
+                  <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-300 text-sm">
+                    {formError}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nom complet</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Téléphone</label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Mot de passe</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                  <p className="mt-1 text-xs text-gray-400">Minimum 6 caractères</p>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => { setShowAddModal(false); setFormError(''); setFormData({ email: '', password: '', fullName: '', phone: '' }) }}
+                    className="flex-1 px-6 py-3 border-2 border-gray-700 text-gray-300 rounded-lg hover:border-gray-600 transition"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={formLoading}
+                    className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition disabled:opacity-50"
+                  >
+                    {formLoading ? 'Création...' : 'Créer'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Patient Modal */}
+        {showEditModal && editingPatient && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setShowEditModal(false); setEditingPatient(null); setFormError(''); setFormData({ email: '', password: '', fullName: '', phone: '' }) }}>
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Modifier Patient</h2>
+                <button onClick={() => { setShowEditModal(false); setEditingPatient(null); setFormError(''); setFormData({ email: '', password: '', fullName: '', phone: '' }) }} className="text-gray-400 hover:text-white text-2xl">×</button>
+              </div>
+
+              <form onSubmit={handleEditPatient} className="space-y-4">
+                {formError && (
+                  <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-300 text-sm">
+                    {formError}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nom complet</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Téléphone</label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nouveau mot de passe (optionnel)</label>
+                  <input
+                    type="password"
+                    minLength={6}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    placeholder="Laisser vide pour ne pas modifier"
+                  />
+                  <p className="mt-1 text-xs text-gray-400">Minimum 6 caractères si modifié</p>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => { setShowEditModal(false); setEditingPatient(null); setFormError(''); setFormData({ email: '', password: '', fullName: '', phone: '' }) }}
+                    className="flex-1 px-6 py-3 border-2 border-gray-700 text-gray-300 rounded-lg hover:border-gray-600 transition"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={formLoading}
+                    className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition disabled:opacity-50"
+                  >
+                    {formLoading ? 'Modification...' : 'Enregistrer'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

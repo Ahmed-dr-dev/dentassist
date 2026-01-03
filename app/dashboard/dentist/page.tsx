@@ -9,6 +9,7 @@ export default function DentistDashboard() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  const [patientCount, setPatientCount] = useState(0)
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [showAddModal, setShowAddModal] = useState(false)
 
@@ -29,6 +30,13 @@ export default function DentistDashboard() {
         return
       }
       setUser(data.user)
+      
+      // Fetch patient count
+      const patientsResponse = await fetch('/api/patients')
+      if (patientsResponse.ok) {
+        const patientsData = await patientsResponse.json()
+        setPatientCount(patientsData.patients?.length || 0)
+      }
     } catch (error) {
       router.push('/login')
     } finally {
@@ -110,7 +118,7 @@ export default function DentistDashboard() {
               <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center text-2xl">👥</div>
               <span className="text-green-100 text-sm">Total</span>
             </div>
-            <div className="text-3xl font-bold mb-1">124</div>
+            <div className="text-3xl font-bold mb-1">{patientCount}</div>
             <div className="text-green-100">Patients</div>
           </div>
 

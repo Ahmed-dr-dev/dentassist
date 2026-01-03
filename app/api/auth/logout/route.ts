@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function POST() {
   try {
-    const supabase = await createClient();
-
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
-    }
+    const cookieStore = await cookies();
+    cookieStore.delete('user_id');
 
     return NextResponse.json(
       { message: 'Logout successful' },

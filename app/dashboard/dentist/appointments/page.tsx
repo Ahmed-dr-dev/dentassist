@@ -8,12 +8,19 @@ export default function DentistAppointmentsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  const [appointments, setAppointments] = useState<any[]>([])
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [viewMode, setViewMode] = useState<'day' | 'week'>('day')
 
   useEffect(() => {
     checkAuth()
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      fetchAppointments()
+    }
+  }, [user, selectedDate])
 
   const checkAuth = async () => {
     try {
@@ -40,6 +47,18 @@ export default function DentistAppointmentsPage() {
     router.push('/login')
   }
 
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch(`/api/appointments?date=${selectedDate}`)
+      if (response.ok) {
+        const data = await response.json()
+        setAppointments(data.appointments || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch appointments:', error)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
@@ -50,41 +69,10 @@ export default function DentistAppointmentsPage() {
 
   const timeSlots = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00']
 
-  const appointments = [
-    {
-      id: 1,
-      patient: 'Ahmed Benali',
-      service: 'Détartrage',
-      time: '09:00',
-      duration: 45,
-      status: 'confirmed',
-      phone: '0612345678',
-      email: 'ahmed@email.com'
-    },
-    {
-      id: 2,
-      patient: 'Sara El Amrani',
-      service: 'Consultation',
-      time: '10:00',
-      duration: 30,
-      status: 'confirmed',
-      phone: '0623456789',
-      email: 'sara@email.com'
-    },
-    {
-      id: 3,
-      patient: 'Mohammed Tazi',
-      service: 'Extraction',
-      time: '14:30',
-      duration: 60,
-      status: 'pending',
-      phone: '0634567890',
-      email: 'mohammed@email.com'
-    }
-  ]
+  const filteredAppointments = appointments.filter(apt => apt.date === selectedDate)
 
   const getAppointmentAtTime = (time: string) => {
-    return appointments.find(apt => apt.time === time)
+    return filteredAppointments.find(apt => apt.time === time)
   }
 
   return (
@@ -129,7 +117,7 @@ export default function DentistAppointmentsPage() {
               {new Date(selectedDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-sm">Total: {appointments.length} rendez-vous</span>
+              <span className="text-gray-400 text-sm">Total: {filteredAppointments.length} rendez-vous</span>
             </div>
           </div>
 
@@ -197,7 +185,7 @@ export default function DentistAppointmentsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-gray-400 text-sm mb-1">Total</div>
-                <div className="text-2xl font-bold text-white">{appointments.length}</div>
+                <div className="text-2xl font-bold text-white">{filteredAppointments.length}</div>
               </div>
               <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center text-blue-400 text-2xl">📅</div>
             </div>
@@ -207,7 +195,7 @@ export default function DentistAppointmentsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-gray-400 text-sm mb-1">Confirmés</div>
-                <div className="text-2xl font-bold text-white">{appointments.filter(a => a.status === 'confirmed').length}</div>
+                <div className="text-2xl font-bold text-white">{filteredAppointments.filter(a => a.status === 'confirmed').length}</div>
               </div>
               <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center text-green-400 text-2xl">✅</div>
             </div>
@@ -217,7 +205,7 @@ export default function DentistAppointmentsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-gray-400 text-sm mb-1">En attente</div>
-                <div className="text-2xl font-bold text-white">{appointments.filter(a => a.status === 'pending').length}</div>
+                <div className="text-2xl font-bold text-white">{filteredAppointments.filter(a => a.status === 'pending').length}</div>
               </div>
               <div className="w-12 h-12 bg-orange-600/20 rounded-lg flex items-center justify-center text-orange-400 text-2xl">⏰</div>
             </div>
@@ -227,7 +215,7 @@ export default function DentistAppointmentsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-gray-400 text-sm mb-1">Disponibles</div>
-                <div className="text-2xl font-bold text-white">{timeSlots.length - appointments.length}</div>
+                <div className="text-2xl font-bold text-white">{timeSlots.length - filteredAppointments.length}</div>
               </div>
               <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center text-purple-400 text-2xl">🕐</div>
             </div>

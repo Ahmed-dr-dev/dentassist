@@ -9,14 +9,12 @@ export default function SignupPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [userType, setUserType] = useState<'patient' | 'dentist'>('patient')
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
     lastName: '',
     password: '',
-    phone: '',
-    specialty: ''
+    phone: ''
   })
 
   useEffect(() => {
@@ -30,11 +28,7 @@ export default function SignupPage() {
       if (response.ok) {
         const data = await response.json()
         // User is already logged in, redirect to dashboard
-        if (data.user.role === 'dentist') {
-          router.push('/dashboard/dentist')
-        } else {
-          router.push('/dashboard/patient')
-        }
+        router.push('/dashboard/patient')
       }
     } catch (error) {
       // User not logged in, stay on signup page
@@ -54,9 +48,8 @@ export default function SignupPage() {
           email: formData.email,
           password: formData.password,
           fullName: `${formData.firstName} ${formData.lastName}`,
-          role: userType,
-          ...(userType === 'patient' && { phone: formData.phone }),
-          ...(userType === 'dentist' && { specialty: formData.specialty })
+          role: 'patient',
+          phone: formData.phone
         })
       })
 
@@ -106,49 +99,6 @@ export default function SignupPage() {
               </div>
             )}
 
-            {/* User Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Type de compte
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <label className={`relative flex items-center justify-center p-3 border-2 rounded-lg cursor-pointer transition ${
-                  userType === 'patient' 
-                    ? 'border-blue-600 bg-blue-600/20' 
-                    : 'border-gray-600 bg-gray-800 hover:border-gray-500'
-                }`}>
-                  <input 
-                    type="radio" 
-                    name="userType" 
-                    value="patient" 
-                    className="sr-only" 
-                    checked={userType === 'patient'}
-                    onChange={() => setUserType('patient')}
-                  />
-                  <span className={`text-sm font-medium ${
-                    userType === 'patient' ? 'text-blue-300' : 'text-gray-300'
-                  }`}>Patient</span>
-                </label>
-                <label className={`relative flex items-center justify-center p-3 border-2 rounded-lg cursor-pointer transition ${
-                  userType === 'dentist' 
-                    ? 'border-blue-600 bg-blue-600/20' 
-                    : 'border-gray-600 bg-gray-800 hover:border-gray-500'
-                }`}>
-                  <input 
-                    type="radio" 
-                    name="userType" 
-                    value="dentist" 
-                    className="sr-only"
-                    checked={userType === 'dentist'}
-                    onChange={() => setUserType('dentist')}
-                  />
-                  <span className={`text-sm font-medium ${
-                    userType === 'dentist' ? 'text-blue-300' : 'text-gray-300'
-                  }`}>Dentiste</span>
-                </label>
-              </div>
-            </div>
-
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
@@ -197,40 +147,21 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Conditional Fields */}
-            {userType === 'patient' && (
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
-                  Téléphone
-                </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  placeholder="0612345678"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
-                />
-              </div>
-            )}
-
-            {userType === 'dentist' && (
-              <div>
-                <label htmlFor="specialty" className="block text-sm font-medium text-gray-300 mb-2">
-                  Spécialité
-                </label>
-                <input
-                  id="specialty"
-                  type="text"
-                  placeholder="Orthodontie"
-                  required
-                  value={formData.specialty}
-                  onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
-                />
-              </div>
-            )}
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                Téléphone
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="0612345678"
+                required
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+              />
+            </div>
 
             {/* Password */}
             <div>
@@ -294,50 +225,14 @@ export default function SignupPage() {
       {/* Right Side - Illustration */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-gray-800 via-gray-900 to-black items-center justify-center p-12 relative overflow-hidden">
         {/* Animated Background Circles */}
-        <div className="absolute top-20 left-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         
         <div className="relative z-10 text-center">
           {/* Illustration Placeholder */}
           <div className="mb-8 flex items-center justify-center">
             <div className="relative">
               {/* Dashboard Card Illustration */}
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 w-96 h-72 relative">
-                <div className="space-y-4">
-                  {/* Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-3 bg-gray-700 rounded w-3/4"></div>
-                      <div className="h-2 bg-gray-800 rounded w-1/2"></div>
-                    </div>
-                  </div>
-                  
-                  {/* Content Bars */}
-                  <div className="space-y-3 pt-4">
-                    <div className="flex gap-2">
-                      <div className="h-8 bg-gradient-to-r from-green-600 to-green-500 rounded flex-1 shadow-lg"></div>
-                      <div className="w-8 h-8 bg-green-600/20 rounded border border-green-500"></div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-8 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded flex-1 shadow-lg"></div>
-                      <div className="w-8 h-8 bg-yellow-600/20 rounded border border-yellow-500"></div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-8 bg-gradient-to-r from-blue-600 to-blue-500 rounded flex-1 shadow-lg"></div>
-                      <div className="w-8 h-8 bg-blue-600/20 rounded border border-blue-500"></div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-8 bg-gradient-to-r from-red-600 to-red-500 rounded flex-1 shadow-lg"></div>
-                      <div className="w-8 h-8 bg-red-600/20 rounded border border-red-500"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <Image src="/images-removebg-preview.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
               
-              {/* Floating Elements */}
-              <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full shadow-xl animate-bounce"></div>
-              <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl shadow-xl animate-pulse"></div>
             </div>
           </div>
 

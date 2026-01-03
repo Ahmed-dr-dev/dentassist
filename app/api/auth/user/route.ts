@@ -1,30 +1,31 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const cookieStore = await cookies();
+    const userId = cookieStore.get('user_id')?.value;
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'Not authenticated' },
+        { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    // Get user profile
+    const supabase = await createClient();
+
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('id, email, role, full_name, created_at')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single();
 
-    if (profileError) {
+    if (profileError || !profile) {
       return NextResponse.json(
-        { error: `Failed to fetch profile: ${profileError.message}` },
-        { status: 500 }
+        { error: 'User not found' },
+        { status: 404 }
       );
     }
 
@@ -34,14 +35,14 @@ export async function GET() {
       const { data: patientData } = await supabase
         .from('patients')
         .select('phone')
-        .eq('user_id', user.id)
+        .eq('user_id', profile.id)
         .single();
       additionalData = patientData;
     } else if (profile.role === 'dentist') {
       const { data: dentistData } = await supabase
         .from('dentists')
         .select('specialty')
-        .eq('user_id', user.id)
+        .eq('user_id', profile.id)
         .single();
       additionalData = dentistData;
     }
@@ -49,8 +50,8 @@ export async function GET() {
     return NextResponse.json(
       {
         user: {
-          id: user.id,
-          email: user.email,
+          id: profile.id,
+          email: profile.email,
           role: profile.role,
           fullName: profile.full_name,
           createdAt: profile.created_at,

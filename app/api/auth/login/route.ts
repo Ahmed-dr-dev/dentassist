@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
+import bcrypt from 'bcryptjs';
+import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
@@ -15,37 +17,26 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
-    // Sign in the user
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Fetch profile with password
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, email, password, role, full_name')
+      .eq('email', email)
+      .single();
 
-    if (authError) {
+    if (profileError || !profile) {
       return NextResponse.json(
-        { error: authError.message },
+        { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
-    if (!authData.user) {
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, profile.password);
+    if (!isPasswordValid) {
       return NextResponse.json(
-        { error: 'Login failed' },
-        { status: 500 }
-      );
-    }
-
-    // Get user profile to include role information
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, role, full_name')
-      .eq('id', authData.user.id)
-      .single();
-
-    if (profileError) {
-      return NextResponse.json(
-        { error: `Failed to fetch profile: ${profileError.message}` },
-        { status: 500 }
+        { error: 'Invalid email or password' },
+        { status: 401 }
       );
     }
 
@@ -55,29 +46,37 @@ export async function POST(request: Request) {
       const { data: patientData } = await supabase
         .from('patients')
         .select('phone')
-        .eq('user_id', authData.user.id)
+        .eq('user_id', profile.id)
         .single();
       additionalData = patientData;
     } else if (profile.role === 'dentist') {
       const { data: dentistData } = await supabase
         .from('dentists')
         .select('specialty')
-        .eq('user_id', authData.user.id)
+        .eq('user_id', profile.id)
         .single();
       additionalData = dentistData;
     }
+
+    // Set user_id cookie
+    const cookieStore = await cookies();
+    cookieStore.set('user_id', profile.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
 
     return NextResponse.json(
       {
         message: 'Login successful',
         user: {
-          id: authData.user.id,
-          email: authData.user.email,
+          id: profile.id,
+          email: profile.email,
           role: profile.role,
           fullName: profile.full_name,
           ...additionalData,
         },
-        session: authData.session,
       },
       { status: 200 }
     );

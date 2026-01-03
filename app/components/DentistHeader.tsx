@@ -44,12 +44,7 @@ export default function DentistHeader({ user }: { user: any }) {
           >
             Patients
           </Link>
-          <Link 
-            href="/dashboard/dentist/analytics" 
-            className={`transition ${isActive('/dashboard/dentist/analytics') ? 'text-blue-400 font-medium' : 'text-gray-300 hover:text-white'}`}
-          >
-            Statistiques
-          </Link>
+   
           <span className="text-gray-400">|</span>
           <span className="text-gray-300">{user?.fullName}</span>
         
