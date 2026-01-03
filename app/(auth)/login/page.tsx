@@ -198,7 +198,7 @@ console.log(data)
           <div className="mb-8 flex items-center justify-center">
             <div className="relative">
               {/* Dashboard Card Illustration */}
-          <Image src="/images-removebg-preview.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
+          <Image src="/ChatGPT Image Jan 3, 2026, 05_24_31 PM.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
               
             </div>
           </div>
