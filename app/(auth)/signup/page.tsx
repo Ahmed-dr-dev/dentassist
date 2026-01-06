@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link'
@@ -117,6 +118,20 @@ export default function SignupPage() {
 
             {/* Full Name */}
             <div className="grid grid-cols-2 gap-4">
+               <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
+                  Nom
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  placeholder="Nom"
+                  required
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                />
+              </div>
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
                   Prénom
@@ -131,20 +146,7 @@ export default function SignupPage() {
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
                 />
               </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
-                  Nom
-                </label>
-                <input
-                  id="lastName"
-                  type="text"
-                  placeholder="Nom"
-                  required
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
-                />
-              </div>
+             
             </div>
 
             {/* Phone */}
