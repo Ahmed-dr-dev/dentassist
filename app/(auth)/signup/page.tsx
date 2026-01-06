@@ -124,7 +124,7 @@ export default function SignupPage() {
                 <input
                   id="firstName"
                   type="text"
-                  placeholder="Ahmed"
+                  placeholder="Prénom"
                   required
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
@@ -138,7 +138,7 @@ export default function SignupPage() {
                 <input
                   id="lastName"
                   type="text"
-                  placeholder="Benali"
+                  placeholder="Nom"
                   required
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
