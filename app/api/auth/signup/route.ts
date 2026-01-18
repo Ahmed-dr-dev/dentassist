@@ -1,95 +1,74 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, fullName, role, phone, specialty } = await request.json();
+    const { email, password, fullName, phone } = await request.json();
 
     // Validate required fields
-    if (!email || !password || !fullName || !role) {
+    if (!email || !password || !fullName) {
       return NextResponse.json(
-        { error: 'Email, password, full name, and role are required' },
+        { error: 'Email, password, and full name are required' },
         { status: 400 }
       );
     }
 
-    // Validate role-specific fields
-    if (role === 'patient' && !phone) {
+    // Validate phone (optional but recommended for patients)
+    if (!phone) {
       return NextResponse.json(
-        { error: 'Phone number is required for patients' },
-        { status: 400 }
-      );
-    }
-
-    if (role === 'dentist' && !specialty) {
-      return NextResponse.json(
-        { error: 'Specialty is required for dentists' },
+        { error: 'Phone number is required' },
         { status: 400 }
       );
     }
 
     const supabase = await createClient();
-    const userId = randomUUID();
+
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'Email already registered' },
+        { status: 400 }
+      );
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create profile
-    const { error: profileError } = await supabase
-      .from('profiles')
+    // Create user with role 'patient' only (doctors are pre-created in database)
+    const { data: newUser, error: userError } = await supabase
+      .from('users')
       .insert({
-        id: userId,
         email: email,
         password: hashedPassword,
         full_name: fullName,
-        role: role,
-      });
+        role: 'patient',
+        phone: phone,
+      })
+      .select('id, email, role, full_name')
+      .single();
 
-    if (profileError) {
+    if (userError) {
       return NextResponse.json(
-        { error: `Profile creation failed: ${profileError.message}` },
+        { error: `User creation failed: ${userError.message}` },
         { status: 500 }
       );
     }
 
-    // Create role-specific record
-    if (role === 'patient') {
-      const { error: patientError } = await supabase
-        .from('patients')
-        .insert({
-          user_id: userId,
-          phone: phone,
-        });
-
-      if (patientError) {
-        return NextResponse.json(
-          { error: `Patient record creation failed: ${patientError.message}` },
-          { status: 500 }
-        );
-      }
-    } else if (role === 'dentist') {
-      const { error: dentistError } = await supabase
-        .from('dentists')
-        .insert({
-          user_id: userId,
-          specialty: specialty,
-        });
-
-      if (dentistError) {
-        return NextResponse.json(
-          { error: `Dentist record creation failed: ${dentistError.message}` },
-          { status: 500 }
-        );
-      }
-    }
-
     return NextResponse.json(
       {
-        message: 'User created successfully',
+        message: 'Account created successfully',
         user: {
-          id: userId,
-          email: email,
-          role: role,
+          id: newUser.id,
+          email: newUser.email,
+          role: newUser.role,
+          fullName: newUser.full_name,
         },
       },
       { status: 201 }

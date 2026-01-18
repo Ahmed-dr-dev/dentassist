@@ -17,14 +17,14 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
-    // Fetch profile with password
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, password, role, full_name')
+    // Fetch user from users table
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, email, password, role, full_name, phone, specialty')
       .eq('email', email)
       .single();
 
-    if (profileError || !profile) {
+    if (userError || !user) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, profile.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
@@ -40,42 +40,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get role-specific data
-    let additionalData = null;
-    if (profile.role === 'patient') {
-      const { data: patientData } = await supabase
-        .from('patients')
-        .select('phone')
-        .eq('user_id', profile.id)
-        .single();
-      additionalData = patientData;
-    } else if (profile.role === 'dentist') {
-      const { data: dentistData } = await supabase
-        .from('dentists')
-        .select('specialty')
-        .eq('user_id', profile.id)
-        .single();
-      additionalData = dentistData;
-    }
-
     // Set user_id cookie
     const cookieStore = await cookies();
-    cookieStore.set('user_id', profile.id, {
+    cookieStore.set('user_id', user.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
+    // Return user data (exclude password)
+    const { password: _, ...userWithoutPassword } = user;
+
     return NextResponse.json(
       {
         message: 'Login successful',
         user: {
-          id: profile.id,
-          email: profile.email,
-          role: profile.role,
-          fullName: profile.full_name,
-          ...additionalData,
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          fullName: user.full_name,
+          phone: user.phone,
+          specialty: user.specialty,
         },
       },
       { status: 200 }

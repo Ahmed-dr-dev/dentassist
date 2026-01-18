@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
-import bcrypt from 'bcryptjs';
 
-export async function PUT(
+export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -18,102 +17,92 @@ export async function PUT(
       );
     }
 
+    const { id: patientId } = await params;
+
     const supabase = await createClient();
 
-    // Verify user is a dentist
-    const { data: profile } = await supabase
-      .from('profiles')
+    // Verify user is doctor
+    const { data: user } = await supabase
+      .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!profile || profile.role !== 'dentist') {
+    if (!user || user.role !== 'doctor') {
       return NextResponse.json(
-        { error: 'Forbidden' },
+        { error: 'Only doctors can view patient details' },
         { status: 403 }
       );
     }
 
-    const { email, password, fullName, phone } = await request.json();
-    const { id: patientId } = await params;
-
-    // Verify patient exists
-    const { data: patientProfile } = await supabase
-      .from('profiles')
-      .select('id, role')
+    // Get patient details
+    const { data: patient, error: patientError } = await supabase
+      .from('users')
+      .select('id, full_name, email, phone, created_at')
       .eq('id', patientId)
+      .eq('role', 'patient')
       .single();
 
-    if (!patientProfile || patientProfile.role !== 'patient') {
+    if (patientError || !patient) {
       return NextResponse.json(
         { error: 'Patient not found' },
         { status: 404 }
       );
     }
 
-    // Update profile
-    const updateData: any = {};
-    if (fullName) updateData.full_name = fullName;
-    if (email) {
-      // Check if email is already taken by another user
-      const { data: existingProfile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .neq('id', patientId)
-        .single();
+    // Get all appointments for this patient with this doctor
+    const { data: appointments, error: appointmentsError } = await supabase
+      .from('appointments')
+      .select(`
+        id,
+        status,
+        requested_date_time,
+        confirmed_date_time,
+        reason,
+        rejection_reason,
+        cancellation_reason,
+        notes,
+        observations,
+        created_at,
+        updated_at
+      `)
+      .eq('doctor_id', userId)
+      .eq('patient_id', patientId)
+      .order('confirmed_date_time', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false });
 
-      if (existingProfile) {
-        return NextResponse.json(
-          { error: 'Email already exists' },
-          { status: 400 }
-        );
-      }
-      updateData.email = email;
-    }
-    if (password) {
-      updateData.password = await bcrypt.hash(password, 10);
-    }
-
-    if (Object.keys(updateData).length > 0) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', patientId);
-
-      if (profileError) {
-        return NextResponse.json(
-          { error: `Profile update failed: ${profileError.message}` },
-          { status: 500 }
-        );
-      }
+    if (appointmentsError) {
+      return NextResponse.json(
+        { error: `Failed to fetch appointments: ${appointmentsError.message}` },
+        { status: 500 }
+      );
     }
 
-    // Update patient record
-    if (phone) {
-      const { error: patientError } = await supabase
-        .from('patients')
-        .update({ phone })
-        .eq('user_id', patientId);
+    // Get prescriptions for this patient
+    const { data: prescriptions, error: prescriptionsError } = await supabase
+      .from('prescriptions')
+      .select('id, file_path, file_name, description, created_at, appointment_id')
+      .eq('doctor_id', userId)
+      .eq('patient_id', patientId)
+      .order('created_at', { ascending: false });
 
-      if (patientError) {
-        return NextResponse.json(
-          { error: `Patient record update failed: ${patientError.message}` },
-          { status: 500 }
-        );
-      }
+    if (prescriptionsError) {
+      console.error('Error fetching prescriptions:', prescriptionsError);
     }
 
     return NextResponse.json(
-      { message: 'Patient updated successfully' },
+      {
+        patient,
+        appointments: appointments || [],
+        prescriptions: prescriptions || []
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Update patient error:', error);
+    console.error('Get patient details error:', error);
     return NextResponse.json(
       { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }
 }
-

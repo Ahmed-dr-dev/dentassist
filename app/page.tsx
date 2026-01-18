@@ -1,7 +1,12 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { useI18n } from '@/lib/i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Home() {
+  const { t } = useI18n()
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
       {/* Animated Background Elements */}
@@ -23,20 +28,16 @@ export default function Home() {
                 className="object-contain"
               />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">DentAssist</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{t('common.appName')}</span>
           </Link>
           
           <div className="flex items-center gap-6">
-            <a href="#home" className="text-gray-300 hover:text-white transition-colors">Accueil</a>
-            <Link href="/login" className="text-gray-300 hover:text-white transition-colors">Connexion</Link>
+            <a href="#home" className="text-gray-300 hover:text-white transition-colors">{t('common.home')}</a>
+            <Link href="/login" className="text-gray-300 hover:text-white transition-colors">{t('auth.login')}</Link>
             <Link href="/signup" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all hover:shadow-lg hover:shadow-blue-600/50">
-              S'inscrire
+              {t('auth.signUp')}
             </Link>
-            <select className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none cursor-pointer hover:bg-gray-750 transition">
-              <option>🇫🇷 FR</option>
-              <option>🇬🇧 EN</option>
-              <option>🇸🇦 AR</option>
-            </select>
+            <LanguageSwitcher />
           </div>
         </nav>
       </header>
@@ -47,18 +48,18 @@ export default function Home() {
           <div className="space-y-8 animate-fade-in">
             <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 px-4 py-2 rounded-full">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-blue-300 text-sm font-medium">Plateforme Dentaire Intelligente</span>
+              <span className="text-blue-300 text-sm font-medium">{t('home.smartPlatform')}</span>
               </div>
             
             <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-              Réservez votre rendez-vous
+              {t('home.heroTitle')}
               <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                dentaire facilement
+                {t('home.heroSubtitle')}
               </span>
               </h1>
             
             <p className="text-xl text-gray-300 leading-relaxed">
-              Gérez vos rendez-vous et visites en une seule plateforme simple. Profitez d'une réservation de soins dentaires sans tracas avec des confirmations instantanées.
+              {t('home.heroDescription')}
             </p>
             
          
@@ -82,8 +83,8 @@ export default function Home() {
       <section className="relative z-10 py-24 bg-gray-800/30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Comment ça marche</h2>
-            <p className="text-xl text-gray-400">Trois étapes simples pour votre sourire parfait</p>
+            <h2 className="text-4xl font-bold text-white mb-4">{t('home.howItWorks')}</h2>
+            <p className="text-xl text-gray-400">{t('home.howItWorksSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 relative">
@@ -98,8 +99,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 ),
-                title: "Créez un compte",
-                description: "Inscrivez-vous rapidement avec vos informations de base et commencez en quelques minutes"
+                title: t('home.step1'),
+                description: t('home.step1Desc')
               },
               {
                 step: 2,
@@ -108,8 +109,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 ),
-                title: "Choisissez dentiste et horaire",
-                description: "Sélectionnez parmi les créneaux disponibles qui correspondent parfaitement à votre emploi du temps"
+                title: t('home.step2'),
+                description: t('home.step2Desc')
               },
               {
                 step: 3,
@@ -118,8 +119,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 ),
-                title: "Confirmez le rendez-vous",
-                description: "Recevez une confirmation instantanée et des rappels automatiques"
+                title: t('home.step3'),
+                description: t('home.step3Desc')
               }
             ].map((item, idx) => (
               <div key={idx} className="relative group">
@@ -143,8 +144,8 @@ export default function Home() {
       <section id="services" className="relative z-10 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Nos services</h2>
-            <p className="text-xl text-gray-400">Soins dentaires complets pour vos besoins</p>
+            <h2 className="text-4xl font-bold text-white mb-4">{t('home.services')}</h2>
+            <p className="text-xl text-gray-400">{t('home.servicesSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -155,8 +156,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 ),
-                title: "Consultation",
-                description: "Examen dentaire général et conseils d'experts",
+                title: t('home.consultation'),
+                description: t('home.consultationDesc'),
                 color: "from-blue-600 to-blue-500"
               },
               {
@@ -165,8 +166,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 ),
-                title: "Détartrage",
-                description: "Nettoyage et polissage professionnels",
+                title: t('home.cleaning'),
+                description: t('home.cleaningDesc'),
                 color: "from-green-600 to-green-500"
               },
               {
@@ -175,8 +176,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 ),
-                title: "Extraction",
-                description: "Extraction dentaire sûre si nécessaire",
+                title: t('home.extraction'),
+                description: t('home.extractionDesc'),
                 color: "from-orange-600 to-orange-500"
               },
               {
@@ -185,8 +186,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 ),
-                title: "Blanchiment",
-                description: "Éclaircissez votre sourire professionnellement",
+                title: t('home.whitening'),
+                description: t('home.whiteningDesc'),
                 color: "from-purple-600 to-purple-500"
               }
             ].map((service, idx) => (
@@ -207,8 +208,8 @@ export default function Home() {
       <section className="relative z-10 py-24 bg-gray-800/30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Pourquoi choisir DentAssist</h2>
-            <p className="text-xl text-gray-400">Découvrez l'avenir des soins dentaires</p>
+            <h2 className="text-4xl font-bold text-white mb-4">{t('home.whyChoose')}</h2>
+            <p className="text-xl text-gray-400">{t('home.whyChooseSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -219,8 +220,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 ),
-                title: "Réservation facile",
-                description: "Réservez des rendez-vous en quelques clics avec notre interface intuitive",
+                title: t('home.easyBooking'),
+                description: t('home.easyBookingDesc'),
                 gradient: "from-yellow-600 to-orange-600"
               },
               {
@@ -229,8 +230,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                   </svg>
                 ),
-                title: "Rappels intelligents",
-                description: "Ne manquez jamais un rendez-vous avec des notifications et rappels automatiques",
+                title: t('home.smartReminders'),
+                description: t('home.smartRemindersDesc'),
                 gradient: "from-blue-600 to-purple-600"
               },
               {
@@ -239,8 +240,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 ),
-                title: "Dossiers sécurisés",
-                description: "Vos données médicales sont cryptées et protégées avec une sécurité de niveau entreprise",
+                title: t('home.secureRecords'),
+                description: t('home.secureRecordsDesc'),
                 gradient: "from-green-600 to-emerald-600"
               }
             ].map((feature, idx) => (
@@ -274,7 +275,7 @@ export default function Home() {
                   className="object-contain"
                 />
               </div>
-              <span className="text-xl font-bold">DentAssist</span>
+              <span className="text-xl font-bold">{t('common.appName')}</span>
             </div>
             
        

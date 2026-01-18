@@ -5,12 +5,22 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useI18n } from '@/lib/i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function SignupPage() {
   const router = useRouter()
+  const { t } = useI18n()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+    phone: ''
+  })
+  const [fieldErrors, setFieldErrors] = useState({
     email: '',
     firstName: '',
     lastName: '',
@@ -28,17 +38,88 @@ export default function SignupPage() {
       const response = await fetch('/api/auth/user')
       if (response.ok) {
         const data = await response.json()
-        // User is already logged in, redirect to dashboard
-        router.push('/dashboard/patient')
+        // User is already logged in, redirect to home
+        router.push('/')
       }
     } catch (error) {
       // User not logged in, stay on signup page
     }
   }
 
+  const validateEmail = (email: string): string => {
+    if (!email) return 'L\'email est requis'
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) return 'Format d\'email invalide'
+    return ''
+  }
+
+  const validateName = (name: string, fieldName: string): string => {
+    if (!name) return `${fieldName} est requis`
+    if (name.length < 2) return `${fieldName} doit contenir au moins 2 caractères`
+    if (/[0-9]/.test(name)) return `${fieldName} ne peut pas contenir de chiffres`
+    if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(name)) return `${fieldName} contient des caractères invalides`
+    return ''
+  }
+
+  const validatePhone = (phone: string): string => {
+    if (!phone) return 'Le numéro de téléphone est requis'
+    // Remove spaces and dashes for validation
+    const cleanPhone = phone.replace(/[\s-]/g, '')
+    // Check for international format (+216XXXXXXXX or +XXXXXXXXXX) or local format
+    const phoneRegex = /^(\+?\d{1,3}[\s-]?)?\d{8,15}$/
+    if (!phoneRegex.test(cleanPhone)) return 'Format de téléphone invalide (ex: +21612345678)'
+    return ''
+  }
+
+  const validatePassword = (password: string): string => {
+    if (!password) return 'Le mot de passe est requis'
+    if (password.length < 6) return 'Le mot de passe doit contenir au moins 6 caractères'
+    return ''
+  }
+
+  const validateField = (field: string, value: string) => {
+    let error = ''
+    switch (field) {
+      case 'email':
+        error = validateEmail(value)
+        break
+      case 'firstName':
+        error = validateName(value, 'Le prénom')
+        break
+      case 'lastName':
+        error = validateName(value, 'Le nom')
+        break
+      case 'phone':
+        error = validatePhone(value)
+        break
+      case 'password':
+        error = validatePassword(value)
+        break
+    }
+    setFieldErrors(prev => ({ ...prev, [field]: error }))
+    return error === ''
+  }
+
+  const validateForm = (): boolean => {
+    const errors = {
+      email: validateEmail(formData.email),
+      firstName: validateName(formData.firstName, 'Le prénom'),
+      lastName: validateName(formData.lastName, 'Le nom'),
+      phone: validatePhone(formData.phone),
+      password: validatePassword(formData.password)
+    }
+    setFieldErrors(errors)
+    return Object.values(errors).every(error => error === '')
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    
+    if (!validateForm()) {
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -46,11 +127,10 @@ export default function SignupPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: formData.email,
+          email: formData.email.trim(),
           password: formData.password,
-          fullName: `${formData.firstName} ${formData.lastName}`,
-          role: 'patient',
-          phone: formData.phone
+          fullName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+          phone: formData.phone.trim()
         })
       })
 
@@ -111,9 +191,18 @@ export default function SignupPage() {
                 placeholder="nom@gmail.com"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value })
+                  if (fieldErrors.email) validateField('email', e.target.value)
+                }}
+                onBlur={(e) => validateField('email', e.target.value)}
+                className={`w-full px-4 py-3 bg-gray-800 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500 ${
+                  fieldErrors.email ? 'border-red-500' : 'border-gray-700'
+                }`}
               />
+              {fieldErrors.email && (
+                <p className="mt-1 text-xs text-red-400">{fieldErrors.email}</p>
+              )}
             </div>
 
             {/* Full Name */}
@@ -128,9 +217,18 @@ export default function SignupPage() {
                   placeholder="Nom"
                   required
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                  onChange={(e) => {
+                    setFormData({ ...formData, lastName: e.target.value })
+                    if (fieldErrors.lastName) validateField('lastName', e.target.value)
+                  }}
+                  onBlur={(e) => validateField('lastName', e.target.value)}
+                  className={`w-full px-4 py-3 bg-gray-800 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500 ${
+                    fieldErrors.lastName ? 'border-red-500' : 'border-gray-700'
+                  }`}
                 />
+                {fieldErrors.lastName && (
+                  <p className="mt-1 text-xs text-red-400">{fieldErrors.lastName}</p>
+                )}
               </div>
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
@@ -142,9 +240,18 @@ export default function SignupPage() {
                   placeholder="Prénom"
                   required
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                  onChange={(e) => {
+                    setFormData({ ...formData, firstName: e.target.value })
+                    if (fieldErrors.firstName) validateField('firstName', e.target.value)
+                  }}
+                  onBlur={(e) => validateField('firstName', e.target.value)}
+                  className={`w-full px-4 py-3 bg-gray-800 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500 ${
+                    fieldErrors.firstName ? 'border-red-500' : 'border-gray-700'
+                  }`}
                 />
+                {fieldErrors.firstName && (
+                  <p className="mt-1 text-xs text-red-400">{fieldErrors.firstName}</p>
+                )}
               </div>
              
             </div>
@@ -160,9 +267,18 @@ export default function SignupPage() {
                 placeholder="+21612345678"
                 required
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, phone: e.target.value })
+                  if (fieldErrors.phone) validateField('phone', e.target.value)
+                }}
+                onBlur={(e) => validateField('phone', e.target.value)}
+                className={`w-full px-4 py-3 bg-gray-800 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500 ${
+                  fieldErrors.phone ? 'border-red-500' : 'border-gray-700'
+                }`}
               />
+              {fieldErrors.phone && (
+                <p className="mt-1 text-xs text-red-400">{fieldErrors.phone}</p>
+              )}
             </div>
 
             {/* Password */}
@@ -177,10 +293,20 @@ export default function SignupPage() {
                 required
                 minLength={6}
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value })
+                  if (fieldErrors.password) validateField('password', e.target.value)
+                }}
+                onBlur={(e) => validateField('password', e.target.value)}
+                className={`w-full px-4 py-3 bg-gray-800 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500 ${
+                  fieldErrors.password ? 'border-red-500' : 'border-gray-700'
+                }`}
               />
-              <p className="mt-1 text-xs text-gray-400">Minimum 6 caractères</p>
+              {fieldErrors.password ? (
+                <p className="mt-1 text-xs text-red-400">{fieldErrors.password}</p>
+              ) : (
+                <p className="mt-1 text-xs text-gray-400">Minimum 6 caractères</p>
+              )}
             </div>
 
             {/* Submit Button */}

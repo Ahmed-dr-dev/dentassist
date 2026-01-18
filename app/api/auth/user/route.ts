@@ -16,46 +16,29 @@ export async function GET() {
 
     const supabase = await createClient();
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, role, full_name, created_at')
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, email, role, full_name, phone, specialty, created_at')
       .eq('id', userId)
       .single();
 
-    if (profileError || !profile) {
+    if (userError || !user) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
       );
     }
 
-    // Get role-specific data
-    let additionalData = null;
-    if (profile.role === 'patient') {
-      const { data: patientData } = await supabase
-        .from('patients')
-        .select('phone')
-        .eq('user_id', profile.id)
-        .single();
-      additionalData = patientData;
-    } else if (profile.role === 'dentist') {
-      const { data: dentistData } = await supabase
-        .from('dentists')
-        .select('specialty')
-        .eq('user_id', profile.id)
-        .single();
-      additionalData = dentistData;
-    }
-
     return NextResponse.json(
       {
         user: {
-          id: profile.id,
-          email: profile.email,
-          role: profile.role,
-          fullName: profile.full_name,
-          createdAt: profile.created_at,
-          ...additionalData,
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          fullName: user.full_name,
+          phone: user.phone,
+          specialty: user.specialty,
+          createdAt: user.created_at,
         },
       },
       { status: 200 }
