@@ -19,18 +19,36 @@ export async function GET(request: Request) {
 
     const supabase = await createClient();
 
-    // Verify user is doctor
+    // Verify user is doctor or assistant
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can view appointments' },
+        { error: 'Only doctors or assistants can view appointments' },
         { status: 403 }
       );
+    }
+
+    // Assistant sees the default doctor's appointments; doctor uses own id
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase
+        .from('users')
+        .select('id')
+        .eq('role', 'doctor')
+        .limit(1)
+        .single();
+      if (!doctor) {
+        return NextResponse.json(
+          { error: 'No doctor found' },
+          { status: 404 }
+        );
+      }
+      doctorId = doctor.id;
     }
 
     const now = new Date();
@@ -83,7 +101,7 @@ export async function GET(request: Request) {
         created_at,
         patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
       `)
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .in('status', ['confirmed', 'completed', 'rejected', 'cancelled'])
       .gte('confirmed_date_time', startDate.toISOString())
       .lte('confirmed_date_time', endDate.toISOString())
@@ -114,7 +132,7 @@ export async function GET(request: Request) {
         created_at,
         patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
       `)
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .eq('status', 'pending')
       .gte('requested_date_time', startDate.toISOString())
       .lte('requested_date_time', endDate.toISOString())

@@ -32,6 +32,7 @@ export async function GET(request: Request) {
         suggested_dentist_phone,
         payment_approval_path,
         payment_approval_file_name,
+        payment_status,
         created_at,
         doctor:users!appointments_doctor_id_fkey(id, full_name, email, specialty)
       `)

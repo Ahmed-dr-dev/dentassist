@@ -57,6 +57,14 @@ export async function POST(request: Request) {
     const doctorId = doctor.id;
 
     const requestedDate = new Date(requestedDateTime);
+    const now = new Date();
+    const minRequestTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    if (requestedDate < minRequestTime) {
+      return NextResponse.json(
+        { error: 'Appointments must be requested at least 24 hours in advance' },
+        { status: 400 }
+      );
+    }
 
     // Check for time conflicts with confirmed appointments for this doctor
     const { data: conflictingAppointments } = await supabase

@@ -19,24 +19,29 @@ export async function GET(request: Request) {
 
     const supabase = await createClient();
 
-    // Verify user is doctor
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can view available dates' },
+        { error: 'Only doctors or assistants can view available dates' },
         { status: 403 }
       );
+    }
+
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase.from('users').select('id').eq('role', 'doctor').limit(1).single();
+      if (!doctor) return NextResponse.json({ error: 'No doctor found' }, { status: 404 });
+      doctorId = doctor.id;
     }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Get all confirmed appointments for next N days
     const endDate = new Date(today);
     endDate.setDate(today.getDate() + days);
     endDate.setHours(23, 59, 59, 999);
@@ -44,7 +49,7 @@ export async function GET(request: Request) {
     const { data: confirmedAppointments } = await supabase
       .from('appointments')
       .select('confirmed_date_time')
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .eq('status', 'confirmed')
       .gte('confirmed_date_time', today.toISOString())
       .lte('confirmed_date_time', endDate.toISOString());

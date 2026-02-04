@@ -38,6 +38,8 @@ export default function LoginPage() {
           router.push('/dashboards/doctor')
         } else if (data.user.role === 'patient') {
           router.push('/dashboards/patient')
+        } else if (data.user.role === 'assistant') {
+          router.push('/dashboards/assistant')
         } else {
           router.push('/')
         }
@@ -70,6 +72,8 @@ export default function LoginPage() {
         router.push('/dashboards/doctor')
       } else if (data.user.role === 'patient') {
         router.push('/dashboards/patient')
+      } else if (data.user.role === 'assistant') {
+        router.push('/dashboards/assistant')
       } else {
         router.push('/')
       }

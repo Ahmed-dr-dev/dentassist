@@ -21,18 +21,30 @@ export async function GET(
 
     const supabase = await createClient();
 
-    // Verify user is doctor
+    // Verify user is doctor or assistant
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can view patient details' },
+        { error: 'Only doctors or assistants can view patient details' },
         { status: 403 }
       );
+    }
+
+    // Assistant uses default doctor id for filtering appointments
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase
+        .from('users')
+        .select('id')
+        .eq('role', 'doctor')
+        .limit(1)
+        .single();
+      if (doctor) doctorId = doctor.id;
     }
 
     // Get patient details
@@ -66,7 +78,7 @@ export async function GET(
         created_at,
         updated_at
       `)
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .eq('patient_id', patientId)
       .order('confirmed_date_time', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false });
@@ -82,7 +94,7 @@ export async function GET(
     const { data: prescriptions, error: prescriptionsError } = await supabase
       .from('prescriptions')
       .select('id, file_path, file_name, description, created_at, appointment_id')
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false });
 
@@ -90,11 +102,25 @@ export async function GET(
       console.error('Error fetching prescriptions:', prescriptionsError);
     }
 
+    // Get control dates for this patient (set by this doctor)
+    let controlDates: any[] = [];
+    const { data: controlDatesData, error: controlDatesError } = await supabase
+      .from('control_dates')
+      .select('id, control_date_time, notes, created_at')
+      .eq('patient_id', patientId)
+      .eq('doctor_id', doctorId)
+      .order('control_date_time', { ascending: true });
+
+    if (!controlDatesError && controlDatesData) {
+      controlDates = controlDatesData;
+    }
+
     return NextResponse.json(
       {
         patient,
         appointments: appointments || [],
-        prescriptions: prescriptions || []
+        prescriptions: prescriptions || [],
+        controlDates
       },
       { status: 200 }
     );

@@ -3,9 +3,14 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useI18n } from '@/lib/i18n'
+
+const localeMap: Record<string, string> = { fr: 'fr-FR', en: 'en-US', ar: 'ar' }
 
 export default function PrescriptionsPage() {
   const router = useRouter()
+  const { t, language } = useI18n()
+  const locale = localeMap[language] || 'fr-FR'
   const [prescriptions, setPrescriptions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,7 +23,7 @@ export default function PrescriptionsPage() {
     try {
       const response = await fetch('/api/prescriptions/list')
       if (!response.ok) {
-        throw new Error('Erreur lors du chargement des ordonnances')
+        throw new Error(t('prescriptions.loadError'))
       }
       const data = await response.json()
       setPrescriptions(data.prescriptions || [])
@@ -47,7 +52,7 @@ export default function PrescriptionsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+        <div className="text-white">{t('common.loading')}</div>
       </div>
     )
   }
@@ -59,22 +64,22 @@ export default function PrescriptionsPage() {
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
               <Link href="/dashboards/patient" className="text-xl font-bold text-white">
-                DentAssist
+                {t('common.appName')}
               </Link>
-              <span className="text-gray-400">/ Ordonnances</span>
+              <span className="text-gray-400">/ {t('prescriptions.title')}</span>
             </div>
             <Link
               href="/dashboards/patient"
               className="flex items-center text-gray-300 hover:text-white"
             >
-              Retour
+              {t('common.back')}
             </Link>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Mes Ordonnances</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('prescriptions.myPrescriptions')}</h1>
 
         {error && (
           <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
@@ -84,7 +89,7 @@ export default function PrescriptionsPage() {
 
         {prescriptions.length === 0 ? (
           <div className="bg-gray-800 rounded-xl p-8 text-center">
-            <p className="text-gray-400">Aucune ordonnance trouvée</p>
+            <p className="text-gray-400">{t('prescriptions.noPrescriptions')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -108,7 +113,7 @@ export default function PrescriptionsPage() {
                       )}
                     </div>
                     <div className="text-gray-500 text-sm">
-                      {date.toLocaleDateString('fr-FR')}
+                      {date.toLocaleDateString(locale)}
                     </div>
                   </div>
 
@@ -117,13 +122,13 @@ export default function PrescriptionsPage() {
                       onClick={() => handleViewPDF(prescription.file_path, prescription.file_name)}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition"
                     >
-                      Voir le PDF
+                      {t('prescriptions.viewPDF')}
                     </button>
                     <button
                       onClick={() => handleDownloadPDF(prescription.file_path, prescription.file_name)}
                       className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition"
                     >
-                      Télécharger
+                      {t('prescriptions.download')}
                     </button>
                   </div>
                 </div>

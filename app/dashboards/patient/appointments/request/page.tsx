@@ -8,7 +8,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function RequestAppointmentPage() {
   const router = useRouter()
-  const { t } = useI18n()
+  const { t, language } = useI18n()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -21,6 +21,12 @@ export default function RequestAppointmentPage() {
     medicalHistory: '',
     currentMedications: ''
   })
+
+  const minDate = (() => {
+    const d = new Date()
+    d.setDate(d.getDate() + 1)
+    return d.toISOString().split('T')[0]
+  })()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,6 +43,12 @@ export default function RequestAppointmentPage() {
       }
 
       const requestedDateTime = new Date(`${formData.date}T${formData.time}`).toISOString()
+      const minRequestTime = Date.now() + 24 * 60 * 60 * 1000
+      if (new Date(requestedDateTime).getTime() < minRequestTime) {
+        setError(t('appointments.min24h'))
+        setLoading(false)
+        return
+      }
 
       const response = await fetch('/api/appointments/request', {
         method: 'POST',
@@ -52,7 +64,10 @@ export default function RequestAppointmentPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || t('appointments.requestError'))
+        const message = response.status === 400 && data.error?.includes('24 hours')
+          ? t('appointments.min24h')
+          : (data.error || t('appointments.requestError'))
+        throw new Error(message)
       }
 
       if (data.rejected) {
@@ -156,8 +171,9 @@ export default function RequestAppointmentPage() {
                 <div className="space-y-2 mb-4">
                   {rejectionData.availableSlots.map((slot: string, idx: number) => {
                     const date = new Date(slot)
-                    const dateStr = date.toLocaleDateString('fr-FR')
-                    const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                    const locale = language === 'fr' ? 'fr-FR' : language === 'ar' ? 'ar' : 'en-US'
+                    const dateStr = date.toLocaleDateString(locale)
+                    const timeStr = date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
                     return (
                       <button
                         key={idx}
@@ -165,7 +181,7 @@ export default function RequestAppointmentPage() {
                         disabled={loading}
                         className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition disabled:opacity-50"
                       >
-                        {dateStr} à {timeStr}
+                        {dateStr}{t('common.at')}{timeStr}
                       </button>
                     )
                   })}
@@ -222,10 +238,11 @@ export default function RequestAppointmentPage() {
                 required
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                min={new Date().toISOString().split('T')[0]}
+                min={minDate}
                 disabled={loading}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
+              <p className="mt-1 text-xs text-gray-400">{t('appointments.min24hNote')}</p>
             </div>
 
             <div>
@@ -284,7 +301,7 @@ export default function RequestAppointmentPage() {
               disabled={loading}
               rows={3}
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              placeholder="Ex: Aspirine 100mg/jour, Insuline, Anticoagulants, etc."
+              placeholder={t('medical.medicationsPlaceholder')}
             />
             <p className="mt-1 text-xs text-gray-400">
               {t('medical.medicationsNote')}

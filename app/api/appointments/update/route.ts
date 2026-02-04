@@ -32,21 +32,26 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
-    // Verify user is doctor
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can update appointments' },
+        { error: 'Only doctors or assistants can update appointments' },
         { status: 403 }
       );
     }
 
-    // Get appointment details
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase.from('users').select('id').eq('role', 'doctor').limit(1).single();
+      if (!doctor) return NextResponse.json({ error: 'No doctor found' }, { status: 404 });
+      doctorId = doctor.id;
+    }
+
     const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
       .select('id, doctor_id, requested_date_time, status, confirmed_date_time')
@@ -60,7 +65,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (appointment.doctor_id !== userId) {
+    if (appointment.doctor_id !== doctorId) {
       return NextResponse.json(
         { error: 'Unauthorized to update this appointment' },
         { status: 403 }
@@ -86,7 +91,7 @@ export async function POST(request: Request) {
       const { data: confirmedAppointments, error: countError } = await supabase
         .from('appointments')
         .select('id')
-        .eq('doctor_id', userId)
+        .eq('doctor_id', doctorId)
         .eq('status', 'confirmed')
         .gte('confirmed_date_time', dateStart.toISOString())
         .lte('confirmed_date_time', dateEnd.toISOString())

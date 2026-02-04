@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   full_name TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('patient', 'doctor')),
+  role TEXT NOT NULL CHECK (role IN ('patient', 'doctor', 'assistant')),
   phone TEXT,
   specialty TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

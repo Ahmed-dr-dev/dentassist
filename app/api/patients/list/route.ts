@@ -16,25 +16,43 @@ export async function GET(request: Request) {
 
     const supabase = await createClient();
 
-    // Verify user is doctor
+    // Verify user is doctor or assistant
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can view patients' },
+        { error: 'Only doctors or assistants can view patients' },
         { status: 403 }
       );
+    }
+
+    // Assistant sees the default doctor's patients; doctor uses own id
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase
+        .from('users')
+        .select('id')
+        .eq('role', 'doctor')
+        .limit(1)
+        .single();
+      if (!doctor) {
+        return NextResponse.json(
+          { error: 'No doctor found' },
+          { status: 404 }
+        );
+      }
+      doctorId = doctor.id;
     }
 
     // Get all patients who have appointments with this doctor
     const { data: appointments, error: appointmentsError } = await supabase
       .from('appointments')
       .select('patient_id')
-      .eq('doctor_id', userId);
+      .eq('doctor_id', doctorId);
 
     if (appointmentsError) {
       return NextResponse.json(
@@ -74,7 +92,7 @@ export async function GET(request: Request) {
         const { data: patientAppointments } = await supabase
           .from('appointments')
           .select('id, status, confirmed_date_time')
-          .eq('doctor_id', userId)
+          .eq('doctor_id', doctorId)
           .eq('patient_id', patient.id)
           .order('confirmed_date_time', { ascending: false });
 

@@ -19,18 +19,24 @@ export async function GET(request: Request) {
 
     const supabase = await createClient();
 
-    // Verify user is doctor
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can view statistics' },
+        { error: 'Only doctors or assistants can view statistics' },
         { status: 403 }
       );
+    }
+
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase.from('users').select('id').eq('role', 'doctor').limit(1).single();
+      if (!doctor) return NextResponse.json({ error: 'No doctor found' }, { status: 404 });
+      doctorId = doctor.id;
     }
 
     const now = new Date();
@@ -62,7 +68,7 @@ export async function GET(request: Request) {
     const { data: appointments, error: appointmentsError } = await supabase
       .from('appointments')
       .select('id, status, confirmed_date_time')
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .gte('confirmed_date_time', startDate.toISOString())
       .lte('confirmed_date_time', endDate.toISOString());
 
@@ -93,7 +99,7 @@ export async function GET(request: Request) {
     const { data: prescriptions, error: prescriptionsError } = await supabase
       .from('prescriptions')
       .select('id')
-      .eq('doctor_id', userId)
+      .eq('doctor_id', doctorId)
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString());
 

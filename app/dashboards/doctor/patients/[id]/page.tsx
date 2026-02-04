@@ -11,8 +11,14 @@ export default function PatientDetailsPage() {
   const [patient, setPatient] = useState<any>(null)
   const [appointments, setAppointments] = useState<any[]>([])
   const [prescriptions, setPrescriptions] = useState<any[]>([])
+  const [controlDates, setControlDates] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [controlDate, setControlDate] = useState('')
+  const [controlTime, setControlTime] = useState('')
+  const [controlNotes, setControlNotes] = useState('')
+  const [controlSubmitting, setControlSubmitting] = useState(false)
+  const [controlSuccess, setControlSuccess] = useState('')
 
   useEffect(() => {
     if (patientId) {
@@ -30,6 +36,7 @@ export default function PatientDetailsPage() {
       setPatient(data.patient)
       setAppointments(data.appointments || [])
       setPrescriptions(data.prescriptions || [])
+      setControlDates(data.controlDates || [])
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -64,6 +71,37 @@ export default function PatientDetailsPage() {
       case 'completed': return 'Terminé'
       case 'cancelled': return 'Annulé'
       default: return status
+    }
+  }
+
+  const handleSetControlDate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!controlDate || !controlTime) return
+    setControlSubmitting(true)
+    setControlSuccess('')
+    setError('')
+    try {
+      const controlDateTime = new Date(`${controlDate}T${controlTime}`).toISOString()
+      const response = await fetch('/api/control-dates/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientId,
+          controlDateTime,
+          notes: controlNotes || null,
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Erreur')
+      setControlSuccess('Date de contrôle enregistrée. Le patient la verra sur son espace.')
+      setControlDate('')
+      setControlTime('')
+      setControlNotes('')
+      fetchPatientDetails()
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setControlSubmitting(false)
     }
   }
 
@@ -114,6 +152,70 @@ export default function PatientDetailsPage() {
                   Patient depuis le {new Date(patient.created_at).toLocaleDateString('fr-FR')}
                 </p>
               </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6 mb-8">
+              <h2 className="text-xl font-bold text-white mb-4">Fixer une date de contrôle</h2>
+              {controlSuccess && (
+                <p className="mb-4 p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-300 text-sm">{controlSuccess}</p>
+              )}
+              <form onSubmit={handleSetControlDate} className="flex flex-wrap items-end gap-4">
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={controlDate}
+                    onChange={(e) => setControlDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Heure</label>
+                  <input
+                    type="time"
+                    required
+                    value={controlTime}
+                    onChange={(e) => setControlTime(e.target.value)}
+                    className="px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded-lg text-sm"
+                  />
+                </div>
+                <div className="flex-1 min-w-[200px]">
+                  <label className="block text-xs text-gray-400 mb-1">Notes (optionnel)</label>
+                  <input
+                    type="text"
+                    value={controlNotes}
+                    onChange={(e) => setControlNotes(e.target.value)}
+                    placeholder="Ex: contrôle après extraction"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded-lg text-sm"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={controlSubmitting}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                >
+                  {controlSubmitting ? '...' : 'Enregistrer'}
+                </button>
+              </form>
+              {controlDates.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-gray-700">
+                  <p className="text-gray-400 text-sm font-medium mb-2">Dates de contrôle enregistrées ({controlDates.length})</p>
+                  <ul className="space-y-2">
+                    {controlDates.map((c: any) => {
+                      const dt = formatDateTime(c.control_date_time)
+                      const isPast = new Date(c.control_date_time) < new Date()
+                      return (
+                        <li key={c.id} className={`flex justify-between items-center py-2 px-3 rounded-lg text-sm ${isPast ? 'bg-gray-700/50 text-gray-400' : 'bg-cyan-500/10 text-cyan-200 border border-cyan-500/30'}`}>
+                          <span>{dt.date} à {dt.time}</span>
+                          {c.notes && <span className="text-gray-400 truncate max-w-[200px]">{c.notes}</span>}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className="mb-8">

@@ -30,21 +30,26 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
-    // Verify user is doctor
     const { data: user } = await supabase
       .from('users')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (!user || user.role !== 'doctor') {
+    if (!user || (user.role !== 'doctor' && user.role !== 'assistant')) {
       return NextResponse.json(
-        { error: 'Only doctors can create prescriptions' },
+        { error: 'Only doctors or assistants can create prescriptions' },
         { status: 403 }
       );
     }
 
-    // Get appointment details
+    let doctorId = userId;
+    if (user.role === 'assistant') {
+      const { data: doctor } = await supabase.from('users').select('id').eq('role', 'doctor').limit(1).single();
+      if (!doctor) return NextResponse.json({ error: 'No doctor found' }, { status: 404 });
+      doctorId = doctor.id;
+    }
+
     const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
       .select('id, patient_id, doctor_id, status')
@@ -58,7 +63,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (appointment.doctor_id !== userId) {
+    if (appointment.doctor_id !== doctorId) {
       return NextResponse.json(
         { error: 'Unauthorized to create prescription for this appointment' },
         { status: 403 }
@@ -99,7 +104,7 @@ export async function POST(request: Request) {
       .insert({
         appointment_id: appointmentId,
         patient_id: appointment.patient_id,
-        doctor_id: userId,
+        doctor_id: doctorId,
         file_path: publicFilePath,
         file_name: file.name || fileName,
         description: description || null

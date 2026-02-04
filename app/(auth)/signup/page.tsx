@@ -18,6 +18,7 @@ export default function SignupPage() {
     firstName: '',
     lastName: '',
     password: '',
+    confirmPassword: '',
     phone: ''
   })
   const [fieldErrors, setFieldErrors] = useState({
@@ -25,6 +26,7 @@ export default function SignupPage() {
     firstName: '',
     lastName: '',
     password: '',
+    confirmPassword: '',
     phone: ''
   })
 
@@ -77,6 +79,12 @@ export default function SignupPage() {
     return ''
   }
 
+  const validateConfirmPassword = (confirmPassword: string, password: string): string => {
+    if (!confirmPassword) return t('auth.confirmPasswordRequired')
+    if (confirmPassword !== password) return t('auth.passwordMismatch')
+    return ''
+  }
+
   const validateField = (field: string, value: string) => {
     let error = ''
     switch (field) {
@@ -94,9 +102,18 @@ export default function SignupPage() {
         break
       case 'password':
         error = validatePassword(value)
+        if (formData.confirmPassword) {
+          const confirmError = validateConfirmPassword(formData.confirmPassword, value)
+          setFieldErrors(prev => ({ ...prev, [field]: error, confirmPassword: confirmError }))
+        } else {
+          setFieldErrors(prev => ({ ...prev, [field]: error }))
+        }
+        break
+      case 'confirmPassword':
+        error = validateConfirmPassword(value, formData.password)
         break
     }
-    setFieldErrors(prev => ({ ...prev, [field]: error }))
+    if (field !== 'password') setFieldErrors(prev => ({ ...prev, [field]: error }))
     return error === ''
   }
 
@@ -106,7 +123,8 @@ export default function SignupPage() {
       firstName: validateName(formData.firstName, 'Le prénom'),
       lastName: validateName(formData.lastName, 'Le nom'),
       phone: validatePhone(formData.phone),
-      password: validatePassword(formData.password)
+      password: validatePassword(formData.password),
+      confirmPassword: validateConfirmPassword(formData.confirmPassword, formData.password)
     }
     setFieldErrors(errors)
     return Object.values(errors).every(error => error === '')
@@ -306,6 +324,31 @@ export default function SignupPage() {
                 <p className="mt-1 text-xs text-red-400">{fieldErrors.password}</p>
               ) : (
                 <p className="mt-1 text-xs text-gray-400">Minimum 6 caractères</p>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                {t('auth.confirmPassword')}
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                required
+                value={formData.confirmPassword}
+                onChange={(e) => {
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                  if (fieldErrors.confirmPassword) validateField('confirmPassword', e.target.value)
+                }}
+                onBlur={(e) => validateField('confirmPassword', e.target.value)}
+                className={`w-full px-4 py-3 bg-gray-800 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500 ${
+                  fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-700'
+                }`}
+              />
+              {fieldErrors.confirmPassword && (
+                <p className="mt-1 text-xs text-red-400">{fieldErrors.confirmPassword}</p>
               )}
             </div>
 

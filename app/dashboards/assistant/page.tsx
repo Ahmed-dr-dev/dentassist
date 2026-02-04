@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useI18n } from '@/lib/i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
-export default function PatientDashboardPage() {
+export default function AssistantDashboardPage() {
   const router = useRouter()
   const { t } = useI18n()
   const [user, setUser] = useState<any>(null)
@@ -24,7 +24,7 @@ export default function PatientDashboardPage() {
         return
       }
       const data = await response.json()
-      if (data.user.role !== 'patient') {
+      if (data.user.role !== 'assistant') {
         router.push('/')
         return
       }
@@ -50,8 +50,8 @@ export default function PatientDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/dashboards/patient" className="text-xl font-bold text-white">
-                {t('common.appName')} - {t('dashboard.patient')}
+              <Link href="/dashboards/assistant" className="text-xl font-bold text-white">
+                {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
             </div>
             <div className="flex items-center gap-4">
@@ -79,51 +79,27 @@ export default function PatientDashboardPage() {
           <p className="text-gray-400">{t('common.welcome')}, {user?.fullName}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           <Link
-            href="/dashboards/patient/appointments/request"
-            className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-blue-600/50 transition cursor-pointer"
-          >
-            <h3 className="text-xl font-bold mb-2">{t('appointments.request')}</h3>
-            <p className="text-blue-100">{t('dashboard.reserveNew')}</p>
-          </Link>
-
-          <Link
-            href="/dashboards/patient/appointments"
-            className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-purple-600/50 transition cursor-pointer"
-          >
-            <h3 className="text-xl font-bold mb-2">{t('appointments.myAppointments')}</h3>
-            <p className="text-purple-100">{t('dashboard.trackAppointments')}</p>
-          </Link>
-
-          <Link
-            href="/dashboards/patient/prescriptions"
-            className="bg-gradient-to-br from-green-600 to-green-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-green-600/50 transition cursor-pointer"
-          >
-            <h3 className="text-xl font-bold mb-2">{t('prescriptions.title')}</h3>
-            <p className="text-green-100">{t('prescriptions.view')}</p>
-          </Link>
-
-          <Link
-            href="/dashboards/patient/tariffs"
+            href="/dashboards/assistant/appointments"
             className="bg-gradient-to-br from-amber-600 to-amber-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-amber-600/50 transition cursor-pointer"
           >
-            <h3 className="text-xl font-bold mb-2">{t('tariffs.title')}</h3>
-            <p className="text-amber-100">{t('tariffs.subtitle')}</p>
+            <h3 className="text-xl font-bold mb-2">{t('appointments.list')}</h3>
+            <p className="text-amber-100">{t('dashboard.assistantViewAppointments')}</p>
           </Link>
 
           <Link
-            href="/dashboards/patient/controls"
+            href="/dashboards/assistant/patients"
             className="bg-gradient-to-br from-cyan-600 to-cyan-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-cyan-600/50 transition cursor-pointer"
           >
-            <h3 className="text-xl font-bold mb-2">{t('controls.title')}</h3>
-            <p className="text-cyan-100">{t('controls.dashboardCard')}</p>
+            <h3 className="text-xl font-bold mb-2">{t('patients.title')}</h3>
+            <p className="text-cyan-100">{t('dashboard.assistantViewPatients')}</p>
           </Link>
         </div>
 
         <div className="bg-gray-800 rounded-xl p-6">
           <Link
-            href="/dashboards/patient/profile"
+            href="/dashboards/assistant/profile"
             className="flex items-center justify-between text-white hover:text-blue-400 transition"
           >
             <div>
