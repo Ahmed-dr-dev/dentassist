@@ -68,13 +68,28 @@ export default function Home() {
          
           </div>
 
-          {/* Hero Illustration */}
+          {/* Hero Illustration - tilted parallelogram with white border */}
           <div className="relative lg:h-[500px] flex items-center justify-center">
-            <div className="relative">
-              {/* Main Card */}
-          <Image src="/homepage.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
-
-
+            <div className="absolute w-[480px] h-[480px] bg-gradient-to-br from-blue-900/50 to-blue-800/40 pointer-events-none" aria-hidden style={{ transform: 'skewX(-6deg)' }} />
+            <div
+              className="relative p-[10px] bg-white overflow-hidden z-10"
+              style={{
+                transform: 'skewX(-6deg)',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)',
+              }}
+            >
+              <div
+                className="relative w-[420px] h-[420px] overflow-hidden"
+                style={{ transform: 'skewX(6deg)' }}
+              >
+                <Image
+                  src="/homepage.png"
+                  alt="DentAssist Hero"
+                  width={500}
+                  height={500}
+                  className="object-cover w-full h-full"
+                />
+              </div>
             </div>
           </div>
         </div>
