@@ -31,26 +31,26 @@ export default function DoctorPatientsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Chargement...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/doctor" className="text-xl font-bold text-white">
+              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
                 DentAssist
               </Link>
-              <span className="text-gray-400">/ Mes Patients</span>
+              <span className="text-gray-600">/ Mes Patients</span>
             </div>
             <Link
               href="/dashboards/doctor"
-              className="flex items-center text-gray-300 hover:text-white"
+              className="flex items-center text-gray-600 hover:text-gray-900"
             >
               Retour
             </Link>
@@ -59,17 +59,17 @@ export default function DoctorPatientsPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Mes Patients</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Mes Patients</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
             {error}
           </div>
         )}
 
         {patients.length === 0 ? (
-          <div className="bg-gray-800 rounded-xl p-8 text-center">
-            <p className="text-gray-400">Aucun patient trouvé</p>
+          <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm text-center">
+            <p className="text-gray-600">Aucun patient trouvé</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -77,17 +77,17 @@ export default function DoctorPatientsPage() {
               <Link
                 key={patient.id}
                 href={`/dashboards/doctor/patients/${patient.id}`}
-                className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition cursor-pointer"
+                className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:border-gray-300 transition cursor-pointer"
               >
-                <h3 className="text-xl font-bold text-white mb-2">{patient.full_name}</h3>
-                <p className="text-gray-400 text-sm mb-4">{patient.email}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{patient.full_name}</h3>
+                <p className="text-gray-600 text-sm mb-4">{patient.email}</p>
                 {patient.phone && (
-                  <p className="text-gray-400 text-sm mb-4">📞 {patient.phone}</p>
+                  <p className="text-gray-600 text-sm mb-4">📞 {patient.phone}</p>
                 )}
                 <div className="flex gap-4 text-sm">
                   <div>
                     <span className="text-gray-500">Total:</span>
-                    <span className="text-white ml-2">{patient.totalAppointments || 0}</span>
+                    <span className="text-gray-900 ml-2">{patient.totalAppointments || 0}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Terminés:</span>

@@ -192,26 +192,26 @@ export default function DoctorAppointmentsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-lg">Chargement...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-900 text-lg">Chargement...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/doctor" className="text-xl font-bold text-white">
+              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
                 DentAssist
               </Link>
-              <span className="text-gray-400">/ Gérer les RDV</span>
+              <span className="text-gray-600">/ Gérer les RDV</span>
             </div>
             <Link
               href="/dashboards/doctor"
-              className="flex items-center text-gray-300 hover:text-white transition"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition"
             >
               ← Retour
             </Link>
@@ -222,7 +222,7 @@ export default function DoctorAppointmentsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-6">Gérer les rendez-vous</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Gérer les rendez-vous</h1>
         </div>
 
         {/* Search and Filters */}
@@ -235,10 +235,10 @@ export default function DoctorAppointmentsPage() {
                 placeholder="Rechercher par nom, email, téléphone, raison, antécédents..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 pl-11 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full px-4 py-3 pl-11 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
               <svg
-                className="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
+                className="absolute left-3 top-3.5 w-5 h-5 text-gray-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -253,12 +253,12 @@ export default function DoctorAppointmentsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'date' | 'patient')}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               >
                 <option value="date">Date demandée</option>
                 <option value="patient">Nom du patient</option>
               </select>
-              <div className="ml-auto text-gray-400 text-sm">
+              <div className="ml-auto text-gray-600 text-sm">
                 {filteredAppointments.length} résultat(s)
               </div>
             </div>
@@ -282,11 +282,11 @@ export default function DoctorAppointmentsPage() {
 
         {/* Appointments List */}
         {filteredAppointments.length === 0 ? (
-          <div className="bg-gray-800 rounded-xl p-12 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
             <svg className="mx-auto w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-600 text-lg">
               {searchQuery 
                 ? 'Aucune demande ne correspond à votre recherche'
                 : 'Aucune demande en attente'}
@@ -301,18 +301,18 @@ export default function DoctorAppointmentsPage() {
               return (
                 <div
                   key={appointment.id}
-                  className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-yellow-500/50 transition-all hover:shadow-lg hover:shadow-yellow-500/10"
+                  className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 border border-gray-200 hover:border-yellow-500/50 transition-all hover:shadow-lg hover:shadow-yellow-500/10"
                 >
                   {/* Header */}
                   <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-700">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-white mb-1 truncate">
+                      <h3 className="text-xl font-bold text-gray-900 mb-1 truncate">
                         {patient?.full_name || 'Patient'}
                       </h3>
                       <div className="space-y-1">
-                        <p className="text-gray-400 text-sm truncate">📧 {patient?.email}</p>
+                        <p className="text-gray-600 text-sm truncate">📧 {patient?.email}</p>
                         {patient?.phone && (
-                          <p className="text-gray-400 text-sm">📞 {patient.phone}</p>
+                          <p className="text-gray-600 text-sm">📞 {patient.phone}</p>
                         )}
                       </div>
                     </div>
@@ -324,14 +324,14 @@ export default function DoctorAppointmentsPage() {
                   {/* DateTime Card */}
                   <div className="mb-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                     <p className="text-blue-300 text-xs font-semibold mb-2">Date et heure demandées</p>
-                    <p className="text-white font-semibold text-sm mb-1">{dateTime.date}</p>
+                    <p className="text-gray-900 font-semibold text-sm mb-1">{dateTime.date}</p>
                     <p className="text-blue-400 font-bold text-lg">{dateTime.time}</p>
                   </div>
 
                   {/* Reason */}
                   {appointment.reason && (
-                    <div className="mb-4 p-3 bg-gray-700/50 border border-gray-600 rounded-lg">
-                      <p className="text-gray-400 text-xs font-semibold mb-1">💬 Raison de la visite</p>
+                    <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                      <p className="text-gray-600 text-xs font-semibold mb-1">💬 Raison de la visite</p>
                       <p className="text-gray-300 text-sm">{appointment.reason}</p>
                     </div>
                   )}
@@ -408,7 +408,7 @@ export default function DoctorAppointmentsPage() {
                   {showRejectModal === appointment.id && (
                     <div className="mt-6 p-6 bg-gray-750 border-2 border-red-500/50 rounded-xl">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-white font-bold text-lg">Options de rejet</h4>
+                        <h4 className="text-gray-900 font-bold text-lg">Options de rejet</h4>
                         <button
                           onClick={() => {
                             setShowRejectModal(null)
@@ -417,7 +417,7 @@ export default function DoctorAppointmentsPage() {
                             setSelectedDates([])
                             setDentistInfo({ name: '', address: '', phone: '' })
                           }}
-                          className="text-gray-400 hover:text-white transition"
+                          className="text-gray-600 hover:text-gray-900 transition"
                         >
                           ✕
                         </button>
@@ -428,7 +428,7 @@ export default function DoctorAppointmentsPage() {
                           Type de rejet *
                         </label>
                         <div className="space-y-3">
-                          <label className="flex items-center cursor-pointer p-3 rounded-lg border border-gray-600 hover:bg-gray-700/50 transition">
+                          <label className="flex items-center cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
                             <input
                               type="radio"
                               name={`rejectionType-${appointment.id}`}
@@ -439,7 +439,7 @@ export default function DoctorAppointmentsPage() {
                             />
                             <span className="text-gray-300">📅 Proposer des dates alternatives disponibles</span>
                           </label>
-                          <label className="flex items-center cursor-pointer p-3 rounded-lg border border-gray-600 hover:bg-gray-700/50 transition">
+                          <label className="flex items-center cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
                             <input
                               type="radio"
                               name={`rejectionType-${appointment.id}`}
@@ -459,7 +459,7 @@ export default function DoctorAppointmentsPage() {
                             Sélectionner des dates alternatives disponibles *
                           </label>
                           {loadingDates ? (
-                            <div className="p-4 text-center text-gray-400">
+                            <div className="p-4 text-center text-gray-600">
                               <svg className="animate-spin h-5 w-5 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -471,7 +471,7 @@ export default function DoctorAppointmentsPage() {
                               <p className="text-yellow-300 text-sm">⚠️ Aucune date disponible dans les 7 prochains jours</p>
                             </div>
                           ) : (
-                            <div className="max-h-64 overflow-y-auto space-y-2 border border-gray-600 rounded-lg p-3 bg-gray-700/50">
+                            <div className="max-h-64 overflow-y-auto space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
                               {availableDates.map((dateStr: string, idx: number) => {
                                 const date = new Date(dateStr)
                                 const dateFormatted = date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
@@ -526,7 +526,7 @@ export default function DoctorAppointmentsPage() {
                               type="text"
                               value={dentistInfo.name}
                               onChange={(e) => setDentistInfo({ ...dentistInfo, name: e.target.value })}
-                              className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+                              className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
                               placeholder="Ex: Dr. Ahmed Ben Ali"
                             />
                           </div>
@@ -538,7 +538,7 @@ export default function DoctorAppointmentsPage() {
                               type="text"
                               value={dentistInfo.address}
                               onChange={(e) => setDentistInfo({ ...dentistInfo, address: e.target.value })}
-                              className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+                              className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
                               placeholder="Ex: Avenue Habib Bourguiba, Gafsa"
                             />
                           </div>
@@ -550,7 +550,7 @@ export default function DoctorAppointmentsPage() {
                               type="tel"
                               value={dentistInfo.phone}
                               onChange={(e) => setDentistInfo({ ...dentistInfo, phone: e.target.value })}
-                              className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+                              className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
                               placeholder="Ex: +216 76 220 123"
                             />
                           </div>
@@ -565,7 +565,7 @@ export default function DoctorAppointmentsPage() {
                           value={rejectionReason}
                           onChange={(e) => setRejectionReason(e.target.value)}
                           rows={3}
-                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"
                           placeholder="Ex: Date non disponible, Cabinet plein..."
                         />
                       </div>
@@ -585,7 +585,7 @@ export default function DoctorAppointmentsPage() {
                             setSelectedDates([])
                             setDentistInfo({ name: '', address: '', phone: '' })
                           }}
-                          className="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                          className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg transition"
                         >
                           Annuler
                         </button>

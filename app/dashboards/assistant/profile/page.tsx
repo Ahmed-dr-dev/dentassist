@@ -92,24 +92,24 @@ export default function AssistantProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">{t('common.loading')}</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-900">{t('common.loading')}</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/assistant" className="text-xl font-bold text-white">
+              <Link href="/dashboards/assistant" className="text-xl font-bold text-gray-900">
                 {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
-              <span className="text-gray-400">/ {t('profile.title')}</span>
+              <span className="text-gray-600">/ {t('profile.title')}</span>
             </div>
-            <Link href="/dashboards/assistant" className="flex items-center text-gray-300 hover:text-white">
+            <Link href="/dashboards/assistant" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
             </Link>
           </div>
@@ -117,16 +117,16 @@ export default function AssistantProfilePage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">{t('profile.title')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('profile.title')}</h1>
         {error && (
           <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">{error}</div>
         )}
         {success && (
           <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300">{success}</div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 rounded-xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">{t('auth.fullName')} *</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.fullName')} *</label>
             <input
               type="text"
               required
@@ -136,21 +136,21 @@ export default function AssistantProfilePage() {
                 if (fieldErrors.fullName) setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })
               }}
               onBlur={(e) => setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${fieldErrors.fullName ? 'border-red-500' : 'border-gray-600'}`}
+              className={`w-full px-4 py-3 bg-white border text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${fieldErrors.fullName ? 'border-red-500' : 'border-gray-300'}`}
             />
             {fieldErrors.fullName && <p className="mt-1 text-xs text-red-400">{fieldErrors.fullName}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">{t('auth.email')}</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.email')}</label>
             <input
               type="email"
               value={formData.email}
               disabled
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 text-gray-400 rounded-lg cursor-not-allowed"
+              className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-600 rounded-lg cursor-not-allowed"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">{t('auth.phone')} *</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.phone')} *</label>
             <input
               type="tel"
               required
@@ -160,7 +160,7 @@ export default function AssistantProfilePage() {
                 if (fieldErrors.phone) setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })
               }}
               onBlur={(e) => setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${fieldErrors.phone ? 'border-red-500' : 'border-gray-600'}`}
+              className={`w-full px-4 py-3 bg-white border text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="+21612345678"
             />
             {fieldErrors.phone && <p className="mt-1 text-xs text-red-400">{fieldErrors.phone}</p>}

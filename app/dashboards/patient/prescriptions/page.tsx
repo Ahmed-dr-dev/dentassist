@@ -51,27 +51,24 @@ export default function PrescriptionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">{t('common.loading')}</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/patient" className="text-xl font-bold text-white">
+              <Link href="/dashboards/patient" className="text-xl font-bold text-gray-900">
                 {t('common.appName')}
               </Link>
-              <span className="text-gray-400">/ {t('prescriptions.title')}</span>
+              <span className="text-gray-500">/ {t('prescriptions.title')}</span>
             </div>
-            <Link
-              href="/dashboards/patient"
-              className="flex items-center text-gray-300 hover:text-white"
-            >
+            <Link href="/dashboards/patient" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
             </Link>
           </div>
@@ -79,17 +76,15 @@ export default function PrescriptionsPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">{t('prescriptions.myPrescriptions')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('prescriptions.myPrescriptions')}</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
         )}
 
         {prescriptions.length === 0 ? (
-          <div className="bg-gray-800 rounded-xl p-8 text-center">
-            <p className="text-gray-400">{t('prescriptions.noPrescriptions')}</p>
+          <div className="bg-white rounded-xl p-8 text-center border border-gray-200 shadow-sm">
+            <p className="text-gray-600">{t('prescriptions.noPrescriptions')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -98,18 +93,16 @@ export default function PrescriptionsPage() {
               const date = new Date(prescription.created_at)
 
               return (
-                <div key={prescription.id} className="bg-gray-800 rounded-xl p-6">
+                <div key={prescription.id} className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-bold text-white mb-2">
-                        {prescription.file_name}
-                      </h3>
-                      <p className="text-gray-400">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{prescription.file_name}</h3>
+                      <p className="text-gray-600">
                         Dr. {doctor?.full_name}
                         {doctor?.specialty && ` - ${doctor.specialty}`}
                       </p>
                       {prescription.description && (
-                        <p className="text-gray-400 mt-2">{prescription.description}</p>
+                        <p className="text-gray-600 mt-2">{prescription.description}</p>
                       )}
                     </div>
                     <div className="text-gray-500 text-sm">

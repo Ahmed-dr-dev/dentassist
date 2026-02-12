@@ -45,27 +45,24 @@ export default function PatientControlsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">{t('common.loading')}</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/patient" className="text-xl font-bold text-white">
+              <Link href="/dashboards/patient" className="text-xl font-bold text-gray-900">
                 {t('common.appName')}
               </Link>
-              <span className="text-gray-400">/ {t('controls.title')}</span>
+              <span className="text-gray-500">/ {t('controls.title')}</span>
             </div>
-            <Link
-              href="/dashboards/patient"
-              className="flex items-center text-gray-300 hover:text-white"
-            >
+            <Link href="/dashboards/patient" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
             </Link>
           </div>
@@ -73,18 +70,16 @@ export default function PatientControlsPage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-2">{t('controls.title')}</h1>
-        <p className="text-gray-400 mb-8">{t('controls.subtitle')}</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('controls.title')}</h1>
+        <p className="text-gray-600 mb-8">{t('controls.subtitle')}</p>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
         )}
 
         {controlDates.length === 0 && !error && (
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-8 text-center">
-            <p className="text-gray-400">{t('controls.noControls')}</p>
+          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center shadow-sm">
+            <p className="text-gray-600">{t('controls.noControls')}</p>
             <p className="text-gray-500 text-sm mt-2">{t('controls.noControlsHint')}</p>
           </div>
         )}
@@ -101,26 +96,26 @@ export default function PatientControlsPage() {
                   key={c.id}
                   className={`rounded-xl border p-6 transition ${
                     upcoming
-                      ? 'bg-blue-500/10 border-blue-500/40'
-                      : 'bg-gray-800 border-gray-700'
+                      ? 'bg-blue-50 border-blue-200'
+                      : 'bg-white border-gray-200 shadow-sm'
                   }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                      <p className="text-white font-semibold text-lg">{date}</p>
-                      <p className="text-gray-300">{time}</p>
+                      <p className="text-gray-900 font-semibold text-lg">{date}</p>
+                      <p className="text-gray-600">{time}</p>
                       {doctorName && (
-                        <p className="text-gray-400 text-sm mt-1">
+                        <p className="text-gray-500 text-sm mt-1">
                           {t('controls.setBy')} {doctorName}
                           {doctor?.specialty && ` · ${doctor.specialty}`}
                         </p>
                       )}
                       {c.notes && (
-                        <p className="text-gray-400 text-sm mt-2">{c.notes}</p>
+                        <p className="text-gray-500 text-sm mt-2">{c.notes}</p>
                       )}
                     </div>
                     {upcoming && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                         {t('controls.upcoming')}
                       </span>
                     )}

@@ -134,26 +134,26 @@ export default function DoctorProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Chargement...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/doctor" className="text-xl font-bold text-white">
+              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
                 DentAssist
               </Link>
-              <span className="text-gray-400">/ Mon Profil</span>
+              <span className="text-gray-500">/ Mon Profil</span>
             </div>
             <Link
               href="/dashboards/doctor"
-              className="flex items-center text-gray-300 hover:text-white"
+              className="flex items-center text-gray-600 hover:text-gray-900"
             >
               Retour
             </Link>
@@ -162,23 +162,23 @@ export default function DoctorProfilePage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Mon Profil</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Mon Profil</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300">
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">
             {success}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 rounded-xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Nom complet *
             </label>
             <input
@@ -194,8 +194,8 @@ export default function DoctorProfilePage() {
               onBlur={(e) => {
                 setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })
               }}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
-                fieldErrors.fullName ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
+                fieldErrors.fullName ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {fieldErrors.fullName && (
@@ -204,20 +204,20 @@ export default function DoctorProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Email
             </label>
             <input
               type="email"
               value={formData.email}
               disabled
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 text-gray-400 rounded-lg cursor-not-allowed"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
             />
             <p className="mt-1 text-xs text-gray-500">L'email ne peut pas être modifié</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Téléphone *
             </label>
             <input
@@ -233,8 +233,8 @@ export default function DoctorProfilePage() {
               onBlur={(e) => {
                 setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })
               }}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
-                fieldErrors.phone ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
+                fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="+21612345678"
             />
@@ -244,7 +244,7 @@ export default function DoctorProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Spécialité *
             </label>
             <input
@@ -260,8 +260,8 @@ export default function DoctorProfilePage() {
               onBlur={(e) => {
                 setFieldErrors({ ...fieldErrors, specialty: validateSpecialty(e.target.value) })
               }}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
-                fieldErrors.specialty ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
+                fieldErrors.specialty ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Ex: Chirurgie dentaire, Orthodontie..."
             />
@@ -271,70 +271,70 @@ export default function DoctorProfilePage() {
           </div>
 
           {/* Bank Information Section */}
-          <div className="pt-6 border-t border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <div className="pt-6 border-t border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span>💳</span>
               <span>Informations bancaires (RIB)</span>
             </h2>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-gray-500 text-sm mb-6">
               Ces informations seront affichées aux patients lors de la demande de rendez-vous pour effectuer le paiement.
             </p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Nom de la banque
                 </label>
                 <input
                   type="text"
                   value={formData.ribBankName}
                   onChange={(e) => setFormData({ ...formData, ribBankName: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   placeholder="Ex: Banque de Tunisie, STB, BNA..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Numéro de compte
                 </label>
                 <input
                   type="text"
                   value={formData.ribAccountNumber}
                   onChange={(e) => setFormData({ ...formData, ribAccountNumber: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                   placeholder="Ex: 12345678901234567"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   IBAN (International Bank Account Number)
                 </label>
                 <input
                   type="text"
                   value={formData.ribIban}
                   onChange={(e) => setFormData({ ...formData, ribIban: e.target.value.toUpperCase() })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                   placeholder="Ex: TN5912345678901234567890"
                 />
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-gray-500">
                   Format: 2 lettres (code pays) + 2 chiffres de contrôle + jusqu'à 30 caractères alphanumériques
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   BIC (Bank Identifier Code)
                 </label>
                 <input
                   type="text"
                   value={formData.ribBic}
                   onChange={(e) => setFormData({ ...formData, ribBic: e.target.value.toUpperCase() })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                   placeholder="Ex: STBKTNTT"
                 />
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-gray-500">
                   Code unique d'identification de votre banque (optionnel)
                 </p>
               </div>

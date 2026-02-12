@@ -28,9 +28,9 @@ export default function DateTimeBar() {
   }).format(now)
 
   return (
-    <div className="sticky top-0 z-[100] flex justify-end items-center py-1.5 px-4 bg-gray-800/95 border-b border-gray-700/50 backdrop-blur-sm text-gray-300 text-sm font-medium">
+    <div className="sticky top-0 z-[100] flex justify-end items-center py-1.5 px-4 bg-white border-b border-gray-200 shadow-sm text-gray-600 text-sm font-medium">
       <span className="tabular-nums">{dateStr}</span>
-      <span className="mx-2 text-gray-500">•</span>
+      <span className="mx-2 text-gray-400">•</span>
       <span className="tabular-nums">{timeStr}</span>
     </div>
   )

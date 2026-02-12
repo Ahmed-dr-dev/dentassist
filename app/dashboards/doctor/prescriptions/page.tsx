@@ -107,26 +107,26 @@ export default function DoctorPrescriptionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Chargement...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/doctor" className="text-xl font-bold text-white">
+              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
                 DentAssist
               </Link>
-              <span className="text-gray-400">/ Assigner une ordonnance</span>
+              <span className="text-gray-500">/ Assigner une ordonnance</span>
             </div>
             <Link
               href="/dashboards/doctor"
-              className="flex items-center text-gray-300 hover:text-white"
+              className="flex items-center text-gray-600 hover:text-gray-900"
             >
               Retour
             </Link>
@@ -135,23 +135,23 @@ export default function DoctorPrescriptionsPage() {
       </nav>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Assigner une ordonnance</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Assigner une ordonnance</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300">
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">
             {success}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 rounded-xl p-6 mb-8">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Rendez-vous *
             </label>
             <select
@@ -159,7 +159,7 @@ export default function DoctorPrescriptionsPage() {
               value={selectedAppointment || ''}
               onChange={(e) => setSelectedAppointment(e.target.value)}
               disabled={uploading}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             >
               <option value="">Sélectionner un rendez-vous</option>
               {appointments.map((appointment) => {
@@ -177,7 +177,7 @@ export default function DoctorPrescriptionsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Fichier PDF *
             </label>
             <input
@@ -186,15 +186,15 @@ export default function DoctorPrescriptionsPage() {
               onChange={handleFileChange}
               disabled={uploading}
               required
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-500"
+              className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-500"
             />
             {file && (
-              <p className="mt-2 text-sm text-gray-400">Fichier sélectionné : {file.name}</p>
+              <p className="mt-2 text-sm text-gray-500">Fichier sélectionné : {file.name}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Description (optionnel)
             </label>
             <textarea
@@ -202,7 +202,7 @@ export default function DoctorPrescriptionsPage() {
               onChange={(e) => setDescription(e.target.value)}
               disabled={uploading}
               rows={4}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Description de l'ordonnance..."
             />
           </div>

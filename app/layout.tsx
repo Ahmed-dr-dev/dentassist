@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import DateTimeBar from "@/components/DateTimeBar";
+import PatientChatbot from "@/components/PatientChatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Providers>
           <DateTimeBar />
           {children}
+          <PatientChatbot />
         </Providers>
       </body>
     </html>

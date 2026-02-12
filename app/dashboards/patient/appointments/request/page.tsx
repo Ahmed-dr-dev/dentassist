@@ -122,52 +122,40 @@ export default function RequestAppointmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/patient" className="text-xl font-bold text-white">
-                {t('common.appName')}
-              </Link>
-              <span className="text-gray-400">/ {t('appointments.request')}</span>
+              <Link href="/dashboards/patient" className="text-xl font-bold text-gray-900">{t('common.appName')}</Link>
+              <span className="text-gray-500">/ {t('appointments.request')}</span>
             </div>
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
-              <Link
-                href="/dashboards/patient"
-                className="flex items-center text-gray-300 hover:text-white"
-              >
-                {t('common.back')}
-              </Link>
+              <Link href="/dashboards/patient" className="flex items-center text-gray-600 hover:text-gray-900">{t('common.back')}</Link>
             </div>
           </div>
         </div>
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">{t('appointments.request')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('appointments.request')}</h1>
 
         {error && !rejectionData && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
         )}
-
         {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300">
-            {success}
-          </div>
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">{success}</div>
         )}
 
         {rejectionData && (
-          <div className="mb-6 p-6 bg-yellow-500/20 border border-yellow-500 rounded-lg">
-            <h3 className="text-yellow-300 font-bold mb-4">{t('appointments.slotUnavailable')}</h3>
-            <p className="text-yellow-200 mb-4">{rejectionData.reason}</p>
+          <div className="mb-6 p-6 bg-amber-50 border border-amber-200 rounded-xl">
+            <h3 className="text-amber-800 font-bold mb-4">{t('appointments.slotUnavailable')}</h3>
+            <p className="text-amber-700 mb-4">{rejectionData.reason}</p>
 
             {!showExternalDentists && rejectionData.availableSlots && rejectionData.availableSlots.length > 0 && (
               <div className="mb-6">
-                <h4 className="text-white font-semibold mb-3">{t('appointments.alternativeSlots')}:</h4>
+                <h4 className="text-gray-900 font-semibold mb-3">{t('appointments.alternativeSlots')}:</h4>
                 <div className="space-y-2 mb-4">
                   {rejectionData.availableSlots.map((slot: string, idx: number) => {
                     const date = new Date(slot)
@@ -179,7 +167,7 @@ export default function RequestAppointmentPage() {
                         key={idx}
                         onClick={() => handleConfirmAlternative(slot)}
                         disabled={loading}
-                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition disabled:opacity-50"
+                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition disabled:opacity-50"
                       >
                         {dateStr}{t('common.at')}{timeStr}
                       </button>
@@ -188,7 +176,7 @@ export default function RequestAppointmentPage() {
                 </div>
                 <button
                   onClick={() => setShowExternalDentists(true)}
-                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                  className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl transition"
                 >
                   {t('appointments.declineAlternatives')} - {t('externalDentists.title')}
                 </button>
@@ -197,27 +185,21 @@ export default function RequestAppointmentPage() {
 
             {(showExternalDentists || (!rejectionData.availableSlots || rejectionData.availableSlots.length === 0)) && rejectionData.externalDentists && rejectionData.externalDentists.length > 0 && (
               <div>
-                  <h4 className="text-white font-semibold mb-3">{t('externalDentists.title')}:</h4>
+                <h4 className="text-gray-900 font-semibold mb-3">{t('externalDentists.title')}:</h4>
                 <div className="space-y-3">
                   {rejectionData.externalDentists.map((dentist: any) => (
-                    <div key={dentist.id} className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-                      <p className="text-white font-bold text-lg mb-1">{dentist.name}</p>
-                      {dentist.specialty && (
-                        <p className="text-blue-400 text-sm mb-2">{dentist.specialty}</p>
-                      )}
-                      <p className="text-gray-400 text-sm mb-1">
-                        <span className="text-gray-500">📍</span> {dentist.address}
-                      </p>
-                      <p className="text-gray-400 text-sm">
-                        <span className="text-gray-500">📞</span> {dentist.phone}
-                      </p>
+                    <div key={dentist.id} className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                      <p className="text-gray-900 font-bold text-lg mb-1">{dentist.name}</p>
+                      {dentist.specialty && <p className="text-blue-600 text-sm mb-2">{dentist.specialty}</p>}
+                      <p className="text-gray-600 text-sm mb-1">📍 {dentist.address}</p>
+                      <p className="text-gray-600 text-sm">📞 {dentist.phone}</p>
                     </div>
                   ))}
                 </div>
                 {!showExternalDentists && (
                   <button
                     onClick={() => setShowExternalDentists(true)}
-                    className="mt-4 w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                    className="mt-4 w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl transition"
                   >
                     {t('externalDentists.title')}
                   </button>
@@ -227,12 +209,10 @@ export default function RequestAppointmentPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 rounded-xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t('appointments.date')} *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.date')} *</label>
               <input
                 type="date"
                 required
@@ -240,78 +220,65 @@ export default function RequestAppointmentPage() {
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                 min={minDate}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
-              <p className="mt-1 text-xs text-gray-400">{t('appointments.min24hNote')}</p>
+              <p className="mt-1 text-xs text-gray-500">{t('appointments.min24hNote')}</p>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t('appointments.time')} *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.time')} *</label>
               <input
                 type="time"
                 required
                 value={formData.time}
                 onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('appointments.reason')} ({t('common.optional')})
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.reason')} ({t('common.optional')})</label>
             <textarea
               value={formData.reason}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
               disabled={loading}
               rows={3}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder={t('appointments.reason')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('medical.medicalHistory')} ({t('common.optional')})
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('medical.medicalHistory')} ({t('common.optional')})</label>
             <textarea
               value={formData.medicalHistory}
               onChange={(e) => setFormData({ ...formData, medicalHistory: e.target.value })}
               disabled={loading}
               rows={3}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Ex: Diabète, Hypertension, Allergies, Maladies cardiaques, etc."
             />
-            <p className="mt-1 text-xs text-gray-400">
-              {t('medical.medicalHistoryNote')}
-            </p>
+            <p className="mt-1 text-xs text-gray-500">{t('medical.medicalHistoryNote')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('medical.currentMedications')} ({t('common.optional')})
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('medical.currentMedications')} ({t('common.optional')})</label>
             <textarea
               value={formData.currentMedications}
               onChange={(e) => setFormData({ ...formData, currentMedications: e.target.value })}
               disabled={loading}
               rows={3}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder={t('medical.medicationsPlaceholder')}
             />
-            <p className="mt-1 text-xs text-gray-400">
-              {t('medical.medicationsNote')}
-            </p>
+            <p className="mt-1 text-xs text-gray-500">{t('medical.medicationsNote')}</p>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? t('common.loading') : t('appointments.request')}
           </button>

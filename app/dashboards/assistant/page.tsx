@@ -38,28 +38,28 @@ export default function AssistantDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">{t('common.loading')}</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/dashboards/assistant" className="text-xl font-bold text-white">
+              <Link href="/dashboards/assistant" className="text-xl font-bold text-gray-900">
                 {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
             </div>
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
-              <span className="text-gray-300">{user?.fullName}</span>
+              <span className="text-gray-600">{user?.fullName}</span>
               <Link
                 href="/api/auth/logout"
-                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition"
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition shadow-sm"
                 onClick={async (e) => {
                   e.preventDefault()
                   await fetch('/api/auth/logout', { method: 'POST' })
@@ -75,8 +75,18 @@ export default function AssistantDashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">{t('dashboard.title')}</h1>
-          <p className="text-gray-400">{t('common.welcome')}, {user?.fullName}</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.title')}</h1>
+          <p className="text-gray-600">{t('common.welcome')}, {user?.fullName}</p>
+        </div>
+
+        <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{t('dashboard.assistantTasksTitle')}</h2>
+          <ul className="space-y-2 text-gray-600">
+            <li>• {t('dashboard.assistantTaskAcceptDecline')}</li>
+            <li>• {t('dashboard.assistantTaskTariffs')}</li>
+            <li>• {t('dashboard.assistantTaskPaymentStatus')}</li>
+            <li>• {t('dashboard.assistantTaskRdvList')}</li>
+          </ul>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -95,16 +105,24 @@ export default function AssistantDashboardPage() {
             <h3 className="text-xl font-bold mb-2">{t('patients.title')}</h3>
             <p className="text-cyan-100">{t('dashboard.assistantViewPatients')}</p>
           </Link>
+
+          <Link
+            href="/dashboards/assistant/tariffs"
+            className="bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-emerald-600/50 transition cursor-pointer"
+          >
+            <h3 className="text-xl font-bold mb-2">{t('tariffs.title')}</h3>
+            <p className="text-emerald-100">{t('dashboard.assistantManageTariffs')}</p>
+          </Link>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <Link
             href="/dashboards/assistant/profile"
-            className="flex items-center justify-between text-white hover:text-blue-400 transition"
+            className="flex items-center justify-between text-gray-900 hover:text-blue-600 transition"
           >
             <div>
               <h3 className="text-lg font-semibold mb-1">{t('profile.title')}</h3>
-              <p className="text-gray-400 text-sm">{t('dashboard.managePersonalInfo')}</p>
+              <p className="text-gray-500 text-sm">{t('dashboard.managePersonalInfo')}</p>
             </div>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -51,111 +51,103 @@ export async function GET(request: Request) {
       doctorId = doctor.id;
     }
 
-    const now = new Date();
-    let startDate: Date;
-    let endDate: Date;
+    const selectFields = `
+      id,
+      status,
+      requested_date_time,
+      confirmed_date_time,
+      rejection_reason,
+      reason,
+      medical_history,
+      current_medications,
+      payment_status,
+      payment_approval_path,
+      payment_approval_file_name,
+      created_at,
+      patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
+    `;
 
-    if (period === 'day') {
-      startDate = new Date(now);
-      startDate.setHours(0, 0, 0, 0);
-      endDate = new Date(now);
-      endDate.setHours(23, 59, 59, 999);
-    } else if (period === 'week') {
-      startDate = new Date(now);
-      const dayOfWeek = startDate.getDay();
-      const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Monday
-      startDate.setDate(diff);
-      startDate.setHours(0, 0, 0, 0);
-      endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
-      endDate.setHours(23, 59, 59, 999);
-    } else if (period === 'month') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      startDate.setHours(0, 0, 0, 0);
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      endDate.setHours(23, 59, 59, 999);
+    let allAppointments: any[] = [];
+
+    if (period === 'all') {
+      const { data, error } = await supabase
+        .from('appointments')
+        .select(selectFields)
+        .eq('doctor_id', doctorId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        return NextResponse.json(
+          { error: `Failed to fetch appointments: ${error.message}` },
+          { status: 500 }
+        );
+      }
+      allAppointments = data || [];
     } else {
-      startDate = new Date(now);
-      startDate.setHours(0, 0, 0, 0);
-      endDate = new Date(now);
-      endDate.setHours(23, 59, 59, 999);
+      const now = new Date();
+      let startDate: Date;
+      let endDate: Date;
+
+      if (period === 'day') {
+        startDate = new Date(now);
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(now);
+        endDate.setHours(23, 59, 59, 999);
+      } else if (period === 'week') {
+        startDate = new Date(now);
+        const dayOfWeek = startDate.getDay();
+        const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+        startDate.setDate(diff);
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        endDate.setHours(23, 59, 59, 999);
+      }
+
+      const { data: confirmedAppointments, error: confirmedError } = await supabase
+        .from('appointments')
+        .select(selectFields)
+        .eq('doctor_id', doctorId)
+        .in('status', ['confirmed', 'completed', 'rejected', 'cancelled'])
+        .gte('confirmed_date_time', startDate.toISOString())
+        .lte('confirmed_date_time', endDate.toISOString())
+        .order('confirmed_date_time', { ascending: true });
+
+      if (confirmedError) {
+        return NextResponse.json(
+          { error: `Failed to fetch appointments: ${confirmedError.message}` },
+          { status: 500 }
+        );
+      }
+
+      const { data: pendingAppointments, error: pendingError } = await supabase
+        .from('appointments')
+        .select(selectFields)
+        .eq('doctor_id', doctorId)
+        .eq('status', 'pending')
+        .gte('requested_date_time', startDate.toISOString())
+        .lte('requested_date_time', endDate.toISOString())
+        .order('requested_date_time', { ascending: true });
+
+      if (pendingError) console.error('Error fetching pending appointments:', pendingError);
+
+      allAppointments = [
+        ...(confirmedAppointments || []),
+        ...(pendingAppointments || [])
+      ];
     }
 
-    // Get appointments for this doctor in the period
-    // For confirmed/completed appointments, filter by confirmed_date_time
-    // For pending appointments, filter by requested_date_time
-    const { data: confirmedAppointments, error: confirmedError } = await supabase
-      .from('appointments')
-      .select(`
-        id,
-        status,
-        requested_date_time,
-        confirmed_date_time,
-        rejection_reason,
-        reason,
-        medical_history,
-        current_medications,
-        payment_status,
-        payment_approval_path,
-        payment_approval_file_name,
-        created_at,
-        patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
-      `)
-      .eq('doctor_id', doctorId)
-      .in('status', ['confirmed', 'completed', 'rejected', 'cancelled'])
-      .gte('confirmed_date_time', startDate.toISOString())
-      .lte('confirmed_date_time', endDate.toISOString())
-      .order('confirmed_date_time', { ascending: true });
-
-    if (confirmedError) {
-      return NextResponse.json(
-        { error: `Failed to fetch appointments: ${confirmedError.message}` },
-        { status: 500 }
-      );
-    }
-
-    // Get pending appointments filtered by requested_date_time
-    const { data: pendingAppointments, error: pendingError } = await supabase
-      .from('appointments')
-      .select(`
-        id,
-        status,
-        requested_date_time,
-        confirmed_date_time,
-        rejection_reason,
-        reason,
-        medical_history,
-        current_medications,
-        payment_status,
-        payment_approval_path,
-        payment_approval_file_name,
-        created_at,
-        patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
-      `)
-      .eq('doctor_id', doctorId)
-      .eq('status', 'pending')
-      .gte('requested_date_time', startDate.toISOString())
-      .lte('requested_date_time', endDate.toISOString())
-      .order('requested_date_time', { ascending: true });
-
-    if (pendingError) {
-      console.error('Error fetching pending appointments:', pendingError);
-    }
-
-    const allAppointments = [
-      ...(confirmedAppointments || []),
-      ...(pendingAppointments || [])
-    ];
-
-    // Count confirmed appointments for quota info
     const confirmedCount = allAppointments.filter(apt => apt.status === 'confirmed').length;
 
     return NextResponse.json(
       {
         appointments: allAppointments,
-        period,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+        period: period || 'day',
         confirmedCount,
         remainingQuota: Math.max(0, 30 - confirmedCount)
       },

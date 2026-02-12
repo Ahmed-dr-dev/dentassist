@@ -8,15 +8,15 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 export default function Home() {
   const { t } = useI18n()
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-      {/* Animated Background Elements */}
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      {/* Subtle background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-60"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-40"></div>
       </div>
 
       {/* Header */}
-      <header className="relative z-50 border-b border-gray-700/50 backdrop-blur-sm bg-gray-900/80">
+      <header className="relative z-50 border-b border-gray-200 bg-white/95 backdrop-blur-sm shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative w-12 h-12 group-hover:scale-110 transition-transform">
@@ -28,14 +28,14 @@ export default function Home() {
                 className="object-contain"
               />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{t('common.appName')}</span>
+            <span className="text-2xl font-bold text-gray-900">{t('common.appName')}</span>
           </Link>
           
           <div className="flex items-center gap-6">
-            <a href="#home" className="text-gray-300 hover:text-white transition-colors">{t('common.home')}</a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition-colors">{t('home.cabinetTitle')}</a>
-            <Link href="/login" className="text-gray-300 hover:text-white transition-colors">{t('auth.login')}</Link>
-            <Link href="/signup" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all hover:shadow-lg hover:shadow-blue-600/50">
+            <a href="#home" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('common.home')}</a>
+            <a href="#contact" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('home.cabinetTitle')}</a>
+            <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('auth.login')}</Link>
+            <Link href="/signup" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
               {t('auth.signUp')}
             </Link>
             <LanguageSwitcher />
@@ -47,19 +47,19 @@ export default function Home() {
       <section id="home" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 px-4 py-2 rounded-full">
+            <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-4 py-2 rounded-full">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-blue-300 text-sm font-medium">{t('home.smartPlatform')}</span>
+              <span className="text-blue-700 text-sm font-medium">{t('home.smartPlatform')}</span>
               </div>
             
-            <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
+            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
               {t('home.heroTitle')}
-              <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 {t('home.heroSubtitle')}
               </span>
               </h1>
             
-            <p className="text-xl text-gray-300 leading-relaxed">
+            <p className="text-xl text-gray-600 leading-relaxed">
               {t('home.heroDescription')}
             </p>
             
@@ -68,14 +68,14 @@ export default function Home() {
          
           </div>
 
-          {/* Hero Illustration - tilted parallelogram with white border */}
+          {/* Hero Illustration - tilted parallelogram with border */}
           <div className="relative lg:h-[500px] flex items-center justify-center">
-            <div className="absolute w-[480px] h-[480px] bg-gradient-to-br from-blue-900/50 to-blue-800/40 pointer-events-none" aria-hidden style={{ transform: 'skewX(-6deg)' }} />
+            <div className="absolute w-[480px] h-[480px] bg-gradient-to-br from-blue-100 to-indigo-100 pointer-events-none" aria-hidden style={{ transform: 'skewX(-6deg)' }} />
             <div
-              className="relative p-[10px] bg-white overflow-hidden z-10"
+              className="relative p-[10px] bg-white overflow-hidden z-10 border border-gray-200"
               style={{
                 transform: 'skewX(-6deg)',
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.08)',
               }}
             >
               <div
@@ -96,16 +96,15 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="relative z-10 py-24 bg-gray-800/30 backdrop-blur-sm">
+      <section className="relative z-10 py-24 bg-white border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">{t('home.howItWorks')}</h2>
-            <p className="text-xl text-gray-400">{t('home.howItWorksSubtitle')}</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('home.howItWorks')}</h2>
+            <p className="text-xl text-gray-600">{t('home.howItWorksSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connection Lines */}
-            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600"></div>
+            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500"></div>
             
             {[
               {
@@ -140,15 +139,15 @@ export default function Home() {
               }
             ].map((item, idx) => (
               <div key={idx} className="relative group">
-                <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 text-center hover:border-blue-500 transition-all hover:shadow-2xl hover:shadow-blue-600/20 hover:-translate-y-2 duration-300">
-                  <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform">
-                    <div className="text-white">{item.icon}</div>
+                <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center hover:border-blue-300 transition-all hover:shadow-xl hover:-translate-y-1 duration-300 shadow-sm">
+                  <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform text-white">
+                    {item.icon}
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                       {item.step}
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{item.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -157,11 +156,11 @@ export default function Home() {
       </section>
 
       {/* Services */}
-      <section id="services" className="relative z-10 py-24">
+      <section id="services" className="relative z-10 py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">{t('home.services')}</h2>
-            <p className="text-xl text-gray-400">{t('home.servicesSubtitle')}</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('home.services')}</h2>
+            <p className="text-xl text-gray-600">{t('home.servicesSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -207,13 +206,12 @@ export default function Home() {
                 color: "from-purple-600 to-purple-500"
               }
             ].map((service, idx) => (
-              <div key={idx} className="group relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 hover:border-transparent transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity`}></div>
-                <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl shadow-lg mb-6 text-white group-hover:scale-110 transition-transform`}>
+              <div key={idx} className="group relative bg-white border border-gray-200 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-gray-300 shadow-sm">
+                <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl shadow-md mb-6 text-white group-hover:scale-110 transition-transform`}>
                   {service.icon}
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{service.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{service.description}</p>
               </div>
             ))}
           </div>
@@ -221,11 +219,11 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="relative z-10 py-24 bg-gray-800/30 backdrop-blur-sm">
+      <section className="relative z-10 py-24 bg-white border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">{t('home.whyChoose')}</h2>
-            <p className="text-xl text-gray-400">{t('home.whyChooseSubtitle')}</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('home.whyChoose')}</h2>
+            <p className="text-xl text-gray-600">{t('home.whyChooseSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -262,13 +260,12 @@ export default function Home() {
               }
             ].map((feature, idx) => (
               <div key={idx} className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 text-center hover:border-gray-600 transition-all">
-                  <div className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl shadow-lg mb-6 text-white group-hover:scale-110 transition-transform`}>
+                <div className="relative bg-white border border-gray-200 rounded-2xl p-8 text-center hover:border-blue-200 transition-all hover:shadow-xl hover:-translate-y-1 shadow-sm">
+                  <div className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl shadow-md mb-6 text-white group-hover:scale-110 transition-transform`}>
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -278,80 +275,80 @@ export default function Home() {
 
 
       {/* Cabinet / Contact */}
-      <section id="contact" className="relative z-10 py-24">
+      <section id="contact" className="relative z-10 py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">{t('home.cabinetTitle')}</h2>
-            <p className="text-xl text-gray-400">{t('home.cabinetSubtitle')}</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('home.cabinetTitle')}</h2>
+            <p className="text-xl text-gray-600">{t('home.cabinetSubtitle')}</p>
           </div>
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-8 md:p-12 max-w-3xl mx-auto">
-            <h3 className="text-2xl font-bold text-white mb-8">{t('home.cabinetName')}</h3>
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 md:p-12 max-w-3xl mx-auto shadow-sm">
+            <h3 className="text-2xl font-bold text-gray-900 mb-8">{t('home.cabinetName')}</h3>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wide">{t('home.address')}</p>
-                  <p className="text-white">{t('home.addressValue')}</p>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t('home.address')}</p>
+                  <p className="text-gray-900">{t('home.addressValue')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wide">{t('home.phone')}</p>
-                  <a href={`tel:${t('home.phoneValue').replace(/\s/g, '')}`} className="text-white hover:text-blue-400 transition">{t('home.phoneValue')}</a>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t('home.phone')}</p>
+                  <a href={`tel:${t('home.phoneValue').replace(/\s/g, '')}`} className="text-gray-900 hover:text-blue-600 transition font-medium">{t('home.phoneValue')}</a>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wide">{t('home.email')}</p>
-                  <a href={`mailto:${t('home.emailValue')}`} className="text-white hover:text-blue-400 transition">{t('home.emailValue')}</a>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t('home.email')}</p>
+                  <a href={`mailto:${t('home.emailValue')}`} className="text-gray-900 hover:text-blue-600 transition font-medium">{t('home.emailValue')}</a>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wide">{t('home.hours')}</p>
-                  <p className="text-white">{t('home.hoursValue')}</p>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t('home.hours')}</p>
+                  <p className="text-gray-900">{t('home.hoursValue')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-amber-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wide">{t('home.dayOff')}</p>
-                  <p className="text-white">{t('home.dayOffValue')}</p>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t('home.dayOff')}</p>
+                  <p className="text-gray-900">{t('home.dayOffValue')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-emerald-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wide">{t('home.surgeryOnly')}</p>
-                  <p className="text-white">{t('home.surgeryOnlyValue')}</p>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t('home.surgeryOnly')}</p>
+                  <p className="text-gray-900">{t('home.surgeryOnlyValue')}</p>
                 </div>
               </div>
             </div>
@@ -360,7 +357,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 bg-black/40 backdrop-blur-sm border-t border-gray-700/50 text-white py-8">
+      <footer className="relative z-10 bg-white border-t border-gray-200 text-gray-600 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -373,7 +370,7 @@ export default function Home() {
                   className="object-contain"
                 />
               </div>
-              <span className="text-xl font-bold">{t('common.appName')}</span>
+              <span className="text-xl font-bold text-gray-900">{t('common.appName')}</span>
             </div>
             
        

@@ -85,52 +85,40 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen flex bg-gray-50">
       {/* Left Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12">
         <div className="max-w-md w-full">
-          {/* Language Switcher */}
           <div className="flex justify-end mb-4">
             <LanguageSwitcher />
           </div>
 
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 mb-8">
             <div className="relative w-12 h-12">
-              <Image 
-                src="/logo1.png" 
-                alt="DentAssist Logo" 
-                width={48} 
-                height={48}
-                className="object-contain"
-              />
+              <Image src="/logo1.png" alt="DentAssist Logo" width={48} height={48} className="object-contain" />
             </div>
-            <span className="text-2xl font-bold text-white">{t('common.appName')}</span>
+            <span className="text-2xl font-bold text-gray-900">{t('common.appName')}</span>
           </Link>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">{t('auth.login')}</h2>
-            <p className="text-gray-400">{t('auth.loginSubtitle')}</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('auth.login')}</h2>
+            <p className="text-gray-600">{t('auth.loginSubtitle')}</p>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
-              <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-300 text-sm">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 {error}
               </div>
             )}
-            
             {success && (
-              <div className="p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-300 text-sm">
+              <div className="p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
                 {t('auth.signupSuccess')}
               </div>
             )}
 
-            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                {t('auth.email')}
-              </label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">{t('auth.email')}</label>
               <input
                 id="email"
                 type="email"
@@ -138,15 +126,12 @@ export default function LoginPage() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                {t('auth.password')}
-              </label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">{t('auth.password')}</label>
               <input
                 id="password"
                 type="password"
@@ -154,71 +139,48 @@ export default function LoginPage() {
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition placeholder-gray-500"
               />
             </div>
 
-            {/* Forgot Password Link */}
             <div className="flex justify-end">
-              <a href="#" className="text-sm text-blue-400 hover:text-blue-300 font-medium">
-                {t('auth.forgotPassword')}
-              </a>
+              <a href="#" className="text-sm text-blue-600 hover:text-blue-700 font-medium">{t('auth.forgotPassword')}</a>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-500 transition font-medium text-lg shadow-lg hover:shadow-blue-600/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-500 transition font-medium text-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? t('common.loading') : t('auth.signIn')}
             </button>
           </form>
 
-          {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700"></div>
+              <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-400">{t('common.or')}</span>
+              <span className="px-4 bg-gray-50 text-gray-500">{t('common.or')}</span>
             </div>
           </div>
 
-        
-          {/* Sign Up Link */}
-          <p className="mt-6 text-center text-sm text-gray-400">
+          <p className="mt-6 text-center text-sm text-gray-600">
             {t('auth.noAccount')}{' '}
-            <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium">
-              {t('auth.signUp')}
-            </Link>
+            <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">{t('auth.signUp')}</Link>
           </p>
-
         </div>
       </div>
-     {/* Right Side - Illustration */}
-     <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-gray-800 via-gray-900 to-black items-center justify-center p-12 relative overflow-hidden">
-        {/* Animated Background Circles */}
-        
+
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100 border-l border-gray-200 items-center justify-center p-12 relative overflow-hidden">
         <div className="relative z-10 text-center">
-          {/* Illustration Placeholder */}
           <div className="mb-8 flex items-center justify-center">
-            <div className="relative">
-              {/* Dashboard Card Illustration */}
-          <Image src="/ChatGPT Image Jan 3, 2026, 05_24_31 PM.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
-              
-            </div>
+            <Image src="/ChatGPT Image Jan 3, 2026, 05_24_31 PM.png" alt="DentAssist Hero" width={500} height={500} className="object-contain" />
           </div>
-
-          <h2 className="text-4xl font-bold text-white mb-4">
-            {t('home.dashboardIllustration')}
-          </h2>
-          <p className="text-xl text-gray-400">
-            {t('home.platformDescription')}
-          </p>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('home.dashboardIllustration')}</h2>
+          <p className="text-xl text-gray-600">{t('home.platformDescription')}</p>
         </div>
       </div>
-   
     </div>
   )
 }

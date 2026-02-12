@@ -103,9 +103,9 @@ export default function DoctorAppointmentsListPage() {
       case 'completed':
         return 'bg-blue-500/20 text-blue-300 border-blue-500'
       case 'cancelled':
-        return 'bg-gray-500/20 text-gray-300 border-gray-500'
+        return 'bg-gray-500/20 text-gray-600 border-gray-500'
       default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500'
+        return 'bg-gray-500/20 text-gray-600 border-gray-500'
     }
   }
 
@@ -236,26 +236,26 @@ export default function DoctorAppointmentsListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-lg">Chargement...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600 text-lg">Chargement...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/doctor" className="text-xl font-bold text-white">
+              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
                 DentAssist
               </Link>
-              <span className="text-gray-400">/ Liste des RDV</span>
+              <span className="text-gray-600">/ Liste des RDV</span>
             </div>
             <Link
               href="/dashboards/doctor"
-              className="flex items-center text-gray-300 hover:text-white transition"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition"
             >
               ← Retour
             </Link>
@@ -266,7 +266,7 @@ export default function DoctorAppointmentsListPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-6">Liste des rendez-vous</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Liste des rendez-vous</h1>
           
           {/* Period Selector */}
           <div className="flex gap-2 mb-6">
@@ -277,7 +277,7 @@ export default function DoctorAppointmentsListPage() {
                 className={`px-5 py-2.5 rounded-lg transition font-medium ${
                   period === p
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-white text-gray-600 hover:bg-gray-600'
                 }`}
               >
                 {periodText[p]}
@@ -291,7 +291,7 @@ export default function DoctorAppointmentsListPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-200 text-sm mb-1">Quota quotidien</p>
-                  <p className="text-white text-2xl font-bold">
+                  <p className="text-gray-900 text-2xl font-bold">
                     {stats.confirmedCount} / 30 confirmés
                   </p>
                 </div>
@@ -300,7 +300,7 @@ export default function DoctorAppointmentsListPage() {
                   <p className="text-green-200 text-sm">places restantes</p>
                 </div>
               </div>
-              <div className="mt-4 w-full bg-gray-700 rounded-full h-2.5">
+              <div className="mt-4 w-full bg-white rounded-full h-2.5">
                 <div
                   className="bg-blue-600 h-2.5 rounded-full transition-all"
                   style={{ width: `${(stats.confirmedCount / 30) * 100}%` }}
@@ -319,10 +319,10 @@ export default function DoctorAppointmentsListPage() {
               placeholder="Rechercher par nom, email, téléphone ou raison..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-11 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-4 py-3 pl-11 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
             <svg
-              className="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
+              className="absolute left-3 top-3.5 w-5 h-5 text-gray-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -335,11 +335,11 @@ export default function DoctorAppointmentsListPage() {
           <div className="flex flex-wrap gap-4 items-center">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-gray-300 text-sm font-medium">Statut:</label>
+              <label className="text-gray-600 text-sm font-medium">Statut:</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               >
                 <option value="all">Tous ({statusCounts.all})</option>
                 <option value="confirmed">Confirmés ({statusCounts.confirmed})</option>
@@ -352,11 +352,11 @@ export default function DoctorAppointmentsListPage() {
 
             {/* Sort By */}
             <div className="flex items-center gap-2">
-              <label className="text-gray-300 text-sm font-medium">Trier par:</label>
+              <label className="text-gray-600 text-sm font-medium">Trier par:</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'patient')}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               >
                 <option value="date">Date</option>
                 <option value="status">Statut</option>
@@ -367,14 +367,14 @@ export default function DoctorAppointmentsListPage() {
             {/* Sort Order */}
             <button
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg hover:bg-gray-700 transition"
+              className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-100 transition"
               title={sortOrder === 'asc' ? 'Croissant' : 'Décroissant'}
             >
               {sortOrder === 'asc' ? '↑' : '↓'}
             </button>
 
             {/* Results Count */}
-            <div className="ml-auto text-gray-400 text-sm">
+            <div className="ml-auto text-gray-600 text-sm">
               {filteredAppointments.length} rendez-vous trouvé(s)
             </div>
           </div>
@@ -388,11 +388,11 @@ export default function DoctorAppointmentsListPage() {
 
         {/* Appointments List */}
         {filteredAppointments.length === 0 ? (
-          <div className="bg-gray-800 rounded-xl p-12 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
             <svg className="mx-auto w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-600 text-lg">
               {searchQuery || statusFilter !== 'all' 
                 ? 'Aucun rendez-vous ne correspond aux critères de recherche'
                 : `Aucun rendez-vous pour ${periodText[period].toLowerCase()}`}
@@ -412,18 +412,18 @@ export default function DoctorAppointmentsListPage() {
               return (
                 <div
                   key={appointment.id}
-                  className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all hover:shadow-lg hover:shadow-blue-500/10"
+                  className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 border border-gray-200 hover:border-gray-300 transition-all hover:shadow-lg hover:shadow-blue-500/10"
                 >
                   {/* Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-white mb-1 truncate">
+                      <h3 className="text-lg font-bold text-gray-900 mb-1 truncate">
                         {patient?.full_name || 'Patient'}
                       </h3>
                       <div className="space-y-1">
-                        <p className="text-gray-400 text-sm truncate">{patient?.email}</p>
+                        <p className="text-gray-600 text-sm truncate">{patient?.email}</p>
                         {patient?.phone && (
-                          <p className="text-gray-400 text-sm">📞 {patient.phone}</p>
+                          <p className="text-gray-600 text-sm">📞 {patient.phone}</p>
                         )}
                       </div>
                     </div>
@@ -434,17 +434,17 @@ export default function DoctorAppointmentsListPage() {
                   </div>
 
                   {/* DateTime */}
-                  <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
+                  <div className="mb-4 p-3 bg-white/50 rounded-lg">
                     {confirmedDateTime ? (
                       <>
-                        <p className="text-gray-400 text-xs mb-1">Date et heure confirmées:</p>
-                        <p className="text-white font-medium text-sm">{confirmedDateTime.date}</p>
+                        <p className="text-gray-600 text-xs mb-1">Date et heure confirmées:</p>
+                        <p className="text-gray-900 font-medium text-sm">{confirmedDateTime.date}</p>
                         <p className="text-blue-400 font-semibold">{confirmedDateTime.time}</p>
                       </>
                     ) : requestedDateTime ? (
                       <>
-                        <p className="text-gray-400 text-xs mb-1">Date et heure demandées:</p>
-                        <p className="text-white font-medium text-sm">{requestedDateTime.date}</p>
+                        <p className="text-gray-600 text-xs mb-1">Date et heure demandées:</p>
+                        <p className="text-gray-900 font-medium text-sm">{requestedDateTime.date}</p>
                         <p className="text-yellow-400 font-semibold">{requestedDateTime.time}</p>
                       </>
                     ) : null}
@@ -454,7 +454,7 @@ export default function DoctorAppointmentsListPage() {
                   {appointment.reason && (
                     <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                       <p className="text-blue-300 text-xs font-semibold mb-1">Raison:</p>
-                      <p className="text-gray-300 text-sm line-clamp-2">{appointment.reason}</p>
+                      <p className="text-gray-600 text-sm line-clamp-2">{appointment.reason}</p>
                     </div>
                   )}
 
@@ -462,7 +462,7 @@ export default function DoctorAppointmentsListPage() {
                   {appointment.medical_history && (
                     <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
                       <p className="text-red-300 text-xs font-semibold mb-1">⚠️ Antécédents:</p>
-                      <p className="text-gray-300 text-xs line-clamp-1">{appointment.medical_history}</p>
+                      <p className="text-gray-600 text-xs line-clamp-1">{appointment.medical_history}</p>
                     </div>
                   )}
 
@@ -470,7 +470,7 @@ export default function DoctorAppointmentsListPage() {
                   {appointment.current_medications && (
                     <div className="mb-3 p-2 bg-orange-500/10 border border-orange-500/30 rounded-lg">
                       <p className="text-orange-300 text-xs font-semibold mb-1">💊 Médicaments:</p>
-                      <p className="text-gray-300 text-xs line-clamp-1">{appointment.current_medications}</p>
+                      <p className="text-gray-600 text-xs line-clamp-1">{appointment.current_medications}</p>
                     </div>
                   )}
 
@@ -478,7 +478,7 @@ export default function DoctorAppointmentsListPage() {
                   {appointment.rejection_reason && (
                     <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
                       <p className="text-red-300 text-xs font-semibold mb-1">Rejet:</p>
-                      <p className="text-gray-300 text-xs line-clamp-2">{appointment.rejection_reason}</p>
+                      <p className="text-gray-600 text-xs line-clamp-2">{appointment.rejection_reason}</p>
                     </div>
                   )}
 
@@ -492,7 +492,7 @@ export default function DoctorAppointmentsListPage() {
                         </p>
                       </div>
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-gray-300 text-xs truncate">{appointment.payment_approval_file_name || 'Fichier'}</p>
+                        <p className="text-gray-600 text-xs truncate">{appointment.payment_approval_file_name || 'Fichier'}</p>
                         <a
                           href={appointment.payment_approval_path}
                           target="_blank"
@@ -509,41 +509,35 @@ export default function DoctorAppointmentsListPage() {
                   {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
                     <div className="mt-4 mb-3 pt-3 border-t border-gray-700">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-gray-400 text-xs font-medium">Statut du paiement:</p>
+                        <p className="text-gray-600 text-xs font-medium">Statut du paiement:</p>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getPaymentStatusColor(appointment.payment_status || 'pending')}`}>
                           <span>{getPaymentStatusIcon(appointment.payment_status || 'pending')}</span>
                           <span>{getPaymentStatusText(appointment.payment_status || 'pending')}</span>
                         </span>
                       </div>
-                      
-                      {appointment.payment_approval_path && (
-                        <p className="mb-2 text-xs text-gray-400">💡 Consultez la preuve de paiement ci-dessus avant de marquer comme payé</p>
+                      {(appointment.payment_status || 'pending') === 'pending' && (
+                        <>
+                          {appointment.payment_approval_path && (
+                            <p className="mb-2 text-xs text-gray-600">💡 Consultez la preuve de paiement ci-dessus avant de marquer comme payé</p>
+                          )}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handlePaymentStatusUpdate(appointment.id, 'paid')}
+                              disabled={updatingPaymentId === appointment.id}
+                              className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {updatingPaymentId === appointment.id ? '...' : 'Marquer payé'}
+                            </button>
+                            <button
+                              onClick={() => handlePaymentStatusUpdate(appointment.id, 'unpaid')}
+                              disabled={updatingPaymentId === appointment.id}
+                              className="flex-1 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {updatingPaymentId === appointment.id ? '...' : 'Non payé'}
+                            </button>
+                          </div>
+                        </>
                       )}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handlePaymentStatusUpdate(appointment.id, 'paid')}
-                          disabled={updatingPaymentId === appointment.id || appointment.payment_status === 'paid'}
-                          className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {updatingPaymentId === appointment.id ? '...' : 'Marquer payé'}
-                        </button>
-                        <button
-                          onClick={() => handlePaymentStatusUpdate(appointment.id, 'unpaid')}
-                          disabled={updatingPaymentId === appointment.id || appointment.payment_status === 'unpaid'}
-                          className="flex-1 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {updatingPaymentId === appointment.id ? '...' : 'Non payé'}
-                        </button>
-                        {appointment.payment_status !== 'pending' && (
-                          <button
-                            onClick={() => handlePaymentStatusUpdate(appointment.id, 'pending')}
-                            disabled={updatingPaymentId === appointment.id}
-                            className="flex-1 px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {updatingPaymentId === appointment.id ? '...' : 'En attente'}
-                          </button>
-                        )}
-                      </div>
                     </div>
                   )}
 

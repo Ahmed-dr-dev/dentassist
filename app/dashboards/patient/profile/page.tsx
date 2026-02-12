@@ -108,27 +108,24 @@ export default function PatientProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">{t('common.loading')}</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <nav className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/patient" className="text-xl font-bold text-white">
+              <Link href="/dashboards/patient" className="text-xl font-bold text-gray-900">
                 {t('common.appName')}
               </Link>
-              <span className="text-gray-400">/ {t('profile.myProfile')}</span>
+              <span className="text-gray-500">/ {t('profile.myProfile')}</span>
             </div>
-            <Link
-              href="/dashboards/patient"
-              className="flex items-center text-gray-300 hover:text-white"
-            >
+            <Link href="/dashboards/patient" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
             </Link>
           </div>
@@ -136,91 +133,61 @@ export default function PatientProfilePage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">{t('profile.title')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('profile.title')}</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
         )}
-
         {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300">
-            {success}
-          </div>
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">{success}</div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 rounded-xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('profile.fullName')} *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.fullName')} *</label>
             <input
               type="text"
               required
               value={formData.fullName}
               onChange={(e) => {
                 setFormData({ ...formData, fullName: e.target.value })
-                if (fieldErrors.fullName) {
-                  setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })
-                }
+                if (fieldErrors.fullName) setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })
               }}
-              onBlur={(e) => {
-                setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })
-              }}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
-                fieldErrors.fullName ? 'border-red-500' : 'border-gray-600'
-              }`}
+              onBlur={(e) => setFieldErrors({ ...fieldErrors, fullName: validateName(e.target.value) })}
+              className={`w-full px-4 py-3 bg-white border text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${fieldErrors.fullName ? 'border-red-500' : 'border-gray-300'}`}
             />
-            {fieldErrors.fullName && (
-              <p className="mt-1 text-xs text-red-400">{fieldErrors.fullName}</p>
-            )}
+            {fieldErrors.fullName && <p className="mt-1 text-xs text-red-600">{fieldErrors.fullName}</p>}
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('auth.email')}
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('auth.email')}</label>
             <input
               type="email"
               value={formData.email}
               disabled
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 text-gray-400 rounded-lg cursor-not-allowed"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-500 rounded-xl cursor-not-allowed"
             />
             <p className="mt-1 text-xs text-gray-500">{t('profile.emailCannotEdit')}</p>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t('profile.phone')} *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.phone')} *</label>
             <input
               type="tel"
               required
               value={formData.phone}
               onChange={(e) => {
                 setFormData({ ...formData, phone: e.target.value })
-                if (fieldErrors.phone) {
-                  setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })
-                }
+                if (fieldErrors.phone) setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })
               }}
-              onBlur={(e) => {
-                setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })
-              }}
-              className={`w-full px-4 py-3 bg-gray-700 border text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${
-                fieldErrors.phone ? 'border-red-500' : 'border-gray-600'
-              }`}
+              onBlur={(e) => setFieldErrors({ ...fieldErrors, phone: validatePhone(e.target.value) })}
+              className={`w-full px-4 py-3 bg-white border text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="+21612345678"
             />
-            {fieldErrors.phone && (
-              <p className="mt-1 text-xs text-red-400">{fieldErrors.phone}</p>
-            )}
+            {fieldErrors.phone && <p className="mt-1 text-xs text-red-600">{fieldErrors.phone}</p>}
           </div>
-
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? t('profile.saving') : t('profile.saveChanges')}
           </button>
