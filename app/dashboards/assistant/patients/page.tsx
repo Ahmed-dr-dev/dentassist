@@ -12,8 +12,6 @@ export default function AssistantPatientsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState<'name' | 'total' | 'completed' | 'upcoming'>('name')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   useEffect(() => {
     fetchPatients()
@@ -43,27 +41,9 @@ export default function AssistantPatientsPage() {
           (p.phone || '').toLowerCase().includes(q)
       )
     }
-    list.sort((a, b) => {
-      let compareA: string | number, compareB: string | number
-      if (sortBy === 'name') {
-        compareA = (a.full_name || '').toLowerCase()
-        compareB = (b.full_name || '').toLowerCase()
-      } else if (sortBy === 'total') {
-        compareA = a.totalAppointments ?? 0
-        compareB = b.totalAppointments ?? 0
-      } else if (sortBy === 'completed') {
-        compareA = a.completedAppointments ?? 0
-        compareB = b.completedAppointments ?? 0
-      } else {
-        compareA = a.upcomingAppointments ?? 0
-        compareB = b.upcomingAppointments ?? 0
-      }
-      if (compareA < compareB) return sortOrder === 'asc' ? -1 : 1
-      if (compareA > compareB) return sortOrder === 'asc' ? 1 : -1
-      return 0
-    })
+    list.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || '', undefined, { sensitivity: 'base' }))
     return list
-  }, [patients, searchQuery, sortBy, sortOrder])
+  }, [patients, searchQuery])
 
   if (loading) {
     return (
@@ -94,33 +74,30 @@ export default function AssistantPatientsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">{t('patients.title')}</h1>
 
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-wrap gap-3 items-center">
-            <input
-              type="text"
-              placeholder={t('common.search')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 min-w-[200px] px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg placeholder-gray-500"
-            />
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'name' | 'total' | 'completed' | 'upcoming')}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg"
-            >
-              <option value="name">{t('patients.sortByName')}</option>
-              <option value="total">{t('patients.sortByTotalRdv')}</option>
-              <option value="completed">{t('patients.sortByCompleted')}</option>
-              <option value="upcoming">{t('patients.sortByUpcoming')}</option>
-            </select>
-            <button
-              type="button"
-              onClick={() => setSortOrder((o) => (o === 'asc' ? 'desc' : 'asc'))}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg hover:bg-gray-50"
-            >
-              {sortOrder === 'asc' ? '↑' : '↓'}
-            </button>
-            <span className="text-gray-600 text-sm">{filteredPatients.length} {t('patients.patientsCount')}</span>
+        <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex-1 w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.search')}</label>
+              <input
+                type="text"
+                placeholder={t('common.search')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg text-sm placeholder-gray-500"
+              />
+            </div>
+            <div className="flex items-center justify-between sm:justify-end gap-3">
+              <p className="text-sm text-gray-500">{filteredPatients.length} {t('patients.patientsCount')}</p>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+                >
+                  {t('appointments.clearFilters')}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -141,22 +118,26 @@ export default function AssistantPatientsPage() {
                 className="bg-white rounded-xl p-6 hover:bg-gray-50 transition cursor-pointer border border-gray-200 shadow-sm"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{patient.full_name}</h3>
-                <p className="text-gray-600 text-sm mb-4">{patient.email}</p>
+                <p className="text-gray-600 text-sm mb-1">{patient.email}</p>
                 {patient.phone && (
                   <p className="text-gray-600 text-sm mb-4">📞 {patient.phone}</p>
                 )}
-                <div className="flex gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-500">Total: </span>
-                    <span className="text-gray-900">{patient.totalAppointments || 0}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">{t('appointments.completed')}: </span>
-                    <span className="text-green-400">{patient.completedAppointments || 0}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">{t('appointments.confirmed')}: </span>
-                    <span className="text-blue-400">{patient.upcomingAppointments || 0}</span>
+                {!patient.phone && <div className="mb-4" />}
+                <div className="text-sm">
+                  <p className="text-gray-500 font-medium mb-2">{t('patients.rdvStatus')}</p>
+                  <div className="flex gap-4">
+                    <div>
+                      <span className="text-gray-500">{t('patients.rdvTotal')}: </span>
+                      <span className="text-gray-900">{patient.totalAppointments || 0}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">{t('appointments.completed')}: </span>
+                      <span className="text-green-600">{patient.completedAppointments || 0}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">{t('appointments.confirmed')}: </span>
+                      <span className="text-blue-600">{patient.upcomingAppointments || 0}</span>
+                    </div>
                   </div>
                 </div>
               </Link>

@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
-      .select('id, doctor_id, status')
+      .select('id, doctor_id, status, payment_status')
       .eq('id', appointmentId)
       .single();
 
@@ -68,6 +68,13 @@ export async function POST(request: Request) {
     if (appointment.status !== 'confirmed') {
       return NextResponse.json(
         { error: 'Only confirmed appointments can be marked as completed' },
+        { status: 400 }
+      );
+    }
+
+    if ((appointment.payment_status || 'pending') !== 'paid') {
+      return NextResponse.json(
+        { error: 'Appointment can only be marked as completed when payment status is paid' },
         { status: 400 }
       );
     }

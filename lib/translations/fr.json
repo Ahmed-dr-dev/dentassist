@@ -122,6 +122,8 @@
     "accept": "Accepter",
     "reject": "Rejeter",
     "markComplete": "Marquer comme terminé",
+    "markNotComplete": "Marquer comme non terminé",
+    "completeOnlyWhenPaid": "Le RDV ne peut être marqué terminé que s'il est payé",
     "noPending": "Aucun rendez-vous en attente",
     "quotaInfo": "Quota quotidien",
     "remaining": "restants",
@@ -242,7 +244,9 @@
     "sortByTotalRdv": "Trier par total RDV",
     "sortByCompleted": "Trier par terminés",
     "sortByUpcoming": "Trier par à venir",
-    "patientsCount": "patient(s)"
+    "patientsCount": "patient(s)",
+    "rdvStatus": "Statut RDV",
+    "rdvTotal": "Total"
   },
   "prescriptions": {
     "title": "Ordonnances",

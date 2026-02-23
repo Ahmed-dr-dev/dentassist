@@ -79,39 +79,44 @@ export default function AssistantDashboardPage() {
           <p className="text-gray-600">{t('common.welcome')}, {user?.fullName}</p>
         </div>
 
-        <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{t('dashboard.assistantTasksTitle')}</h2>
-          <ul className="space-y-2 text-gray-600">
-            <li>• {t('dashboard.assistantTaskAcceptDecline')}</li>
-            <li>• {t('dashboard.assistantTaskTariffs')}</li>
-            <li>• {t('dashboard.assistantTaskPaymentStatus')}</li>
-            <li>• {t('dashboard.assistantTaskRdvList')}</li>
-          </ul>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           <Link
             href="/dashboards/assistant/appointments"
-            className="bg-gradient-to-br from-amber-600 to-amber-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-amber-600/50 transition cursor-pointer"
+            className="flex items-center gap-4 bg-gradient-to-br from-amber-600 to-amber-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-amber-600/50 transition cursor-pointer"
           >
-            <h3 className="text-xl font-bold mb-2">{t('appointments.list')}</h3>
-            <p className="text-amber-100">{t('dashboard.assistantViewAppointments')}</p>
+            <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </span>
+            <div>
+              <h3 className="text-xl font-bold mb-1">{t('appointments.list')}</h3>
+              <p className="text-amber-100 text-sm">{t('dashboard.assistantViewAppointments')}</p>
+            </div>
           </Link>
 
           <Link
             href="/dashboards/assistant/patients"
-            className="bg-gradient-to-br from-cyan-600 to-cyan-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-cyan-600/50 transition cursor-pointer"
+            className="flex items-center gap-4 bg-gradient-to-br from-cyan-600 to-cyan-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-cyan-600/50 transition cursor-pointer"
           >
-            <h3 className="text-xl font-bold mb-2">{t('patients.title')}</h3>
-            <p className="text-cyan-100">{t('dashboard.assistantViewPatients')}</p>
+            <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </span>
+            <div>
+              <h3 className="text-xl font-bold mb-1">{t('patients.title')}</h3>
+              <p className="text-cyan-100 text-sm">{t('dashboard.assistantViewPatients')}</p>
+            </div>
           </Link>
 
           <Link
             href="/dashboards/assistant/tariffs"
-            className="bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-emerald-600/50 transition cursor-pointer"
+            className="flex items-center gap-4 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-emerald-600/50 transition cursor-pointer"
           >
-            <h3 className="text-xl font-bold mb-2">{t('tariffs.title')}</h3>
-            <p className="text-emerald-100">{t('dashboard.assistantManageTariffs')}</p>
+            <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </span>
+            <div>
+              <h3 className="text-xl font-bold mb-1">{t('tariffs.title')}</h3>
+              <p className="text-emerald-100 text-sm">{t('dashboard.assistantManageTariffs')}</p>
+            </div>
           </Link>
         </div>
 

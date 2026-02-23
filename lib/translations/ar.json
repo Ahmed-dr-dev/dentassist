@@ -122,6 +122,8 @@
     "accept": "قبول",
     "reject": "رفض",
     "markComplete": "تعيين كمكتمل",
+    "markNotComplete": "تعيين كغير مكتمل",
+    "completeOnlyWhenPaid": "يمكن تعيين الموعد كمكتمل فقط عند الدفع",
     "noPending": "لا توجد مواعيد قيد الانتظار",
     "quotaInfo": "الحصة اليومية",
     "remaining": "متبقية",
@@ -242,7 +244,9 @@
     "sortByTotalRdv": "ترتيب حسب إجمالي المواعيد",
     "sortByCompleted": "ترتيب حسب المكتملة",
     "sortByUpcoming": "ترتيب حسب القادمة",
-    "patientsCount": "مريض/مرضى"
+    "patientsCount": "مريض/مرضى",
+    "rdvStatus": "حالة المواعيد",
+    "rdvTotal": "الإجمالي"
   },
   "prescriptions": {
     "title": "الوصفات الطبية",

@@ -122,6 +122,8 @@
     "accept": "Accept",
     "reject": "Reject",
     "markComplete": "Mark as completed",
+    "markNotComplete": "Mark as not completed",
+    "completeOnlyWhenPaid": "Can only be marked completed when paid",
     "noPending": "No pending appointments",
     "quotaInfo": "Daily quota",
     "remaining": "remaining",
@@ -242,7 +244,9 @@
     "sortByTotalRdv": "Sort by total RDV",
     "sortByCompleted": "Sort by completed",
     "sortByUpcoming": "Sort by upcoming",
-    "patientsCount": "patient(s)"
+    "patientsCount": "patient(s)",
+    "rdvStatus": "RDV status",
+    "rdvTotal": "Total"
   },
   "prescriptions": {
     "title": "Prescriptions",

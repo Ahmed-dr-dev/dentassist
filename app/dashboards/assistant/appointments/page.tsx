@@ -5,19 +5,16 @@ import { useState, useEffect, useMemo } from 'react'
 import { useI18n } from '@/lib/i18n'
 
 export default function AssistantAppointmentsPage() {
-  const { t, locale } = useI18n()
+  const { t, language } = useI18n()
+  const locale = language === 'fr' ? 'fr-FR' : language === 'ar' ? 'ar' : 'en-US'
   const [appointments, setAppointments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [paymentFilter, setPaymentFilter] = useState<string>('all')
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [sortBy, setSortBy] = useState<'date' | 'status' | 'patient'>('date')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [filterDate, setFilterDate] = useState('')
+  const [filterTime, setFilterTime] = useState('')
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null)
   const [rejectModalId, setRejectModalId] = useState<string | null>(null)
@@ -48,23 +45,25 @@ export default function AssistantAppointmentsPage() {
   const filteredAppointments = useMemo(() => {
     let filtered = [...appointments]
     if (statusFilter !== 'all') filtered = filtered.filter(apt => apt.status === statusFilter)
-    if (paymentFilter !== 'all') {
-      filtered = filtered.filter(apt => (apt.payment_status || 'pending') === paymentFilter)
-    }
-    if (dateFrom) {
-      const from = new Date(dateFrom)
-      from.setHours(0, 0, 0, 0)
+    if (filterTime) {
+      const [h, m] = filterTime.split(':').map(Number)
       filtered = filtered.filter(apt => {
         const d = apt.confirmed_date_time || apt.requested_date_time
-        return d && new Date(d) >= from
+        if (!d) return false
+        const dt = new Date(d)
+        return dt.getHours() === h && dt.getMinutes() === m
       })
     }
-    if (dateTo) {
-      const to = new Date(dateTo)
-      to.setHours(23, 59, 59, 999)
+    if (filterDate) {
+      const dayStart = new Date(filterDate)
+      dayStart.setHours(0, 0, 0, 0)
+      const dayEnd = new Date(filterDate)
+      dayEnd.setHours(23, 59, 59, 999)
       filtered = filtered.filter(apt => {
         const d = apt.confirmed_date_time || apt.requested_date_time
-        return d && new Date(d) <= to
+        if (!d) return false
+        const t = new Date(d).getTime()
+        return t >= dayStart.getTime() && t <= dayEnd.getTime()
       })
     }
     if (searchQuery.trim()) {
@@ -78,35 +77,22 @@ export default function AssistantAppointmentsPage() {
       })
     }
     filtered.sort((a, b) => {
-      let compareA: any, compareB: any
-      if (sortBy === 'date') {
-        compareA = a.confirmed_date_time || a.requested_date_time
-        compareB = b.confirmed_date_time || b.requested_date_time
-      } else if (sortBy === 'status') {
-        compareA = a.status
-        compareB = b.status
-      } else {
-        const pa = a.patient as any
-        const pb = b.patient as any
-        compareA = (pa?.full_name || '').toLowerCase()
-        compareB = (pb?.full_name || '').toLowerCase()
-      }
-      if (compareA < compareB) return sortOrder === 'asc' ? -1 : 1
-      if (compareA > compareB) return sortOrder === 'asc' ? 1 : -1
-      return 0
+      const dateA = a.confirmed_date_time || a.requested_date_time || ''
+      const dateB = b.confirmed_date_time || b.requested_date_time || ''
+      return dateB.localeCompare(dateA)
     })
     return filtered
-  }, [appointments, searchQuery, statusFilter, paymentFilter, dateFrom, dateTo, sortBy, sortOrder])
+  }, [appointments, searchQuery, statusFilter, filterDate, filterTime])
 
   const getStatusColor = (status: string) => {
     const map: Record<string, string> = {
-      confirmed: 'bg-green-500/20 text-green-300 border-green-500',
-      pending: 'bg-yellow-500/20 text-yellow-300 border-yellow-500',
-      rejected: 'bg-red-500/20 text-red-300 border-red-500',
-      completed: 'bg-blue-500/20 text-blue-300 border-blue-500',
-      cancelled: 'bg-gray-500/20 text-gray-600 border-gray-500'
+      confirmed: 'bg-green-100 text-green-800 border-green-300',
+      pending: 'bg-amber-100 text-amber-800 border-amber-300',
+      rejected: 'bg-red-100 text-red-800 border-red-300',
+      completed: 'bg-blue-100 text-blue-800 border-blue-300',
+      cancelled: 'bg-gray-100 text-gray-600 border-gray-300'
     }
-    return map[status] || 'bg-gray-500/20 text-gray-600 border-gray-500'
+    return map[status] || 'bg-gray-100 text-gray-600 border-gray-300'
   }
 
   const getStatusText = (status: string) => {
@@ -122,10 +108,9 @@ export default function AssistantAppointmentsPage() {
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString)
-    const loc = locale || 'fr-FR'
     return {
-      date: date.toLocaleDateString(loc, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }),
-      time: date.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' })
+      date: date.toLocaleDateString(locale, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }),
+      time: date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
     }
   }
 
@@ -227,14 +212,47 @@ export default function AssistantAppointmentsPage() {
     }
   }
 
-  const statusCounts = useMemo(() => ({
-    all: appointments.length,
-    confirmed: appointments.filter(a => a.status === 'confirmed').length,
-    pending: appointments.filter(a => a.status === 'pending').length,
-    completed: appointments.filter(a => a.status === 'completed').length,
-    rejected: appointments.filter(a => a.status === 'rejected').length,
-    cancelled: appointments.filter(a => a.status === 'cancelled').length
-  }), [appointments])
+  const handleComplete = async (appointmentId: string) => {
+    setProcessingId(appointmentId)
+    setError('')
+    setSuccess('')
+    try {
+      const response = await fetch('/api/appointments/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentId })
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || t('appointments.loadError'))
+      setSuccess(data.message || t('appointments.completed'))
+      setTimeout(() => { fetchAppointments(); setSuccess('') }, 2000)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
+  const handleReopen = async (appointmentId: string) => {
+    setProcessingId(appointmentId)
+    setError('')
+    setSuccess('')
+    try {
+      const response = await fetch('/api/appointments/reopen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentId })
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || t('appointments.loadError'))
+      setSuccess(data.message || 'Reopened')
+      setTimeout(() => { fetchAppointments(); setSuccess('') }, 2000)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setProcessingId(null)
+    }
+  }
 
   const getPaymentStatusText = (status: string) => {
     const map: Record<string, string> = {
@@ -247,17 +265,17 @@ export default function AssistantAppointmentsPage() {
 
   const getPaymentStatusColor = (status: string) => {
     const map: Record<string, string> = {
-      paid: 'bg-green-500/20 text-green-300 border-green-500',
-      unpaid: 'bg-red-500/20 text-red-300 border-red-500',
-      pending: 'bg-yellow-500/20 text-yellow-300 border-yellow-500'
+      paid: 'bg-green-100 text-green-800 border-green-300',
+      unpaid: 'bg-red-100 text-red-800 border-red-300',
+      pending: 'bg-amber-100 text-amber-800 border-amber-300'
     }
-    return map[status] || 'bg-gray-500/20 text-gray-600 border-gray-500'
+    return map[status] || 'bg-gray-100 text-gray-600 border-gray-300'
   }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-900">{t('common.loading')}</div>
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
@@ -271,7 +289,7 @@ export default function AssistantAppointmentsPage() {
               <Link href="/dashboards/assistant" className="text-xl font-bold text-gray-900">
                 {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
-              <span className="text-gray-600">/ {t('appointments.list')}</span>
+              <span className="text-gray-500">/ {t('appointments.list')}</span>
             </div>
             <Link href="/dashboards/assistant" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
@@ -280,200 +298,185 @@ export default function AssistantAppointmentsPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">{t('appointments.list')}</h1>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('appointments.list')}</h1>
 
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-wrap gap-3 items-center">
-            <input
-              type="text"
-              placeholder={t('common.search')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 min-w-[200px] px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-lg placeholder-gray-500"
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg"
-            >
-              <option value="all">{t('appointments.filterAll')} ({statusCounts.all})</option>
-              <option value="confirmed">{t('appointments.confirmed')} ({statusCounts.confirmed})</option>
-              <option value="pending">{t('appointments.pending')} ({statusCounts.pending})</option>
-              <option value="completed">{t('appointments.completed')} ({statusCounts.completed})</option>
-              <option value="rejected">{t('appointments.rejected')} ({statusCounts.rejected})</option>
-              <option value="cancelled">{t('appointments.cancelled')} ({statusCounts.cancelled})</option>
-            </select>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'patient')}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg"
-            >
-              <option value="date">{t('appointments.date')}</option>
-              <option value="status">{t('appointments.status')}</option>
-              <option value="patient">{t('appointments.sortBy.patient')}</option>
-            </select>
-            <button
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-900 rounded-lg hover:bg-white"
-              title={sortOrder === 'asc' ? t('appointments.sortOrder.asc') : t('appointments.sortOrder.desc')}
-            >
-              {sortOrder === 'asc' ? '↑' : '↓'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="px-4 py-2 bg-white hover:bg-gray-600 text-gray-600 rounded-lg text-sm font-medium"
-            >
-              {showAdvanced ? t('appointments.hideFilters') : t('appointments.advancedFilters')}
-            </button>
+        {/* Simple filters */}
+        <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('appointments.time')}</label>
+              <input
+                type="time"
+                value={filterTime}
+                onChange={(e) => setFilterTime(e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('appointments.date')}</label>
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('appointments.status')}</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg text-sm"
+              >
+                <option value="all">{t('common.all')}</option>
+                <option value="pending">{t('appointments.pending')}</option>
+                <option value="confirmed">{t('appointments.confirmed')}</option>
+                <option value="completed">{t('appointments.completed')}</option>
+                <option value="rejected">{t('appointments.rejected')}</option>
+                <option value="cancelled">{t('appointments.cancelled')}</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.search')}</label>
+              <input
+                type="text"
+                placeholder={t('common.search')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg text-sm placeholder-gray-500"
+              />
+            </div>
           </div>
-
-          {showAdvanced && (
-            <div className="p-4 bg-white rounded-xl border border-gray-200 flex flex-wrap gap-4 items-end">
-              <div>
-                <label className="block text-gray-600 text-xs font-medium mb-1">{t('appointments.dateFrom')}</label>
-                <input
-                  type="date"
-                  value={dateFrom}
-                  onChange={(e) => setDateFrom(e.target.value)}
-                  className="px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-600 text-xs font-medium mb-1">{t('appointments.dateTo')}</label>
-                <input
-                  type="date"
-                  value={dateTo}
-                  onChange={(e) => setDateTo(e.target.value)}
-                  className="px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-600 text-xs font-medium mb-1">{t('payment.status')}</label>
-                <select
-                  value={paymentFilter}
-                  onChange={(e) => setPaymentFilter(e.target.value)}
-                  className="px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg"
-                >
-                  <option value="all">{t('common.all')}</option>
-                  <option value="paid">{t('payment.paid')}</option>
-                  <option value="unpaid">{t('payment.unpaid')}</option>
-                  <option value="pending">{t('payment.pending')}</option>
-                </select>
-              </div>
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              {filteredAppointments.length} {t('appointments.filterResultCount')}
+            </p>
+            {(filterTime || filterDate || statusFilter !== 'all' || searchQuery) && (
               <button
                 type="button"
-                onClick={() => { setDateFrom(''); setDateTo(''); setPaymentFilter('all'); }}
-                className="px-3 py-2 bg-gray-600 hover:bg-gray-500 text-gray-200 rounded-lg text-sm"
+                onClick={() => { setFilterTime(''); setFilterDate(''); setStatusFilter('all'); setSearchQuery(''); }}
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium"
               >
                 {t('appointments.clearFilters')}
               </button>
-            </div>
-          )}
-
-          <p className="text-gray-600 text-sm">
-            {filteredAppointments.length} {t('appointments.filterResultCount')}
-          </p>
+            )}
+          </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">{error}</div>
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
         )}
         {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300">{success}</div>
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">{success}</div>
         )}
 
         {filteredAppointments.length === 0 ? (
-          <div className="bg-white rounded-xl p-12 text-center">
+          <div className="bg-white rounded-xl p-12 text-center border border-gray-200">
             <p className="text-gray-600">
-              {searchQuery || statusFilter !== 'all' || paymentFilter !== 'all' || dateFrom || dateTo
+              {searchQuery || statusFilter !== 'all' || filterDate || filterTime
                 ? t('common.noMatch')
                 : t('appointments.noAppointments')}
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <ul className="space-y-2">
             {filteredAppointments.map((appointment) => {
               const patient = appointment.patient as any
               const confirmedDt = appointment.confirmed_date_time ? formatDateTime(appointment.confirmed_date_time) : null
               const requestedDt = appointment.requested_date_time ? formatDateTime(appointment.requested_date_time) : null
               return (
-                <div key={appointment.id} className="bg-white rounded-xl p-6 border border-gray-200">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">{patient?.full_name || '—'}</h3>
-                      <p className="text-gray-600 text-sm">{patient?.email}</p>
-                      {patient?.phone && <p className="text-gray-600 text-sm">📞 {patient.phone}</p>}
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(appointment.status)}`}>
-                      {getStatusText(appointment.status)}
-                    </span>
-                  </div>
-                  <div className="mb-4 p-3 bg-white/50 rounded-lg">
-                    {confirmedDt ? (
-                      <>
-                        <p className="text-gray-600 text-xs">{confirmedDt.date}</p>
-                        <p className="text-amber-400 font-semibold">{confirmedDt.time}</p>
-                      </>
-                    ) : requestedDt ? (
-                      <>
-                        <p className="text-gray-600 text-xs">{requestedDt.date}</p>
-                        <p className="text-yellow-400 font-semibold">{requestedDt.time}</p>
-                      </>
-                    ) : null}
-                  </div>
-                  {appointment.reason && (
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{appointment.reason}</p>
-                  )}
-                  {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <p className="text-gray-600 text-xs font-medium mb-2">{t('payment.status')}</p>
-                      <span className={`inline-block px-2 py-1 rounded border text-xs font-medium ${getPaymentStatusColor(appointment.payment_status || 'pending')}`}>
-                        {getPaymentStatusText(appointment.payment_status || 'pending')}
-                      </span>
-                      {(appointment.payment_status || 'pending') === 'pending' && (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <button
-                            onClick={() => handlePaymentStatusUpdate(appointment.id, 'paid')}
-                            disabled={updatingPaymentId === appointment.id}
-                            className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-medium disabled:opacity-50"
-                          >
-                            {updatingPaymentId === appointment.id ? '...' : t('payment.markAsPaid')}
-                          </button>
-                          <button
-                            onClick={() => handlePaymentStatusUpdate(appointment.id, 'unpaid')}
-                            disabled={updatingPaymentId === appointment.id}
-                            className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-medium disabled:opacity-50"
-                          >
-                            {updatingPaymentId === appointment.id ? '...' : t('payment.unpaidButton')}
-                          </button>
-                        </div>
+                <li key={appointment.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <span className="font-semibold text-gray-900">{patient?.full_name || '—'}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(appointment.status)}`}>
+                          {getStatusText(appointment.status)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500">{patient?.email}</p>
+                      {confirmedDt ? (
+                        <p className="text-sm text-gray-700 mt-1">
+                          {confirmedDt.date} · {confirmedDt.time}
+                        </p>
+                      ) : requestedDt ? (
+                        <p className="text-sm text-amber-700 mt-1">
+                          {requestedDt.date} · {requestedDt.time}
+                        </p>
+                      ) : null}
+                      {appointment.reason && (
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-1">{appointment.reason}</p>
+                      )}
+                      {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
+                        <span className={`inline-block mt-2 px-2 py-0.5 rounded text-xs font-medium border ${getPaymentStatusColor(appointment.payment_status || 'pending')}`}>
+                          {getPaymentStatusText(appointment.payment_status || 'pending')}
+                        </span>
                       )}
                     </div>
-                  )}
-                  {appointment.status === 'pending' && (
-                    <div className="mt-4 pt-3 border-t border-gray-200 flex gap-2">
-                      <button
-                        onClick={() => handleAppointmentAction(appointment.id, 'accept')}
-                        disabled={processingId === appointment.id}
-                        className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-                      >
-                        {processingId === appointment.id ? '...' : t('appointments.accept')}
-                      </button>
-                      <button
-                        onClick={() => handleAppointmentAction(appointment.id, 'reject')}
-                        disabled={processingId === appointment.id}
-                        className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-                      >
-                        {t('appointments.reject')}
-                      </button>
+                    <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
+                      {appointment.status === 'pending' && (
+                        <>
+                          <button
+                            onClick={() => handleAppointmentAction(appointment.id, 'accept')}
+                            disabled={processingId === appointment.id}
+                            className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                          >
+                            {processingId === appointment.id ? '...' : t('appointments.accept')}
+                          </button>
+                          <button
+                            onClick={() => handleAppointmentAction(appointment.id, 'reject')}
+                            disabled={processingId === appointment.id}
+                            className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                          >
+                            {t('appointments.reject')}
+                          </button>
+                        </>
+                      )}
+                      {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
+                        <>
+                          <label
+                            className={`flex items-center gap-2 select-none ${(appointment.status === 'confirmed' && (appointment.payment_status || 'pending') !== 'paid') ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                            title={(appointment.status === 'confirmed' && (appointment.payment_status || 'pending') !== 'paid') ? t('appointments.completeOnlyWhenPaid') : undefined}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={appointment.status === 'completed'}
+                              disabled={processingId === appointment.id || (appointment.status === 'confirmed' && (appointment.payment_status || 'pending') !== 'paid')}
+                              onChange={() => {
+                                if (appointment.status === 'completed') handleReopen(appointment.id)
+                                else handleComplete(appointment.id)
+                              }}
+                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+                            />
+                            <span className="text-sm font-medium text-gray-700">{t('appointments.completed')}</span>
+                          </label>
+                          {appointment.status === 'confirmed' && (appointment.payment_status || 'pending') === 'pending' && (
+                            <>
+                              <button
+                                onClick={() => handlePaymentStatusUpdate(appointment.id, 'paid')}
+                                disabled={updatingPaymentId === appointment.id}
+                                className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-medium disabled:opacity-50"
+                              >
+                                {updatingPaymentId === appointment.id ? '...' : t('payment.markAsPaid')}
+                              </button>
+                              <button
+                                onClick={() => handlePaymentStatusUpdate(appointment.id, 'unpaid')}
+                                disabled={updatingPaymentId === appointment.id}
+                                className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-medium disabled:opacity-50"
+                              >
+                                {t('payment.unpaidButton')}
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
                     </div>
-                  )}
-                </div>
+                  </div>
+                </li>
               )
             })}
-          </div>
+          </ul>
         )}
 
         {/* Reject with alternatives modal */}
@@ -502,18 +505,14 @@ export default function AssistantAppointmentsPage() {
                   <div className="space-y-1 max-h-48 overflow-y-auto">
                     {availableSlots.map((iso) => {
                       const d = new Date(iso)
-                      const loc = locale || 'fr-FR'
-                      const label = d.toLocaleDateString(loc, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                      const label = d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
                       return (
-                        <label
-                          key={iso}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/50 cursor-pointer"
-                        >
+                        <label key={iso} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={selectedAlternatives.includes(iso)}
                             onChange={() => toggleAlternative(iso)}
-                            className="rounded border-gray-300 bg-white text-amber-500 focus:ring-amber-500"
+                            className="rounded border-gray-300 text-amber-500 focus:ring-amber-500"
                           />
                           <span className="text-gray-900 text-sm">{label}</span>
                         </label>
@@ -522,14 +521,14 @@ export default function AssistantAppointmentsPage() {
                   </div>
                 )}
                 {selectedAlternatives.length > 0 && (
-                  <p className="text-amber-300 text-xs mt-2">{selectedAlternatives.length} {t('appointments.selectedSlots')}</p>
+                  <p className="text-amber-700 text-xs mt-2">{selectedAlternatives.length} {t('appointments.selectedSlots')}</p>
                 )}
               </div>
               <div className="p-4 border-t border-gray-200 flex gap-3 justify-end">
                 <button
                   type="button"
                   onClick={() => { setRejectModalId(null); setError(''); setSelectedAlternatives([]); setRejectionReason('') }}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-gray-900 rounded-lg text-sm font-medium"
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-medium"
                 >
                   {t('common.cancel')}
                 </button>
