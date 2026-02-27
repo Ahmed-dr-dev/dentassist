@@ -66,27 +66,49 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check for time conflicts with confirmed appointments for this doctor
-    const { data: conflictingAppointments } = await supabase
-      .from('appointments')
-      .select('confirmed_date_time')
-      .eq('doctor_id', doctorId)
-      .eq('status', 'confirmed')
-      .gte('confirmed_date_time', new Date(requestedDate.getTime() - 30 * 60000).toISOString())
-      .lte('confirmed_date_time', new Date(requestedDate.getTime() + 30 * 60000).toISOString());
+    // Check for time conflicts: slot is taken if any appointment (pending or confirmed) uses it
+    const slotStart = new Date(requestedDate.getTime() - 30 * 60000).toISOString();
+    const slotEnd = new Date(requestedDate.getTime() + 30 * 60000).toISOString();
 
-    if (conflictingAppointments && conflictingAppointments.length > 0) {
-      // Time conflict - find available slots
-      const { data: allConfirmedAppointments } = await supabase
+    const { data: conflictingConfirmed } = await supabase
+      .from('appointments')
+      .select('id')
+      .eq('doctor_id', doctorId)
+      .in('status', ['confirmed', 'completed'])
+      .gte('confirmed_date_time', slotStart)
+      .lte('confirmed_date_time', slotEnd);
+
+    const { data: conflictingPending } = await supabase
+      .from('appointments')
+      .select('id')
+      .eq('doctor_id', doctorId)
+      .eq('status', 'pending')
+      .gte('requested_date_time', slotStart)
+      .lte('requested_date_time', slotEnd);
+
+    const hasConflict = (conflictingConfirmed?.length ?? 0) > 0 || (conflictingPending?.length ?? 0) > 0;
+
+    if (hasConflict) {
+      // Build booked slots from both pending (requested_date_time) and confirmed (confirmed_date_time)
+      const { data: allConfirmed } = await supabase
         .from('appointments')
         .select('confirmed_date_time')
         .eq('doctor_id', doctorId)
-        .eq('status', 'confirmed')
-        .gte('confirmed_date_time', new Date().toISOString())
-        .order('confirmed_date_time', { ascending: true })
-        .limit(20);
+        .in('status', ['confirmed', 'completed'])
+        .not('confirmed_date_time', 'is', null)
+        .gte('confirmed_date_time', new Date().toISOString());
 
-      const bookedSlots = (allConfirmedAppointments || []).map(apt => new Date(apt.confirmed_date_time).getTime());
+      const { data: allPending } = await supabase
+        .from('appointments')
+        .select('requested_date_time')
+        .eq('doctor_id', doctorId)
+        .eq('status', 'pending')
+        .gte('requested_date_time', new Date().toISOString());
+
+      const bookedSlots = [
+        ...(allConfirmed || []).map(apt => new Date(apt.confirmed_date_time).getTime()),
+        ...(allPending || []).map(apt => new Date(apt.requested_date_time).getTime())
+      ];
 
       // Generate available time slots (30 min intervals)
       const availableSlots = [];

@@ -80,6 +80,36 @@ export async function POST(request: Request) {
     }
 
     if (action === 'accept') {
+      const targetSlot = new Date(confirmedDateTime || appointment.requested_date_time);
+      const slotStart = new Date(targetSlot.getTime() - 30 * 60000).toISOString();
+      const slotEnd = new Date(targetSlot.getTime() + 30 * 60000).toISOString();
+
+      // Slot is taken if any other appointment (pending or confirmed) uses it
+      const { data: conflictConfirmed } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('doctor_id', doctorId)
+        .in('status', ['confirmed', 'completed'])
+        .neq('id', appointmentId)
+        .gte('confirmed_date_time', slotStart)
+        .lte('confirmed_date_time', slotEnd);
+
+      const { data: conflictPending } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('doctor_id', doctorId)
+        .eq('status', 'pending')
+        .neq('id', appointmentId)
+        .gte('requested_date_time', slotStart)
+        .lte('requested_date_time', slotEnd);
+
+      if ((conflictConfirmed?.length ?? 0) > 0 || (conflictPending?.length ?? 0) > 0) {
+        return NextResponse.json(
+          { error: 'This time slot is already booked by another patient' },
+          { status: 400 }
+        );
+      }
+
       // Check daily quota (30 patients per day)
       const targetDate = confirmedDateTime || appointment.requested_date_time;
       const dateStart = new Date(targetDate);
@@ -87,7 +117,6 @@ export async function POST(request: Request) {
       const dateEnd = new Date(targetDate);
       dateEnd.setHours(23, 59, 59, 999);
 
-      // Count confirmed appointments for this doctor on this date
       const { data: confirmedAppointments, error: countError } = await supabase
         .from('appointments')
         .select('id')

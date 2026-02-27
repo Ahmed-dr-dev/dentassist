@@ -46,15 +46,28 @@ export async function GET(request: Request) {
     endDate.setDate(today.getDate() + days);
     endDate.setHours(23, 59, 59, 999);
 
+    // Any slot is booked if it has a pending or confirmed/completed appointment (assistant may not have confirmed yet)
     const { data: confirmedAppointments } = await supabase
       .from('appointments')
       .select('confirmed_date_time')
       .eq('doctor_id', doctorId)
-      .eq('status', 'confirmed')
+      .in('status', ['confirmed', 'completed'])
+      .not('confirmed_date_time', 'is', null)
       .gte('confirmed_date_time', today.toISOString())
       .lte('confirmed_date_time', endDate.toISOString());
 
-    const bookedSlots = (confirmedAppointments || []).map(apt => new Date(apt.confirmed_date_time).getTime());
+    const { data: pendingAppointments } = await supabase
+      .from('appointments')
+      .select('requested_date_time')
+      .eq('doctor_id', doctorId)
+      .eq('status', 'pending')
+      .gte('requested_date_time', today.toISOString())
+      .lte('requested_date_time', endDate.toISOString());
+
+    const bookedSlots = [
+      ...(confirmedAppointments || []).map(apt => new Date(apt.confirmed_date_time).getTime()),
+      ...(pendingAppointments || []).map(apt => new Date(apt.requested_date_time).getTime())
+    ];
 
     // Generate available slots for next N days (30 min intervals, 9am-5pm)
     const availableSlots: string[] = [];

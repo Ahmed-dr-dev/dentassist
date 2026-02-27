@@ -74,6 +74,7 @@ export async function GET(request: Request) {
         .from('appointments')
         .select(selectFields)
         .eq('doctor_id', doctorId)
+        .neq('status', 'completed')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -113,7 +114,7 @@ export async function GET(request: Request) {
         .from('appointments')
         .select(selectFields)
         .eq('doctor_id', doctorId)
-        .in('status', ['confirmed', 'completed', 'rejected', 'cancelled'])
+        .in('status', ['confirmed', 'rejected', 'cancelled'])
         .gte('confirmed_date_time', startDate.toISOString())
         .lte('confirmed_date_time', endDate.toISOString())
         .order('confirmed_date_time', { ascending: true });

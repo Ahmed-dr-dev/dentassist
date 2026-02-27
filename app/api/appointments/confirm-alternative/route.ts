@@ -42,16 +42,27 @@ export async function POST(request: Request) {
 
     const doctorId = doctor.id;
 
-    // Check for conflicts with the alternative time
-    const { data: conflictingAppointments } = await supabase
+    // Check for conflicts: slot is taken if any appointment (pending or confirmed) uses it
+    const slotStart = new Date(new Date(alternativeDateTime).getTime() - 30 * 60000).toISOString();
+    const slotEnd = new Date(new Date(alternativeDateTime).getTime() + 30 * 60000).toISOString();
+
+    const { data: conflictConfirmed } = await supabase
       .from('appointments')
       .select('id')
       .eq('doctor_id', doctorId)
-      .eq('status', 'confirmed')
-      .gte('confirmed_date_time', new Date(new Date(alternativeDateTime).getTime() - 30 * 60000).toISOString())
-      .lte('confirmed_date_time', new Date(new Date(alternativeDateTime).getTime() + 30 * 60000).toISOString());
+      .in('status', ['confirmed', 'completed'])
+      .gte('confirmed_date_time', slotStart)
+      .lte('confirmed_date_time', slotEnd);
 
-    if (conflictingAppointments && conflictingAppointments.length > 0) {
+    const { data: conflictPending } = await supabase
+      .from('appointments')
+      .select('id')
+      .eq('doctor_id', doctorId)
+      .eq('status', 'pending')
+      .gte('requested_date_time', slotStart)
+      .lte('requested_date_time', slotEnd);
+
+    if ((conflictConfirmed?.length ?? 0) > 0 || (conflictPending?.length ?? 0) > 0) {
       return NextResponse.json(
         { error: 'Selected time slot is no longer available' },
         { status: 409 }
