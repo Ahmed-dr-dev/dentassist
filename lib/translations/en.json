@@ -58,6 +58,9 @@
       "minPassword": "Minimum 6 characters"
     }
   },
+  "doctor": {
+    "rdvReadOnly": "View only. RDV management is done by the assistant."
+  },
   "dashboard": {
     "doctor": "Doctor",
     "patient": "Patient",
@@ -100,6 +103,8 @@
     "cancelConfirm": "Are you sure you want to cancel this appointment?",
     "cancelSuccess": "Appointment cancelled successfully.",
     "noAppointments": "No appointments",
+    "all": "All",
+    "rdvCount": "appointment(s)",
     "today": "Today",
     "thisWeek": "This week",
     "thisMonth": "This month",
@@ -240,13 +245,16 @@
     "appointmentHistory": "Appointment history",
     "prescriptions": "Prescriptions",
     "noPatients": "No patients found",
+    "noPatientsOnDate": "No patients with an RDV on this date",
     "sortByName": "Sort by name",
     "sortByTotalRdv": "Sort by total RDV",
     "sortByCompleted": "Sort by completed",
     "sortByUpcoming": "Sort by upcoming",
     "patientsCount": "patient(s)",
     "rdvStatus": "RDV status",
-    "rdvTotal": "Total"
+    "rdvTotal": "Total",
+    "filterByRdvDate": "Filter by RDV date",
+    "rdvOnDate": "RDV on"
   },
   "prescriptions": {
     "title": "Prescriptions",
@@ -273,7 +281,16 @@
     "confirmedAppointments": "Confirmed appointments",
     "completedAppointments": "Completed appointments",
     "totalPatients": "Total patients",
-    "period": "Period"
+    "period": "Period",
+    "rdvIncome": "RDV income",
+    "paidRdvs": "paid RDVs"
+  },
+  "income": {
+    "title": "RDV income",
+    "today": "Today",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "thisYear": "This year"
   },
   "tariffs": {
     "title": "Tariffs",

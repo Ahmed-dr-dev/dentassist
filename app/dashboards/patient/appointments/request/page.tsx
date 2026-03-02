@@ -212,7 +212,7 @@ export default function RequestAppointmentPage() {
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.date')} *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.date')}</label>
               <input
                 type="date"
                 required
@@ -225,7 +225,7 @@ export default function RequestAppointmentPage() {
               <p className="mt-1 text-xs text-gray-500">{t('appointments.min24hNote')}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.time')} *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('appointments.time')}</label>
               <input
                 type="time"
                 required

@@ -48,21 +48,48 @@ export async function GET(request: Request) {
       doctorId = doctor.id;
     }
 
-    // Get all patients who have appointments with this doctor
-    const { data: appointments, error: appointmentsError } = await supabase
-      .from('appointments')
-      .select('patient_id')
-      .eq('doctor_id', doctorId);
+    const { searchParams } = new URL(request.url);
+    // Optional filter by RDV date (YYYY-MM-DD): only patients with an appointment on that day
+    const dateFilter = searchParams.get('date');
+    let patientIds: string[] = [];
 
-    if (appointmentsError) {
-      return NextResponse.json(
-        { error: `Failed to fetch patients: ${appointmentsError.message}` },
-        { status: 500 }
-      );
+    if (dateFilter) {
+      const dayStart = new Date(dateFilter + 'T00:00:00.000Z');
+      const dayEnd = new Date(dateFilter + 'T23:59:59.999Z');
+      const isoStart = dayStart.toISOString();
+      const isoEnd = dayEnd.toISOString();
+      const { data: byConfirmed } = await supabase
+        .from('appointments')
+        .select('patient_id')
+        .eq('doctor_id', doctorId)
+        .not('confirmed_date_time', 'is', null)
+        .gte('confirmed_date_time', isoStart)
+        .lte('confirmed_date_time', isoEnd);
+      const { data: byRequested } = await supabase
+        .from('appointments')
+        .select('patient_id')
+        .eq('doctor_id', doctorId)
+        .eq('status', 'pending')
+        .gte('requested_date_time', isoStart)
+        .lte('requested_date_time', isoEnd);
+      const ids = new Set<string>();
+      (byConfirmed || []).forEach((a: { patient_id: string }) => ids.add(a.patient_id));
+      (byRequested || []).forEach((a: { patient_id: string }) => ids.add(a.patient_id));
+      patientIds = [...ids];
+    } else {
+      const { data: appointments, error: appointmentsError } = await supabase
+        .from('appointments')
+        .select('patient_id')
+        .eq('doctor_id', doctorId);
+
+      if (appointmentsError) {
+        return NextResponse.json(
+          { error: `Failed to fetch patients: ${appointmentsError.message}` },
+          { status: 500 }
+        );
+      }
+      patientIds = [...new Set((appointments || []).map(apt => apt.patient_id))];
     }
-
-    // Get unique patient IDs
-    const patientIds = [...new Set((appointments || []).map(apt => apt.patient_id))];
 
     if (patientIds.length === 0) {
       return NextResponse.json(

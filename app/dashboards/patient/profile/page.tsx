@@ -144,7 +144,7 @@ export default function PatientProfilePage() {
 
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.fullName')} *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.fullName')}</label>
             <input
               type="text"
               required
@@ -169,7 +169,7 @@ export default function PatientProfilePage() {
             <p className="mt-1 text-xs text-gray-500">{t('profile.emailCannotEdit')}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.phone')} *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.phone')}</label>
             <input
               type="tel"
               required

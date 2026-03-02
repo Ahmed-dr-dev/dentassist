@@ -74,7 +74,6 @@ export async function GET(request: Request) {
         .from('appointments')
         .select(selectFields)
         .eq('doctor_id', doctorId)
-        .neq('status', 'completed')
         .order('created_at', { ascending: false });
 
       if (error) {

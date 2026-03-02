@@ -65,11 +65,10 @@ export default function SignupPage() {
 
   const validatePhone = (phone: string): string => {
     if (!phone) return 'Le numéro de téléphone est requis'
-    // Remove spaces and dashes for validation
-    const cleanPhone = phone.replace(/[\s-]/g, '')
-    // Check for international format (+216XXXXXXXX or +XXXXXXXXXX) or local format
-    const phoneRegex = /^(\+?\d{1,3}[\s-]?)?\d{8,15}$/
-    if (!phoneRegex.test(cleanPhone)) return 'Format de téléphone invalide (ex: +21612345678)'
+    const cleanPhone = phone.replace(/[\s-]/g, '').replace(/^\+216|^00216|^216|^0/, '')
+    if (cleanPhone.length !== 8) return 'Le numéro doit contenir exactement 8 chiffres'
+    // Tunisian: 8 digits, first digit typically 2, 4, 5, 7, 9 (mobile/landline)
+    if (!/^[2-9]\d{7}$/.test(cleanPhone)) return 'Numéro tunisien invalide (8 chiffres, ex: 21234567 ou 91234567)'
     return ''
   }
 
@@ -239,7 +238,7 @@ export default function SignupPage() {
               <input
                 id="phone"
                 type="tel"
-                placeholder="+21612345678"
+                placeholder="00 000 000 "
                 required
                 value={formData.phone}
                 onChange={(e) => { setFormData({ ...formData, phone: e.target.value }); if (fieldErrors.phone) validateField('phone', e.target.value) }}

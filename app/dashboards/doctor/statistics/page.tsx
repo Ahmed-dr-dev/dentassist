@@ -127,6 +127,12 @@ export default function DoctorStatisticsPage() {
               <p className="text-4xl font-bold">{stats.prescriptionsCount || 0}</p>
               <p className="text-teal-100 text-sm mt-2">Ordonnances assignées</p>
             </div>
+
+            <div className="bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white">
+              <h3 className="text-lg font-semibold mb-2">Revenus RDV</h3>
+              <p className="text-4xl font-bold">{stats.totalIncome ?? 0} DT</p>
+              <p className="text-emerald-100 text-sm mt-2">{stats.paidAppointmentsCount ?? 0} RDV payés × {stats.rdvUnitPrice ?? 70} DT</p>
+            </div>
           </div>
         )}
       </main>

@@ -2,38 +2,30 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useMemo } from 'react'
+import { useI18n } from '@/lib/i18n'
+
+type PeriodFilter = 'today' | 'week' | 'month' | 'all'
 
 export default function DoctorAppointmentsListPage() {
+  const { t, language } = useI18n()
+  const locale = language === 'fr' ? 'fr-FR' : language === 'ar' ? 'ar' : 'en-US'
   const [appointments, setAppointments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [period, setPeriod] = useState<'day' | 'week' | 'month'>('day')
-  const [stats, setStats] = useState({ confirmedCount: 0, remainingQuota: 30 })
-  
-  // Search and filters
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [sortBy, setSortBy] = useState<'date' | 'status' | 'patient'>('date')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
-  const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null)
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all')
 
   useEffect(() => {
     fetchAppointments()
-  }, [period])
+  }, [])
 
   const fetchAppointments = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/appointments/doctor/list?period=${period}`)
-      if (!response.ok) {
-        throw new Error('Erreur lors du chargement')
-      }
+      const response = await fetch('/api/appointments/doctor/list?period=all')
+      if (!response.ok) throw new Error('Failed to load')
       const data = await response.json()
       setAppointments(data.appointments || [])
-      setStats({
-        confirmedCount: data.confirmedCount || 0,
-        remainingQuota: data.remainingQuota || 0
-      })
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -41,203 +33,103 @@ export default function DoctorAppointmentsListPage() {
     }
   }
 
-  // Filter and search appointments
-  const filteredAppointments = useMemo(() => {
-    let filtered = [...appointments]
+  const getAppointmentDate = (apt: any) => {
+    const t = apt.confirmed_date_time || apt.requested_date_time
+    return t ? new Date(t) : null
+  }
 
-    // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(apt => apt.status === statusFilter)
-    }
+  const isToday = (d: Date) => {
+    const today = new Date()
+    return d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear()
+  }
 
-    // Search filter
+  const isInWeek = (d: Date) => {
+    const now = new Date()
+    const start = new Date(now)
+    const dayOfWeek = start.getDay()
+    const diff = start.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
+    start.setDate(diff)
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(start)
+    end.setDate(start.getDate() + 6)
+    end.setHours(23, 59, 59, 999)
+    return d >= start && d <= end
+  }
+
+  const isInMonth = (d: Date) => {
+    const now = new Date()
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  }
+
+  const filteredAndSorted = useMemo(() => {
+    let list = [...appointments]
+
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(apt => {
+      const q = searchQuery.toLowerCase()
+      list = list.filter(apt => {
         const patient = apt.patient as any
-        const name = (patient?.full_name || '').toLowerCase()
-        const email = (patient?.email || '').toLowerCase()
-        const phone = (patient?.phone || '').toLowerCase()
-        const reason = (apt.reason || '').toLowerCase()
-        
-        return name.includes(query) || 
-               email.includes(query) || 
-               phone.includes(query) ||
-               reason.includes(query)
+        return (patient?.full_name || '').toLowerCase().includes(q) ||
+          (patient?.email || '').toLowerCase().includes(q) ||
+          (patient?.phone || '').toLowerCase().includes(q) ||
+          (apt.reason || '').toLowerCase().includes(q)
       })
     }
 
-    // Sort appointments
-    filtered.sort((a, b) => {
-      let compareA: any, compareB: any
+    if (periodFilter !== 'all') {
+      list = list.filter(apt => {
+        const d = getAppointmentDate(apt)
+        if (!d) return false
+        if (periodFilter === 'today') return isToday(d)
+        if (periodFilter === 'week') return isInWeek(d)
+        if (periodFilter === 'month') return isInMonth(d)
+        return true
+      })
+    }
 
-      if (sortBy === 'date') {
-        compareA = a.confirmed_date_time || a.requested_date_time
-        compareB = b.confirmed_date_time || b.requested_date_time
-      } else if (sortBy === 'status') {
-        compareA = a.status
-        compareB = b.status
-      } else if (sortBy === 'patient') {
-        const patientA = a.patient as any
-        const patientB = b.patient as any
-        compareA = (patientA?.full_name || '').toLowerCase()
-        compareB = (patientB?.full_name || '').toLowerCase()
-      }
-
-      if (compareA < compareB) return sortOrder === 'asc' ? -1 : 1
-      if (compareA > compareB) return sortOrder === 'asc' ? 1 : -1
-      return 0
+    list.sort((a, b) => {
+      const dateA = getAppointmentDate(a)?.getTime() ?? 0
+      const dateB = getAppointmentDate(b)?.getTime() ?? 0
+      const today = new Date()
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()
+      const todayEnd = todayStart + 24 * 60 * 60 * 1000 - 1
+      const aIsToday = dateA >= todayStart && dateA <= todayEnd
+      const bIsToday = dateB >= todayStart && dateB <= todayEnd
+      if (aIsToday && !bIsToday) return -1
+      if (!aIsToday && bIsToday) return 1
+      return dateA - dateB
     })
 
-    return filtered
-  }, [appointments, searchQuery, statusFilter, sortBy, sortOrder])
+    return list
+  }, [appointments, searchQuery, periodFilter])
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'bg-green-500/20 text-green-300 border-green-500'
-      case 'pending':
-        return 'bg-yellow-500/20 text-yellow-300 border-yellow-500'
-      case 'rejected':
-        return 'bg-red-500/20 text-red-300 border-red-500'
-      case 'completed':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500'
-      case 'cancelled':
-        return 'bg-gray-500/20 text-gray-600 border-gray-500'
-      default:
-        return 'bg-gray-500/20 text-gray-600 border-gray-500'
-    }
+  const statusLabel: Record<string, string> = {
+    confirmed: 'Confirmé',
+    pending: 'En attente',
+    completed: 'Terminé',
+    rejected: 'Rejeté',
+    cancelled: 'Annulé'
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return '✓'
-      case 'pending':
-        return '⏳'
-      case 'rejected':
-        return '✗'
-      case 'completed':
-        return '✓✓'
-      case 'cancelled':
-        return '⊘'
-      default:
-        return '•'
-    }
+  const statusClass: Record<string, string> = {
+    confirmed: 'bg-green-100 text-green-800',
+    pending: 'bg-amber-100 text-amber-800',
+    completed: 'bg-blue-100 text-blue-800',
+    rejected: 'bg-red-100 text-red-800',
+    cancelled: 'bg-gray-100 text-gray-600'
   }
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'Confirmé'
-      case 'pending':
-        return 'En attente'
-      case 'rejected':
-        return 'Rejeté'
-      case 'completed':
-        return 'Terminé'
-      case 'cancelled':
-        return 'Annulé'
-      default:
-        return status
-    }
-  }
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return {
-      date: date.toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }),
-      time: date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      fullDate: date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    }
-  }
-
-  const periodText = {
-    day: "Aujourd'hui",
-    week: 'Cette semaine',
-    month: 'Ce mois'
-  }
-
-  const statusCounts = useMemo(() => {
-    return {
-      all: appointments.length,
-      confirmed: appointments.filter(a => a.status === 'confirmed').length,
-      pending: appointments.filter(a => a.status === 'pending').length,
-      completed: appointments.filter(a => a.status === 'completed').length,
-      rejected: appointments.filter(a => a.status === 'rejected').length,
-      cancelled: appointments.filter(a => a.status === 'cancelled').length
-    }
-  }, [appointments])
-
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'bg-green-500/20 text-green-300 border-green-500'
-      case 'unpaid':
-        return 'bg-red-500/20 text-red-300 border-red-500'
-      case 'pending':
-      default:
-        return 'bg-yellow-500/20 text-yellow-300 border-yellow-500'
-    }
-  }
-
-  const getPaymentStatusText = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'Payé'
-      case 'unpaid':
-        return 'Non payé'
-      case 'pending':
-      default:
-        return 'En attente'
-    }
-  }
-
-  const getPaymentStatusIcon = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return '✓'
-      case 'unpaid':
-        return '✗'
-      case 'pending':
-      default:
-        return '⏳'
-    }
-  }
-
-  const handlePaymentStatusUpdate = async (appointmentId: string, paymentStatus: string) => {
-    setUpdatingPaymentId(appointmentId)
-    setError('')
-    
-    try {
-      const response = await fetch('/api/appointments/payment-status', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          appointmentId,
-          paymentStatus
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de la mise à jour')
-      }
-
-      // Refresh appointments
-      fetchAppointments()
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setUpdatingPaymentId(null)
-    }
+  const formatRow = (apt: any) => {
+    const d = getAppointmentDate(apt)
+    const dateStr = d ? d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : '—'
+    const timeStr = d ? d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) : '—'
+    const patient = apt.patient as any
+    return { name: patient?.full_name || 'Patient', dateStr, timeStr, status: apt.status }
   }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600 text-lg">Chargement...</div>
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
@@ -246,310 +138,85 @@ export default function DoctorAppointmentsListPage() {
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
               <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
-                DentAssist
+                {t('common.appName')} - {t('dashboard.doctor')}
               </Link>
-              <span className="text-gray-600">/ Liste des RDV</span>
+              <span className="text-gray-500">/ {t('appointments.list')}</span>
             </div>
-            <Link
-              href="/dashboards/doctor"
-              className="flex items-center text-gray-600 hover:text-gray-900 transition"
-            >
-              ← Retour
+            <Link href="/dashboards/doctor" className="text-gray-600 hover:text-gray-900">
+              {t('common.back')}
             </Link>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Liste des rendez-vous</h1>
-          
-          {/* Period Selector */}
-          <div className="flex gap-2 mb-6">
-            {(['day', 'week', 'month'] as const).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`px-5 py-2.5 rounded-lg transition font-medium ${
-                  period === p
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                    : 'bg-white text-gray-600 hover:bg-gray-600'
-                }`}
-              >
-                {periodText[p]}
-              </button>
-            ))}
-          </div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('appointments.list')}</h1>
+        <p className="text-gray-600 text-sm mb-6">{t('doctor.rdvReadOnly')}</p>
 
-          {/* Stats Card */}
-          {period === 'day' && (
-            <div className="mb-6 p-5 bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/50 rounded-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-200 text-sm mb-1">Quota quotidien</p>
-                  <p className="text-gray-900 text-2xl font-bold">
-                    {stats.confirmedCount} / 30 confirmés
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-green-300 text-3xl font-bold">{stats.remainingQuota}</p>
-                  <p className="text-green-200 text-sm">places restantes</p>
-                </div>
-              </div>
-              <div className="mt-4 w-full bg-white rounded-full h-2.5">
-                <div
-                  className="bg-blue-600 h-2.5 rounded-full transition-all"
-                  style={{ width: `${(stats.confirmedCount / 30) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Search and Filters */}
-        <div className="mb-6 space-y-4">
-          {/* Search Bar */}
-          <div className="relative">
+        <div className="mb-6 flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
             <input
               type="text"
-              placeholder="Rechercher par nom, email, téléphone ou raison..."
+              placeholder={t('common.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-11 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500"
             />
-            <svg
-              className="absolute left-3 top-3.5 w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
           </div>
-
-          {/* Filters and Sort */}
-          <div className="flex flex-wrap gap-4 items-center">
-            {/* Status Filter */}
-            <div className="flex items-center gap-2">
-              <label className="text-gray-600 text-sm font-medium">Statut:</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          <div className="flex flex-wrap gap-2">
+            {([
+              { value: 'today' as const, label: t('income.today') },
+              { value: 'week' as const, label: t('income.thisWeek') },
+              { value: 'month' as const, label: t('income.thisMonth') },
+              { value: 'all' as const, label: t('appointments.all') }
+            ]).map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setPeriodFilter(value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${periodFilter === value ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
               >
-                <option value="all">Tous ({statusCounts.all})</option>
-                <option value="confirmed">Confirmés ({statusCounts.confirmed})</option>
-                <option value="pending">En attente ({statusCounts.pending})</option>
-                <option value="completed">Terminés ({statusCounts.completed})</option>
-                <option value="rejected">Rejetés ({statusCounts.rejected})</option>
-                <option value="cancelled">Annulés ({statusCounts.cancelled})</option>
-              </select>
-            </div>
-
-            {/* Sort By */}
-            <div className="flex items-center gap-2">
-              <label className="text-gray-600 text-sm font-medium">Trier par:</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'patient')}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              >
-                <option value="date">Date</option>
-                <option value="status">Statut</option>
-                <option value="patient">Patient</option>
-              </select>
-            </div>
-
-            {/* Sort Order */}
-            <button
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-100 transition"
-              title={sortOrder === 'asc' ? 'Croissant' : 'Décroissant'}
-            >
-              {sortOrder === 'asc' ? '↑' : '↓'}
-            </button>
-
-            {/* Results Count */}
-            <div className="ml-auto text-gray-600 text-sm">
-              {filteredAppointments.length} rendez-vous trouvé(s)
-            </div>
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>
         )}
 
-        {/* Appointments List */}
-        {filteredAppointments.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-            <svg className="mx-auto w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <p className="text-gray-600 text-lg">
-              {searchQuery || statusFilter !== 'all' 
-                ? 'Aucun rendez-vous ne correspond aux critères de recherche'
-                : `Aucun rendez-vous pour ${periodText[period].toLowerCase()}`}
-            </p>
+        <p className="text-sm text-gray-500 mb-4">{filteredAndSorted.length} {t('appointments.rdvCount')}</p>
+
+        {filteredAndSorted.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-600">
+            {searchQuery || periodFilter !== 'all' ? t('common.noMatch') : t('appointments.noAppointments')}
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredAppointments.map((appointment) => {
-              const patient = appointment.patient as any
-              const confirmedDateTime = appointment.confirmed_date_time
-                ? formatDateTime(appointment.confirmed_date_time)
-                : null
-              const requestedDateTime = appointment.requested_date_time
-                ? formatDateTime(appointment.requested_date_time)
-                : null
-
-              return (
-                <div
-                  key={appointment.id}
-                  className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 border border-gray-200 hover:border-gray-300 transition-all hover:shadow-lg hover:shadow-blue-500/10"
-                >
-                  {/* Header */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1 truncate">
-                        {patient?.full_name || 'Patient'}
-                      </h3>
-                      <div className="space-y-1">
-                        <p className="text-gray-600 text-sm truncate">{patient?.email}</p>
-                        {patient?.phone && (
-                          <p className="text-gray-600 text-sm">📞 {patient.phone}</p>
-                        )}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <ul className="divide-y divide-gray-200">
+              {filteredAndSorted.map((apt) => {
+                const row = formatRow(apt)
+                return (
+                  <li key={apt.id} className="px-4 py-3 sm:px-6 hover:bg-gray-50 transition">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 truncate">{row.name}</p>
+                        <p className="text-sm text-gray-600">{row.dateStr} · {row.timeStr}</p>
                       </div>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusClass[row.status] || 'bg-gray-100 text-gray-600'}`}>
+                        {statusLabel[row.status] || row.status}
+                      </span>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1 whitespace-nowrap ${getStatusColor(appointment.status)}`}>
-                      <span>{getStatusIcon(appointment.status)}</span>
-                      <span>{getStatusText(appointment.status)}</span>
-                    </span>
-                  </div>
-
-                  {/* DateTime */}
-                  <div className="mb-4 p-3 bg-white/50 rounded-lg">
-                    {confirmedDateTime ? (
-                      <>
-                        <p className="text-gray-600 text-xs mb-1">Date et heure confirmées:</p>
-                        <p className="text-gray-900 font-medium text-sm">{confirmedDateTime.date}</p>
-                        <p className="text-blue-400 font-semibold">{confirmedDateTime.time}</p>
-                      </>
-                    ) : requestedDateTime ? (
-                      <>
-                        <p className="text-gray-600 text-xs mb-1">Date et heure demandées:</p>
-                        <p className="text-gray-900 font-medium text-sm">{requestedDateTime.date}</p>
-                        <p className="text-yellow-400 font-semibold">{requestedDateTime.time}</p>
-                      </>
-                    ) : null}
-                  </div>
-
-                  {/* Reason */}
-                  {appointment.reason && (
-                    <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                      <p className="text-blue-300 text-xs font-semibold mb-1">Raison:</p>
-                      <p className="text-gray-600 text-sm line-clamp-2">{appointment.reason}</p>
-                    </div>
-                  )}
-
-                  {/* Medical History */}
-                  {appointment.medical_history && (
-                    <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <p className="text-red-300 text-xs font-semibold mb-1">⚠️ Antécédents:</p>
-                      <p className="text-gray-600 text-xs line-clamp-1">{appointment.medical_history}</p>
-                    </div>
-                  )}
-
-                  {/* Medications */}
-                  {appointment.current_medications && (
-                    <div className="mb-3 p-2 bg-orange-500/10 border border-orange-500/30 rounded-lg">
-                      <p className="text-orange-300 text-xs font-semibold mb-1">💊 Médicaments:</p>
-                      <p className="text-gray-600 text-xs line-clamp-1">{appointment.current_medications}</p>
-                    </div>
-                  )}
-
-                  {/* Rejection Reason */}
-                  {appointment.rejection_reason && (
-                    <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <p className="text-red-300 text-xs font-semibold mb-1">Rejet:</p>
-                      <p className="text-gray-600 text-xs line-clamp-2">{appointment.rejection_reason}</p>
-                    </div>
-                  )}
-
-                  {/* Payment Approval - Show file if uploaded */}
-                  {appointment.payment_approval_path && (
-                    <div className="mt-4 mb-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-green-300 text-xs font-semibold flex items-center gap-2">
-                          <span>💳</span>
-                          <span>Preuve de paiement téléchargée</span>
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-gray-600 text-xs truncate">{appointment.payment_approval_file_name || 'Fichier'}</p>
-                        <a
-                          href={appointment.payment_approval_path}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition text-xs font-medium whitespace-nowrap"
-                        >
-                          📄 Voir le fichier
-                        </a>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Payment Status */}
-                  {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
-                    <div className="mt-4 mb-3 pt-3 border-t border-gray-700">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-gray-600 text-xs font-medium">Statut du paiement:</p>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getPaymentStatusColor(appointment.payment_status || 'pending')}`}>
-                          <span>{getPaymentStatusIcon(appointment.payment_status || 'pending')}</span>
-                          <span>{getPaymentStatusText(appointment.payment_status || 'pending')}</span>
-                        </span>
-                      </div>
-                      {(appointment.payment_status || 'pending') === 'pending' && (
-                        <>
-                          {appointment.payment_approval_path && (
-                            <p className="mb-2 text-xs text-gray-600">💡 Consultez la preuve de paiement ci-dessus avant de marquer comme payé</p>
-                          )}
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handlePaymentStatusUpdate(appointment.id, 'paid')}
-                              disabled={updatingPaymentId === appointment.id}
-                              className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {updatingPaymentId === appointment.id ? '...' : 'Marquer payé'}
-                            </button>
-                            <button
-                              onClick={() => handlePaymentStatusUpdate(appointment.id, 'unpaid')}
-                              disabled={updatingPaymentId === appointment.id}
-                              className="flex-1 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg transition text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {updatingPaymentId === appointment.id ? '...' : 'Non payé'}
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Created At */}
-                  <div className="mt-2 pt-3 border-t border-gray-700">
-                    <p className="text-gray-500 text-xs">
-                      Créé le {new Date(appointment.created_at).toLocaleDateString('fr-FR')}
-                    </p>
-                  </div>
-                </div>
-              )
-            })}
+                    {apt.reason && (
+                      <p className="mt-1 text-sm text-gray-500 line-clamp-1">{apt.reason}</p>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
           </div>
         )}
       </main>

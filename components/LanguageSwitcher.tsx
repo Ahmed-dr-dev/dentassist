@@ -12,9 +12,9 @@ export default function LanguageSwitcher() {
         onChange={(e) => setLanguage(e.target.value as 'fr' | 'en' | 'ar')}
         className="px-3 py-1.5 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm cursor-pointer shadow-sm"
       >
-        <option value="fr">🇫🇷 FR</option>
-        <option value="en">🇬🇧 EN</option>
-        <option value="ar">🇹🇳 AR</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="ar">🇹🇳 العربية</option>
       </select>
     </div>
   )

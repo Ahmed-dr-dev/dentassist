@@ -58,6 +58,9 @@
       "minPassword": "الحد الأدنى 6 أحرف"
     }
   },
+  "doctor": {
+    "rdvReadOnly": "عرض فقط. إدارة المواعيد يقوم بها المساعد."
+  },
   "dashboard": {
     "doctor": "طبيب",
     "patient": "مريض",
@@ -100,6 +103,8 @@
     "cancelConfirm": "هل أنت متأكد من إلغاء هذا الموعد؟",
     "cancelSuccess": "تم إلغاء الموعد بنجاح.",
     "noAppointments": "لا توجد مواعيد",
+    "all": "الكل",
+    "rdvCount": "موعد/مواعيد",
     "today": "اليوم",
     "thisWeek": "هذا الأسبوع",
     "thisMonth": "هذا الشهر",
@@ -240,13 +245,16 @@
     "appointmentHistory": "سجل المواعيد",
     "prescriptions": "الوصفات الطبية",
     "noPatients": "لم يتم العثور على مرضى",
+    "noPatientsOnDate": "لا يوجد مرضى لديهم موعد في هذا التاريخ",
     "sortByName": "ترتيب حسب الاسم",
     "sortByTotalRdv": "ترتيب حسب إجمالي المواعيد",
     "sortByCompleted": "ترتيب حسب المكتملة",
     "sortByUpcoming": "ترتيب حسب القادمة",
     "patientsCount": "مريض/مرضى",
     "rdvStatus": "حالة المواعيد",
-    "rdvTotal": "الإجمالي"
+    "rdvTotal": "الإجمالي",
+    "filterByRdvDate": "تصفية حسب تاريخ الموعد",
+    "rdvOnDate": "موعد في"
   },
   "prescriptions": {
     "title": "الوصفات الطبية",
@@ -273,7 +281,16 @@
     "confirmedAppointments": "مواعيد مؤكدة",
     "completedAppointments": "مواعيد مكتملة",
     "totalPatients": "إجمالي المرضى",
-    "period": "الفترة"
+    "period": "الفترة",
+    "rdvIncome": "إيرادات المواعيد",
+    "paidRdvs": "مواعيد مدفوعة"
+  },
+  "income": {
+    "title": "إيرادات المواعيد",
+    "today": "اليوم",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "thisYear": "هذه السنة"
   },
   "tariffs": {
     "title": "التعريفة",

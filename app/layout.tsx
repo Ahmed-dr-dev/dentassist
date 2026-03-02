@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import DateTimeBar from "@/components/DateTimeBar";
 import PatientChatbot from "@/components/PatientChatbot";
+import ThemeSwitcherFixed from "@/components/ThemeSwitcherFixed";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" dir="ltr">
+    <html lang="fr" dir="ltr" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -34,6 +35,7 @@ export default function RootLayout({
           <DateTimeBar />
           {children}
           <PatientChatbot />
+          <ThemeSwitcherFixed />
         </Providers>
       </body>
     </html>

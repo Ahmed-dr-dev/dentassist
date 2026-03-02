@@ -126,7 +126,7 @@ export default function AssistantProfilePage() {
         )}
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.fullName')} *</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.fullName')}</label>
             <input
               type="text"
               required
@@ -150,7 +150,7 @@ export default function AssistantProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.phone')} *</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('auth.phone')}</label>
             <input
               type="tel"
               required

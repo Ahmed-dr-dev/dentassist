@@ -14,10 +14,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate phone (optional but recommended for patients)
-    if (!phone) {
+    // Validate phone: Tunisian 8-digit pattern
+    if (!phone || typeof phone !== 'string') {
       return NextResponse.json(
         { error: 'Phone number is required' },
+        { status: 400 }
+      );
+    }
+    const cleanPhone = phone.replace(/[\s-]/g, '').replace(/^\+216|^00216|^216|^0/, '');
+    if (cleanPhone.length !== 8 || !/^[2-9]\d{7}$/.test(cleanPhone)) {
+      return NextResponse.json(
+        { error: 'Invalid Tunisian phone number. Must be 8 digits (e.g. 21234567, 91234567).' },
         { status: 400 }
       );
     }

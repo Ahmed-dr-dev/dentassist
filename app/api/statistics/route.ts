@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || 'month'; // day, week, month
+    const period = searchParams.get('period') || 'month'; // day, week, month, year
 
     const supabase = await createClient();
 
@@ -57,6 +57,11 @@ export async function GET(request: Request) {
       endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 6);
       endDate.setHours(23, 59, 59, 999);
+    } else if (period === 'year') {
+      startDate = new Date(now.getFullYear(), 0, 1);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(now.getFullYear(), 11, 31);
+      endDate.setHours(23, 59, 59, 999);
     } else {
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       startDate.setHours(0, 0, 0, 0);
@@ -64,10 +69,10 @@ export async function GET(request: Request) {
       endDate.setHours(23, 59, 59, 999);
     }
 
-    // Get appointment statistics
+    // Get appointment statistics (include payment_status for income)
     const { data: appointments, error: appointmentsError } = await supabase
       .from('appointments')
-      .select('id, status, confirmed_date_time')
+      .select('id, status, confirmed_date_time, payment_status')
       .eq('doctor_id', doctorId)
       .gte('confirmed_date_time', startDate.toISOString())
       .lte('confirmed_date_time', endDate.toISOString());
@@ -83,6 +88,18 @@ export async function GET(request: Request) {
     const confirmedCount = appointments?.filter(apt => apt.status === 'confirmed').length || 0;
     const completedCount = appointments?.filter(apt => apt.status === 'completed').length || 0;
     const cancelledCount = appointments?.filter(apt => apt.status === 'cancelled').length || 0;
+    const paidCount = appointments?.filter(apt => apt.payment_status === 'paid').length || 0;
+
+    // Income: paid RDVs × unit price from tariffs (basic_rdv)
+    let totalIncome = 0;
+    let rdvUnitPrice = 0;
+    const { data: tariff } = await supabase
+      .from('tariffs')
+      .select('price')
+      .eq('key', 'basic_rdv')
+      .single();
+    rdvUnitPrice = (tariff?.price as number) ?? 70;
+    totalIncome = paidCount * rdvUnitPrice;
 
     // Get unique patients count
     const { data: uniquePatients, error: patientsError } = await supabase
@@ -116,7 +133,10 @@ export async function GET(request: Request) {
           completedAppointments: completedCount,
           cancelledAppointments: cancelledCount,
           totalPatients,
-          prescriptionsCount
+          prescriptionsCount,
+          paidAppointmentsCount: paidCount,
+          rdvUnitPrice,
+          totalIncome
         }
       },
       { status: 200 }

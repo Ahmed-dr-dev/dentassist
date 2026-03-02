@@ -152,7 +152,7 @@ export default function DoctorPrescriptionsPage() {
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rendez-vous *
+              Rendez-vous
             </label>
             <select
               required
@@ -178,7 +178,7 @@ export default function DoctorPrescriptionsPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Fichier PDF *
+              Fichier PDF
             </label>
             <input
               type="file"

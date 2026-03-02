@@ -179,7 +179,7 @@ export default function DoctorProfilePage() {
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nom complet *
+              Nom complet
             </label>
             <input
               type="text"
@@ -218,7 +218,7 @@ export default function DoctorProfilePage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Téléphone *
+              Téléphone
             </label>
             <input
               type="tel"
@@ -245,7 +245,7 @@ export default function DoctorProfilePage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Spécialité *
+              Spécialité
             </label>
             <input
               type="text"

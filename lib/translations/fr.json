@@ -58,6 +58,9 @@
       "minPassword": "Minimum 6 caractères"
     }
   },
+  "doctor": {
+    "rdvReadOnly": "Consultation seule. La gestion des RDV est assurée par l'assistant(e)."
+  },
   "dashboard": {
     "doctor": "Docteur",
     "patient": "Patient",
@@ -100,6 +103,8 @@
     "cancelConfirm": "Êtes-vous sûr de vouloir annuler ce rendez-vous ?",
     "cancelSuccess": "Rendez-vous annulé avec succès.",
     "noAppointments": "Aucun rendez-vous",
+    "all": "Tous",
+    "rdvCount": "rendez-vous",
     "today": "Aujourd'hui",
     "thisWeek": "Cette semaine",
     "thisMonth": "Ce mois",
@@ -240,13 +245,16 @@
     "appointmentHistory": "Historique des rendez-vous",
     "prescriptions": "Ordonnances",
     "noPatients": "Aucun patient trouvé",
+    "noPatientsOnDate": "Aucun patient avec un RDV à cette date",
     "sortByName": "Trier par nom",
     "sortByTotalRdv": "Trier par total RDV",
     "sortByCompleted": "Trier par terminés",
     "sortByUpcoming": "Trier par à venir",
     "patientsCount": "patient(s)",
     "rdvStatus": "Statut RDV",
-    "rdvTotal": "Total"
+    "rdvTotal": "Total",
+    "filterByRdvDate": "Filtrer par date de RDV",
+    "rdvOnDate": "RDV le"
   },
   "prescriptions": {
     "title": "Ordonnances",
@@ -273,7 +281,16 @@
     "confirmedAppointments": "Rendez-vous confirmés",
     "completedAppointments": "Rendez-vous terminés",
     "totalPatients": "Total des patients",
-    "period": "Période"
+    "period": "Période",
+    "rdvIncome": "Revenus RDV",
+    "paidRdvs": "RDV payés"
+  },
+  "income": {
+    "title": "Revenus RDV",
+    "today": "Aujourd'hui",
+    "thisWeek": "Cette semaine",
+    "thisMonth": "Ce mois",
+    "thisYear": "Cette année"
   },
   "tariffs": {
     "title": "Tarifs",

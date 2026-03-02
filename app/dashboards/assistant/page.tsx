@@ -81,16 +81,23 @@ export default function AssistantDashboardPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           <Link
+            href="/dashboards/assistant/income"
+            className="flex items-center gap-4 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-emerald-600/50 transition cursor-pointer"
+          >
+            <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </span>
+            <h3 className="text-xl font-bold">{t('income.title')}</h3>
+          </Link>
+
+          <Link
             href="/dashboards/assistant/appointments"
             className="flex items-center gap-4 bg-gradient-to-br from-amber-600 to-amber-500 rounded-xl p-6 text-white hover:shadow-lg hover:shadow-amber-600/50 transition cursor-pointer"
           >
             <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </span>
-            <div>
-              <h3 className="text-xl font-bold mb-1">{t('appointments.list')}</h3>
-              <p className="text-amber-100 text-sm">{t('dashboard.assistantViewAppointments')}</p>
-            </div>
+            <h3 className="text-xl font-bold">{t('appointments.list')}</h3>
           </Link>
 
           <Link
@@ -100,10 +107,7 @@ export default function AssistantDashboardPage() {
             <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
             </span>
-            <div>
-              <h3 className="text-xl font-bold mb-1">{t('patients.title')}</h3>
-              <p className="text-cyan-100 text-sm">{t('dashboard.assistantViewPatients')}</p>
-            </div>
+            <h3 className="text-xl font-bold">{t('patients.title')}</h3>
           </Link>
 
           <Link
@@ -113,10 +117,7 @@ export default function AssistantDashboardPage() {
             <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </span>
-            <div>
-              <h3 className="text-xl font-bold mb-1">{t('tariffs.title')}</h3>
-              <p className="text-emerald-100 text-sm">{t('dashboard.assistantManageTariffs')}</p>
-            </div>
+            <h3 className="text-xl font-bold">{t('tariffs.title')}</h3>
           </Link>
         </div>
 
@@ -125,9 +126,11 @@ export default function AssistantDashboardPage() {
             href="/dashboards/assistant/profile"
             className="flex items-center justify-between text-gray-900 hover:text-blue-600 transition"
           >
-            <div>
-              <h3 className="text-lg font-semibold mb-1">{t('profile.title')}</h3>
-              <p className="text-gray-500 text-sm">{t('dashboard.managePersonalInfo')}</p>
+            <div className="flex items-center gap-4">
+              <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              </span>
+              <h3 className="text-lg font-semibold">{t('profile.title')}</h3>
             </div>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
