@@ -170,6 +170,12 @@ export default function SignupPage() {
     <div className="min-h-screen flex bg-gray-50">
       <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12">
         <div className="max-w-md w-full">
+          <div className="flex items-center justify-between mb-6">
+            <Link href="/" className="text-gray-600 hover:text-gray-900 text-sm font-medium flex items-center gap-1">
+              ← {t('common.home')}
+            </Link>
+            <LanguageSwitcher />
+          </div>
           <Link href="/" className="flex items-center gap-2 mb-8">
             <div className="relative w-12 h-12">
               <Image src="/logo1.png" alt="DentAssist Logo" width={48} height={48} className="object-contain" />

@@ -2,11 +2,23 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Home() {
   const { t } = useI18n()
+  const [user, setUser] = useState<{ role: string } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/auth/user')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => data?.user ? setUser(data.user) : setUser(null))
+      .catch(() => setUser(null))
+  }, [])
+
+  const dashboardHref = user?.role === 'doctor' ? '/dashboards/doctor' : user?.role === 'assistant' ? '/dashboards/assistant' : user?.role === 'patient' ? '/dashboards/patient' : null
+
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
       {/* Subtle background */}
@@ -34,10 +46,18 @@ export default function Home() {
           <div className="flex items-center gap-6">
             <a href="#home" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('common.home')}</a>
             <a href="#contact" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('home.cabinetTitle')}</a>
-            <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('auth.login')}</Link>
-            <Link href="/signup" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
-              {t('auth.signUp')}
-            </Link>
+            {dashboardHref ? (
+              <Link href={dashboardHref} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+                {t('dashboard.title')}
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">{t('auth.login')}</Link>
+                <Link href="/signup" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+                  {t('auth.signUp')}
+                </Link>
+              </>
+            )}
             <LanguageSwitcher />
           </div>
         </nav>

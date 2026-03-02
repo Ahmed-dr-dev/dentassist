@@ -55,6 +55,7 @@ export default function PatientDashboardPage() {
               </Link>
             </div>
             <div className="flex items-center gap-4">
+              <Link href="/" className="text-gray-600 hover:text-gray-900">{t('common.home')}</Link>
               <LanguageSwitcher />
               <span className="text-gray-600">{user?.fullName}</span>
               <Link
