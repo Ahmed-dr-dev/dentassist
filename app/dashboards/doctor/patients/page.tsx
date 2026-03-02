@@ -89,14 +89,7 @@ export default function DoctorPatientsPage() {
                     <span className="text-gray-500">Total:</span>
                     <span className="text-gray-900 ml-2">{patient.totalAppointments || 0}</span>
                   </div>
-                  <div>
-                    <span className="text-gray-500">Terminés:</span>
-                    <span className="text-green-400 ml-2">{patient.completedAppointments || 0}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">À venir:</span>
-                    <span className="text-blue-400 ml-2">{patient.upcomingAppointments || 0}</span>
-                  </div>
+                
                 </div>
               </Link>
             ))}
