@@ -113,6 +113,16 @@ export async function GET(request: Request) {
       );
     }
 
+    // Control dates count per patient (dates de contrôle fixées par le docteur)
+    const { data: controlCounts } = await supabase
+      .from('control_dates')
+      .select('patient_id')
+      .eq('doctor_id', doctorId);
+    const controlByPatient: Record<string, number> = {};
+    (controlCounts || []).forEach((row: { patient_id: string }) => {
+      controlByPatient[row.patient_id] = (controlByPatient[row.patient_id] || 0) + 1;
+    });
+
     // Get appointment counts for each patient
     const patientsWithCounts = await Promise.all(
       (patients || []).map(async (patient) => {
@@ -127,7 +137,8 @@ export async function GET(request: Request) {
           ...patient,
           totalAppointments: patientAppointments?.length || 0,
           completedAppointments: patientAppointments?.filter(apt => apt.status === 'completed').length || 0,
-          upcomingAppointments: patientAppointments?.filter(apt => apt.status === 'confirmed').length || 0
+          upcomingAppointments: patientAppointments?.filter(apt => apt.status === 'confirmed').length || 0,
+          controlDatesCount: controlByPatient[patient.id] || 0
         };
       })
     );

@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useI18n } from '@/lib/i18n'
 
 type PeriodFilter = 'today' | 'week' | 'month' | 'all'
+type TypeFilter = 'all' | 'rdv' | 'control'
 
 export default function DoctorAppointmentsListPage() {
   const { t, language } = useI18n()
@@ -14,6 +15,7 @@ export default function DoctorAppointmentsListPage() {
   const [error, setError] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
 
   useEffect(() => {
     fetchAppointments()
@@ -25,7 +27,25 @@ export default function DoctorAppointmentsListPage() {
       const response = await fetch('/api/appointments/doctor/list?period=all')
       if (!response.ok) throw new Error('Failed to load')
       const data = await response.json()
-      setAppointments(data.appointments || [])
+
+      const rdvs = (data.appointments || []).map((apt: any) => ({
+        ...apt,
+        kind: 'rdv' as const,
+      }))
+
+      const controlRes = await fetch('/api/control-dates/doctor/list')
+      if (!controlRes.ok) throw new Error('Failed to load')
+      const controlData = await controlRes.json()
+      const controls = (controlData.controlDates || []).map((c: any) => ({
+        id: c.id,
+        kind: 'control' as const,
+        status: 'control',
+        control_date_time: c.control_date_time,
+        reason: c.notes,
+        patient: c.patient,
+      }))
+
+      setAppointments([...rdvs, ...controls])
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -34,7 +54,7 @@ export default function DoctorAppointmentsListPage() {
   }
 
   const getAppointmentDate = (apt: any) => {
-    const t = apt.confirmed_date_time || apt.requested_date_time
+    const t = apt.confirmed_date_time || apt.requested_date_time || apt.control_date_time
     return t ? new Date(t) : null
   }
 
@@ -86,6 +106,15 @@ export default function DoctorAppointmentsListPage() {
       })
     }
 
+    if (typeFilter !== 'all') {
+      list = list.filter(apt => {
+        const kind = apt.kind || 'rdv'
+        if (typeFilter === 'rdv') return kind === 'rdv'
+        if (typeFilter === 'control') return kind === 'control'
+        return true
+      })
+    }
+
     list.sort((a, b) => {
       const dateA = getAppointmentDate(a)?.getTime() ?? 0
       const dateB = getAppointmentDate(b)?.getTime() ?? 0
@@ -100,14 +129,15 @@ export default function DoctorAppointmentsListPage() {
     })
 
     return list
-  }, [appointments, searchQuery, periodFilter])
+  }, [appointments, searchQuery, periodFilter, typeFilter])
 
   const statusLabel: Record<string, string> = {
     confirmed: 'Confirmé',
     pending: 'En attente',
     completed: 'Terminé',
     rejected: 'Rejeté',
-    cancelled: 'Annulé'
+    cancelled: 'Annulé',
+    control: 'Contrôle',
   }
 
   const statusClass: Record<string, string> = {
@@ -115,7 +145,8 @@ export default function DoctorAppointmentsListPage() {
     pending: 'bg-amber-100 text-amber-800',
     completed: 'bg-blue-100 text-blue-800',
     rejected: 'bg-red-100 text-red-800',
-    cancelled: 'bg-gray-100 text-gray-600'
+    cancelled: 'bg-gray-100 text-gray-600',
+    control: 'bg-purple-100 text-purple-800',
   }
 
   const formatRow = (apt: any) => {
@@ -123,7 +154,14 @@ export default function DoctorAppointmentsListPage() {
     const dateStr = d ? d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : '—'
     const timeStr = d ? d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) : '—'
     const patient = apt.patient as any
-    return { name: patient?.full_name || 'Patient', dateStr, timeStr, status: apt.status }
+    const kind = apt.kind === 'control' ? 'control' : 'rdv'
+    return {
+      name: patient?.full_name || 'Patient',
+      dateStr,
+      timeStr,
+      status: apt.status,
+      kind,
+    }
   }
 
   if (loading) {
@@ -182,13 +220,26 @@ export default function DoctorAppointmentsListPage() {
               </button>
             ))}
           </div>
+          <div>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white"
+            >
+              <option value="all">{t('appointments.filterTypeAll')}</option>
+              <option value="rdv">{t('appointments.filterTypeRdv')}</option>
+              <option value="control">{t('appointments.filterTypeControl')}</option>
+            </select>
+          </div>
         </div>
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>
         )}
 
-        <p className="text-sm text-gray-500 mb-4">{filteredAndSorted.length} {t('appointments.rdvCount')}</p>
+        <p className="text-sm text-black font-bold mb-4">
+          {filteredAndSorted.filter(a => a.kind === 'rdv').length} {t('appointments.rdvShort')}, {filteredAndSorted.filter(a => a.kind === 'control').length} {t('appointments.controlShort')}
+        </p>
 
         {filteredAndSorted.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-600">
@@ -206,9 +257,14 @@ export default function DoctorAppointmentsListPage() {
                         <p className="font-medium text-gray-900 truncate">{row.name}</p>
                         <p className="text-sm text-gray-600">{row.dateStr} · {row.timeStr}</p>
                       </div>
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusClass[row.status] || 'bg-gray-100 text-gray-600'}`}>
-                        {statusLabel[row.status] || row.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          {row.kind === 'control' ? t('appointments.controlShort') : t('appointments.rdvShort')}
+                        </span>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusClass[row.status] || 'bg-gray-100 text-gray-600'}`}>
+                          {statusLabel[row.status] || row.status}
+                        </span>
+                      </div>
                     </div>
                     {apt.reason && (
                       <p className="mt-1 text-sm text-gray-500 line-clamp-1">{apt.reason}</p>

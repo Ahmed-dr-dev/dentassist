@@ -83,7 +83,7 @@
   "appointments": {
     "title": "Appointments",
     "request": "Request Appointment",
-    "list": "Appointments List",
+    "list": "Appointments and control dates",
     "manage": "Manage Appointments",
     "myAppointments": "My Appointments",
     "date": "Date",
@@ -133,6 +133,11 @@
     "quotaInfo": "Daily quota",
     "remaining": "remaining",
     "confirmedCount": "confirmed",
+    "filterTypeAll": "All types",
+    "filterTypeRdv": "Only RDV",
+    "filterTypeControl": "Only control appointments",
+    "rdvShort": "RDV",
+    "controlShort": "Control",
     "period": {
       "day": "Day",
       "week": "Week",
@@ -253,6 +258,7 @@
     "patientsCount": "patient(s)",
     "rdvStatus": "RDV status",
     "rdvTotal": "Total",
+    "rdvControl": "Control RDV",
     "filterByRdvDate": "Filter by RDV date",
     "rdvOnDate": "RDV on"
   },
@@ -272,6 +278,25 @@
     "viewPDF": "View PDF",
     "myPrescriptions": "My Prescriptions",
     "loadError": "Error loading prescriptions"
+  },
+  "certificat": {
+    "title": "Medical certificate",
+    "subtitle": "Fill in the form and download the PDF. The file is saved locally.",
+    "patientName": "Patient name",
+    "selectPatient": "Select a patient",
+    "otherPatient": "Other (enter name manually)",
+    "patientNamePlaceholder": "Full name",
+    "patientDob": "Date of birth (optional)",
+    "certificateDate": "Certificate date",
+    "reason": "Reason / Purpose",
+    "reasonPlaceholder": "e.g. work leave, fitness for sport, return to work...",
+    "duration": "Duration / Period (optional)",
+    "durationPlaceholder": "e.g. from ... to ... or number of days",
+    "observations": "Observations (optional)",
+    "observationsPlaceholder": "Additional notes",
+    "generateAndDownload": "Generate and download PDF",
+    "saved": "Certificate saved. PDF opened in new tab.",
+    "fieldsRequired": "Patient name, certificate date and reason are required."
   },
   "statistics": {
     "title": "Statistics",

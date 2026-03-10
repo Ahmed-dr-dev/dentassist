@@ -83,7 +83,7 @@
   "appointments": {
     "title": "المواعيد",
     "request": "طلب موعد",
-    "list": "قائمة المواعيد",
+    "list": "قائمة المواعيد ومواعيد المتابعة",
     "manage": "إدارة المواعيد",
     "myAppointments": "مواعيدي",
     "date": "التاريخ",
@@ -133,6 +133,11 @@
     "quotaInfo": "الحصة اليومية",
     "remaining": "متبقية",
     "confirmedCount": "مؤكدة",
+    "filterTypeAll": "كل الأنواع",
+    "filterTypeRdv": "المواعيد العادية فقط",
+    "filterTypeControl": "مواعيد المتابعة فقط",
+    "rdvShort": "موعد",
+    "controlShort": "متابعة",
     "period": {
       "day": "يوم",
       "week": "أسبوع",
@@ -253,6 +258,7 @@
     "patientsCount": "مريض/مرضى",
     "rdvStatus": "حالة المواعيد",
     "rdvTotal": "الإجمالي",
+    "rdvControl": "مواعيد التحكم",
     "filterByRdvDate": "تصفية حسب تاريخ الموعد",
     "rdvOnDate": "موعد في"
   },
@@ -272,6 +278,25 @@
     "viewPDF": "عرض PDF",
     "myPrescriptions": "وصفاتي الطبية",
     "loadError": "خطأ في تحميل الوصفات"
+  },
+  "certificat": {
+    "title": "الشهادة الطبية",
+    "subtitle": "املأ النموذج وحمّل ملف PDF. يتم حفظ الملف محلياً.",
+    "patientName": "اسم المريض",
+    "selectPatient": "اختر مريضاً",
+    "otherPatient": "آخر (إدخال الاسم يدوياً)",
+    "patientNamePlaceholder": "الاسم الكامل",
+    "patientDob": "تاريخ الميلاد (اختياري)",
+    "certificateDate": "تاريخ الشهادة",
+    "reason": "السبب / الغرض",
+    "reasonPlaceholder": "مثال: إجازة مرضية، لياقة رياضية...",
+    "duration": "المدة / الفترة (اختياري)",
+    "durationPlaceholder": "مثال: من ... إلى ... أو عدد الأيام",
+    "observations": "ملاحظات (اختياري)",
+    "observationsPlaceholder": "ملاحظات إضافية",
+    "generateAndDownload": "إنشاء وتحميل PDF",
+    "saved": "تم حفظ الشهادة. تم فتح PDF في نافذة جديدة.",
+    "fieldsRequired": "اسم المريض وتاريخ الشهادة والسبب مطلوبة."
   },
   "statistics": {
     "title": "الإحصائيات",

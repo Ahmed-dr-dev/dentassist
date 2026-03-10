@@ -83,7 +83,7 @@
   "appointments": {
     "title": "Rendez-vous",
     "request": "Demander un RDV",
-    "list": "Liste des RDV",
+    "list": "Liste des rendez-vous et contrôles",
     "manage": "Gérer les RDV",
     "myAppointments": "Mes Rendez-vous",
     "date": "Date",
@@ -133,6 +133,11 @@
     "quotaInfo": "Quota quotidien",
     "remaining": "restants",
     "confirmedCount": "confirmés",
+    "filterTypeAll": "Tous les types",
+    "filterTypeRdv": "Uniquement RDV",
+    "filterTypeControl": "Uniquement contrôles",
+    "rdvShort": "RDV",
+    "controlShort": "Contrôle",
     "period": {
       "day": "Jour",
       "week": "Semaine",
@@ -253,6 +258,7 @@
     "patientsCount": "patient(s)",
     "rdvStatus": "Statut RDV",
     "rdvTotal": "Total",
+    "rdvControl": "RDV de contrôle",
     "filterByRdvDate": "Filtrer par date de RDV",
     "rdvOnDate": "RDV le"
   },
@@ -272,6 +278,25 @@
     "viewPDF": "Voir le PDF",
     "myPrescriptions": "Mes Ordonnances",
     "loadError": "Erreur lors du chargement des ordonnances"
+  },
+  "certificat": {
+    "title": "Certificat médical",
+    "subtitle": "Remplissez le formulaire et téléchargez le PDF. Le fichier est enregistré localement.",
+    "patientName": "Nom du patient",
+    "selectPatient": "Sélectionner un patient",
+    "otherPatient": "Autre (saisie manuelle)",
+    "patientNamePlaceholder": "Nom et prénom",
+    "patientDob": "Date de naissance (optionnel)",
+    "certificateDate": "Date du certificat",
+    "reason": "Motif / Objet du certificat",
+    "reasonPlaceholder": "ex. arrêt travail, aptitude sportive, reprise...",
+    "duration": "Durée / Période (optionnel)",
+    "durationPlaceholder": "ex. du ... au ... ou nombre de jours",
+    "observations": "Observations (optionnel)",
+    "observationsPlaceholder": "Notes complémentaires",
+    "generateAndDownload": "Générer et télécharger le PDF",
+    "saved": "Certificat enregistré. PDF ouvert dans un nouvel onglet.",
+    "fieldsRequired": "Le nom du patient, la date du certificat et le motif sont obligatoires."
   },
   "statistics": {
     "title": "Statistiques",

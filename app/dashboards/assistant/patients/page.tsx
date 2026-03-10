@@ -111,7 +111,7 @@ export default function AssistantPatientsPage() {
               )}
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-500">{filteredPatients.length} {t('patients.patientsCount')}</p>
+              <p className="text-sm text-black font-bold">{filteredPatients.length} {t('patients.patientsCount')}</p>
               {filterDate && (
                 <p className="text-sm text-gray-600">{t('patients.rdvOnDate')}: {filterDate}</p>
               )}
@@ -150,7 +150,10 @@ export default function AssistantPatientsPage() {
                       <span className="text-gray-500">{t('patients.rdvTotal')}: </span>
                       <span className="text-gray-900">{patient.totalAppointments || 0}</span>
                     </div>
-                 
+                    <div>
+                      <span className="text-gray-500">{t('patients.rdvControl')}: </span>
+                      <span className="text-gray-900">{patient.controlDatesCount ?? 0}</span>
+                    </div>
                   </div>
                 </div>
               </Link>
