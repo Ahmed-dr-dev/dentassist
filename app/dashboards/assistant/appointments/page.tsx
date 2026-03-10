@@ -212,48 +212,6 @@ export default function AssistantAppointmentsPage() {
     }
   }
 
-  const handleComplete = async (appointmentId: string) => {
-    setProcessingId(appointmentId)
-    setError('')
-    setSuccess('')
-    try {
-      const response = await fetch('/api/appointments/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ appointmentId })
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || t('appointments.loadError'))
-      setSuccess(data.message || t('appointments.completed'))
-      setTimeout(() => { fetchAppointments(); setSuccess('') }, 2000)
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setProcessingId(null)
-    }
-  }
-
-  const handleReopen = async (appointmentId: string) => {
-    setProcessingId(appointmentId)
-    setError('')
-    setSuccess('')
-    try {
-      const response = await fetch('/api/appointments/reopen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ appointmentId })
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || t('appointments.loadError'))
-      setSuccess(data.message || 'Reopened')
-      setTimeout(() => { fetchAppointments(); setSuccess('') }, 2000)
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setProcessingId(null)
-    }
-  }
-
   const getPaymentStatusText = (status: string) => {
     const map: Record<string, string> = {
       paid: t('payment.paid'),
@@ -435,22 +393,6 @@ export default function AssistantAppointmentsPage() {
                       )}
                       {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
                         <>
-                          <label
-                            className={`flex items-center gap-2 select-none ${(appointment.status === 'confirmed' && (appointment.payment_status || 'pending') !== 'paid') ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
-                            title={(appointment.status === 'confirmed' && (appointment.payment_status || 'pending') !== 'paid') ? t('appointments.completeOnlyWhenPaid') : undefined}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={appointment.status === 'completed'}
-                              disabled={processingId === appointment.id || (appointment.status === 'confirmed' && (appointment.payment_status || 'pending') !== 'paid')}
-                              onChange={() => {
-                                if (appointment.status === 'completed') handleReopen(appointment.id)
-                                else handleComplete(appointment.id)
-                              }}
-                              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
-                            />
-                            <span className="text-sm font-medium text-gray-700">{t('appointments.completed')}</span>
-                          </label>
                           {appointment.status === 'confirmed' && (appointment.payment_status || 'pending') === 'pending' && (
                             <>
                               <button
