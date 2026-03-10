@@ -44,6 +44,8 @@ export default function AssistantAppointmentsPage() {
 
   const filteredAppointments = useMemo(() => {
     let filtered = [...appointments]
+    // Paid RDV disappear from the list
+    filtered = filtered.filter(apt => apt.payment_status !== 'paid')
     if (statusFilter !== 'all') filtered = filtered.filter(apt => apt.status === statusFilter)
     if (filterTime) {
       const [h, m] = filterTime.split(':').map(Number)
