@@ -43,7 +43,8 @@ export default function AssistantAppointmentsPage() {
   }
 
   const filteredAppointments = useMemo(() => {
-    let filtered = [...appointments]
+    // Assistant sees only RDV (appointments); control dates are doctor-only and never shown here
+    let filtered = appointments.filter(apt => apt.kind !== 'control')
     // Paid RDV disappear from the list unless filtering by Terminé (then show only paid)
     if (statusFilter === 'completed') {
       filtered = filtered.filter(apt => apt.payment_status === 'paid')
@@ -111,6 +112,9 @@ export default function AssistantAppointmentsPage() {
     }
     return map[status] || status
   }
+
+  // When RDV is paid, show status as Terminé (completed) instead of Confirmé
+  const getDisplayStatus = (apt: any) => (apt.payment_status === 'paid' ? 'completed' : apt.status)
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString)
@@ -253,7 +257,7 @@ export default function AssistantAppointmentsPage() {
               <Link href="/dashboards/assistant" className="text-xl font-bold text-gray-900">
                 {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
-              <span className="text-gray-500">/ {t('appointments.list')}</span>
+              <span className="text-gray-500">/ {t('appointments.listRdv')}</span>
             </div>
             <Link href="/dashboards/assistant" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
@@ -263,7 +267,7 @@ export default function AssistantAppointmentsPage() {
       </nav>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('appointments.list')}</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('appointments.listRdv')}</h1>
 
         {/* Simple filters */}
         <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -313,7 +317,7 @@ export default function AssistantAppointmentsPage() {
             </div>
           </div>
           <div className="mt-3 flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-black font-bold">
               {filteredAppointments.length} {t('appointments.filterResultCount')}
             </p>
             {(filterTime || filterDate || statusFilter !== 'all' || searchQuery) && (
@@ -355,8 +359,8 @@ export default function AssistantAppointmentsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         <span className="font-semibold text-gray-900">{patient?.full_name || '—'}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(appointment.status)}`}>
-                          {getStatusText(appointment.status)}
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(getDisplayStatus(appointment))}`}>
+                          {getStatusText(getDisplayStatus(appointment))}
                         </span>
                       </div>
                       <p className="text-sm text-gray-500">{patient?.email}</p>

@@ -84,6 +84,7 @@
     "title": "Appointments",
     "request": "Request Appointment",
     "list": "Appointments and control dates",
+    "listRdv": "Appointments list",
     "manage": "Manage Appointments",
     "myAppointments": "My Appointments",
     "date": "Date",
@@ -138,6 +139,7 @@
     "filterTypeControl": "Only control appointments",
     "rdvShort": "RDV",
     "controlShort": "Control",
+    "type": "Type",
     "period": {
       "day": "Day",
       "week": "Week",

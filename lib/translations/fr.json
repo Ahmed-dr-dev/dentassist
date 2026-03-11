@@ -84,6 +84,7 @@
     "title": "Rendez-vous",
     "request": "Demander un RDV",
     "list": "Liste des rendez-vous et contrôles",
+    "listRdv": "Liste des rendez-vous",
     "manage": "Gérer les RDV",
     "myAppointments": "Mes Rendez-vous",
     "date": "Date",
@@ -138,6 +139,7 @@
     "filterTypeControl": "Uniquement contrôles",
     "rdvShort": "RDV",
     "controlShort": "Contrôle",
+    "type": "Type",
     "period": {
       "day": "Jour",
       "week": "Semaine",

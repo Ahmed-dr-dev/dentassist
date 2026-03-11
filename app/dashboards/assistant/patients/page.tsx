@@ -2,11 +2,9 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
 import { useI18n } from '@/lib/i18n'
 
 export default function AssistantPatientsPage() {
-  const router = useRouter()
   const { t } = useI18n()
   const [patients, setPatients] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -61,12 +59,12 @@ export default function AssistantPatientsPage() {
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
               <Link href="/dashboards/assistant" className="text-xl font-bold text-gray-900">
                 {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
-              <span className="text-gray-600">/ {t('patients.list')}</span>
+              <span className="text-gray-500">/ {t('patients.list')}</span>
             </div>
             <Link href="/dashboards/assistant" className="flex items-center text-gray-600 hover:text-gray-900">
               {t('common.back')}
@@ -76,7 +74,7 @@ export default function AssistantPatientsPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">{t('patients.title')}</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('patients.title')}</h1>
 
         <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
           <div className="flex flex-col gap-4">
@@ -124,40 +122,37 @@ export default function AssistantPatientsPage() {
         )}
 
         {filteredPatients.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center">
-            <p className="text-gray-600">
-              {searchQuery ? t('common.noMatch') : filterDate ? t('patients.noPatientsOnDate') : t('patients.noPatients')}
-            </p>
+          <div className="bg-white rounded-xl p-8 border border-gray-200 text-center text-gray-600">
+            {searchQuery ? t('common.noMatch') : filterDate ? t('patients.noPatientsOnDate') : t('patients.noPatients')}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredPatients.map((patient) => (
-              <Link
-                key={patient.id}
-                href={`/dashboards/assistant/patients/${patient.id}`}
-                className="bg-white rounded-xl p-6 hover:bg-gray-50 transition cursor-pointer border border-gray-200 shadow-sm"
-              >
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{patient.full_name}</h3>
-                <p className="text-gray-600 text-sm mb-1">{patient.email}</p>
-                {patient.phone && (
-                  <p className="text-gray-600 text-sm mb-4">📞 {patient.phone}</p>
-                )}
-                {!patient.phone && <div className="mb-4" />}
-                <div className="text-sm">
-                  <p className="text-gray-500 font-medium mb-2">{t('patients.rdvStatus')}</p>
-                  <div className="flex gap-4">
-                    <div>
-                      <span className="text-gray-500">{t('patients.rdvTotal')}: </span>
-                      <span className="text-gray-900">{patient.totalAppointments || 0}</span>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <ul className="divide-y divide-gray-200">
+              {filteredPatients.map((patient) => (
+                <li key={patient.id}>
+                  <Link
+                    href={`/dashboards/assistant/patients/${patient.id}`}
+                    className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 hover:bg-gray-50 transition"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{patient.full_name}</p>
+                      <p className="text-sm text-gray-600 truncate">{patient.email}</p>
+                      {patient.phone && (
+                        <p className="text-sm text-gray-500">📞 {patient.phone}</p>
+                      )}
                     </div>
-                    <div>
-                      <span className="text-gray-500">{t('patients.rdvControl')}: </span>
-                      <span className="text-gray-900">{patient.controlDatesCount ?? 0}</span>
+                    <div className="flex gap-6 text-sm shrink-0">
+                      <span className="text-gray-500">
+                        {t('patients.rdvTotal')}: <strong className="text-gray-900">{patient.totalAppointments ?? 0}</strong>
+                      </span>
+                      <span className="text-gray-500">
+                        {t('patients.rdvControl')}: <strong className="text-gray-900">{patient.controlDatesCount ?? 0}</strong>
+                      </span>
                     </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </main>

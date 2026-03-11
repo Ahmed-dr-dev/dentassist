@@ -39,7 +39,7 @@ export default function DoctorAppointmentsListPage() {
       const controls = (controlData.controlDates || []).map((c: any) => ({
         id: c.id,
         kind: 'control' as const,
-        status: 'control',
+        status: 'confirmed',
         control_date_time: c.control_date_time,
         reason: c.notes,
         patient: c.patient,
@@ -237,9 +237,10 @@ export default function DoctorAppointmentsListPage() {
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>
         )}
 
-        <p className="text-sm text-black font-bold mb-4">
-          {filteredAndSorted.filter(a => a.kind === 'rdv').length} {t('appointments.rdvShort')}, {filteredAndSorted.filter(a => a.kind === 'control').length} {t('appointments.controlShort')}
-        </p>
+        <div className="text-sm text-black font-bold mb-4 flex flex-col gap-0.5">
+          <span>{filteredAndSorted.filter(a => a.kind === 'rdv').length} {t('appointments.rdvShort')}</span>
+          <span>{filteredAndSorted.filter(a => a.kind === 'control').length} {t('appointments.controlShort')}</span>
+        </div>
 
         {filteredAndSorted.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-600">
@@ -247,32 +248,47 @@ export default function DoctorAppointmentsListPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <ul className="divide-y divide-gray-200">
-              {filteredAndSorted.map((apt) => {
-                const row = formatRow(apt)
-                return (
-                  <li key={apt.id} className="px-4 py-3 sm:px-6 hover:bg-gray-50 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="min-w-0">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                    {t('certificat.patientName')}
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                    {t('appointments.type')}
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                    {t('appointments.status')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {filteredAndSorted.map((apt) => {
+                  const row = formatRow(apt)
+                  return (
+                    <tr key={apt.id} className="hover:bg-gray-50 transition">
+                      <td className="px-4 py-3 sm:px-6">
                         <p className="font-medium text-gray-900 truncate">{row.name}</p>
                         <p className="text-sm text-gray-600">{row.dateStr} · {row.timeStr}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
+                        {apt.reason && (
+                          <p className="text-sm text-gray-500 truncate max-w-xs mt-0.5">{apt.reason}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 sm:px-6">
                         <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                           {row.kind === 'control' ? t('appointments.controlShort') : t('appointments.rdvShort')}
                         </span>
+                      </td>
+                      <td className="px-4 py-3 sm:px-6">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusClass[row.status] || 'bg-gray-100 text-gray-600'}`}>
                           {statusLabel[row.status] || row.status}
                         </span>
-                      </div>
-                    </div>
-                    {apt.reason && (
-                      <p className="mt-1 text-sm text-gray-500 line-clamp-1">{apt.reason}</p>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </main>
