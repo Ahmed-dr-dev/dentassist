@@ -139,6 +139,12 @@ export async function POST(request: Request) {
 
     const publicFilePath = `/certificats-medicaux/${fileName}`;
 
+    await supabase.from('medical_certificates').insert({
+      doctor_id: user.id,
+      patient_name: String(patientName).trim(),
+      file_path: publicFilePath,
+    });
+
     return NextResponse.json(
       { filePath: publicFilePath, fileName },
       { status: 201 }

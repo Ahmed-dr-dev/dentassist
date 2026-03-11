@@ -7,7 +7,7 @@ export default function DoctorStatisticsPage() {
   const [stats, setStats] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [period, setPeriod] = useState<'day' | 'week' | 'month'>('month')
+  const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('month')
 
   useEffect(() => {
     fetchStatistics()
@@ -29,10 +29,11 @@ export default function DoctorStatisticsPage() {
     }
   }
 
-  const periodText = {
+  const periodText: Record<string, string> = {
     day: "Aujourd'hui",
     week: 'Cette semaine',
-    month: 'Ce mois'
+    month: 'Ce mois',
+    year: 'Cette année'
   }
 
   if (loading) {
@@ -68,7 +69,7 @@ export default function DoctorStatisticsPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Statistiques</h1>
           <div className="flex gap-2">
-            {(['day', 'week', 'month'] as const).map((p) => (
+            {(['day', 'week', 'month', 'year'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
@@ -94,44 +95,62 @@ export default function DoctorStatisticsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl p-6 text-white">
               <h3 className="text-lg font-semibold mb-2">Total RDV</h3>
-              <p className="text-4xl font-bold">{stats.totalAppointments || 0}</p>
-              <p className="text-blue-100 text-sm mt-2">{periodText[period]}</p>
+              <p className="text-4xl font-bold">{stats.totalAppointments ?? 0}</p>
+              <p className="text-blue-100 text-sm mt-2">Tous les rendez-vous</p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-600 to-green-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Confirmés</h3>
-              <p className="text-4xl font-bold">{stats.confirmedAppointments || 0}</p>
-              <p className="text-green-100 text-sm mt-2">Rendez-vous confirmés</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Terminés</h3>
-              <p className="text-4xl font-bold">{stats.completedAppointments || 0}</p>
-              <p className="text-purple-100 text-sm mt-2">Rendez-vous terminés</p>
+            <div className="bg-gradient-to-br from-orange-600 to-orange-500 rounded-xl p-6 text-white">
+              <h3 className="text-lg font-semibold mb-2">Rejetés</h3>
+              <p className="text-4xl font-bold">{stats.rejectedAppointments ?? 0}</p>
+              <p className="text-orange-100 text-sm mt-2">RDV rejetés</p>
             </div>
 
             <div className="bg-gradient-to-br from-red-600 to-red-500 rounded-xl p-6 text-white">
               <h3 className="text-lg font-semibold mb-2">Annulés</h3>
-              <p className="text-4xl font-bold">{stats.cancelledAppointments || 0}</p>
-              <p className="text-red-100 text-sm mt-2">Rendez-vous annulés</p>
+              <p className="text-4xl font-bold">{stats.cancelledAppointments ?? 0}</p>
+              <p className="text-red-100 text-sm mt-2">RDV annulés</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-xl p-6 text-white">
+              <h3 className="text-lg font-semibold mb-2">Terminés</h3>
+              <p className="text-4xl font-bold">{stats.completedAppointments ?? 0}</p>
+              <p className="text-purple-100 text-sm mt-2">RDV terminés</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-600 to-green-500 rounded-xl p-6 text-white">
+              <h3 className="text-lg font-semibold mb-2">Confirmés</h3>
+              <p className="text-4xl font-bold">{stats.confirmedAppointments ?? 0}</p>
+              <p className="text-green-100 text-sm mt-2">RDV confirmés</p>
             </div>
 
             <div className="bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Patients</h3>
-              <p className="text-4xl font-bold">{stats.totalPatients || 0}</p>
+              <h3 className="text-lg font-semibold mb-2">Total patients</h3>
+              <p className="text-4xl font-bold">{stats.totalPatients ?? 0}</p>
               <p className="text-yellow-100 text-sm mt-2">Patients uniques</p>
             </div>
 
             <div className="bg-gradient-to-br from-teal-600 to-teal-500 rounded-xl p-6 text-white">
               <h3 className="text-lg font-semibold mb-2">Ordonnances</h3>
-              <p className="text-4xl font-bold">{stats.prescriptionsCount || 0}</p>
-              <p className="text-teal-100 text-sm mt-2">Ordonnances assignées</p>
+              <p className="text-4xl font-bold">{stats.prescriptionsCount ?? 0}</p>
+              <p className="text-teal-100 text-sm mt-2">Ordonnances émises</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-cyan-600 to-cyan-500 rounded-xl p-6 text-white">
+              <h3 className="text-lg font-semibold mb-2">Certificats médicaux</h3>
+              <p className="text-4xl font-bold">{stats.certificatCount ?? 0}</p>
+              <p className="text-cyan-100 text-sm mt-2">Certificats générés</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-indigo-600 to-indigo-500 rounded-xl p-6 text-white">
+              <h3 className="text-lg font-semibold mb-2">Contrôles</h3>
+              <p className="text-4xl font-bold">{stats.controlDatesCount ?? 0}</p>
+              <p className="text-indigo-100 text-sm mt-2">Dates de contrôle</p>
             </div>
 
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white">
               <h3 className="text-lg font-semibold mb-2">Revenus RDV</h3>
               <p className="text-4xl font-bold">{stats.totalIncome ?? 0} DT</p>
-              <p className="text-emerald-100 text-sm mt-2">{stats.paidAppointmentsCount ?? 0} RDV payés × {stats.rdvUnitPrice ?? 70} DT</p>
+              <p className="text-emerald-100 text-sm mt-2">{periodText[period]} — {stats.paidAppointmentsCount ?? 0} RDV payés × {stats.rdvUnitPrice ?? 70} DT</p>
             </div>
           </div>
         )}

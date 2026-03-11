@@ -255,6 +255,12 @@ export default function DoctorAppointmentsListPage() {
                     {t('certificat.patientName')}
                   </th>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                    {t('appointments.date')}
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                    {t('appointments.time')}
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
                     {t('appointments.type')}
                   </th>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
@@ -269,11 +275,12 @@ export default function DoctorAppointmentsListPage() {
                     <tr key={apt.id} className="hover:bg-gray-50 transition">
                       <td className="px-4 py-3 sm:px-6">
                         <p className="font-medium text-gray-900 truncate">{row.name}</p>
-                        <p className="text-sm text-gray-600">{row.dateStr} · {row.timeStr}</p>
                         {apt.reason && (
                           <p className="text-sm text-gray-500 truncate max-w-xs mt-0.5">{apt.reason}</p>
                         )}
                       </td>
+                      <td className="px-4 py-3 sm:px-6 text-gray-700">{row.dateStr}</td>
+                      <td className="px-4 py-3 sm:px-6 text-gray-700 tabular-nums">{row.timeStr}</td>
                       <td className="px-4 py-3 sm:px-6">
                         <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                           {row.kind === 'control' ? t('appointments.controlShort') : t('appointments.rdvShort')}
