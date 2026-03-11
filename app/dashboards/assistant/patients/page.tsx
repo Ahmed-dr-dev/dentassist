@@ -126,33 +126,34 @@ export default function AssistantPatientsPage() {
             {searchQuery ? t('common.noMatch') : filterDate ? t('patients.noPatientsOnDate') : t('patients.noPatients')}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <ul className="divide-y divide-gray-200">
-              {filteredPatients.map((patient) => (
-                <li key={patient.id}>
-                  <Link
-                    href={`/dashboards/assistant/patients/${patient.id}`}
-                    className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 hover:bg-gray-50 transition"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-medium text-gray-900 truncate">{patient.full_name}</p>
-                      <p className="text-sm text-gray-600 truncate">{patient.email}</p>
-                      {patient.phone && (
-                        <p className="text-sm text-gray-500">📞 {patient.phone}</p>
-                      )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredPatients.map((patient) => (
+              <Link
+                key={patient.id}
+                href={`/dashboards/assistant/patients/${patient.id}`}
+                className="bg-white rounded-xl p-6 hover:bg-gray-50 transition cursor-pointer border border-gray-200 shadow-sm"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{patient.full_name}</h3>
+                <p className="text-gray-600 text-sm mb-1">{patient.email}</p>
+                {patient.phone && (
+                  <p className="text-gray-600 text-sm mb-4">📞 {patient.phone}</p>
+                )}
+                {!patient.phone && <div className="mb-4" />}
+                <div className="text-sm">
+                  <p className="text-gray-500 font-medium mb-2">{t('patients.rdvStatus')}</p>
+                  <div className="flex flex-col gap-1">
+                    <div>
+                      <span className="text-gray-500">{t('patients.rdvTotal')}: </span>
+                      <span className="text-gray-900">{patient.totalAppointments ?? 0}</span>
                     </div>
-                    <div className="flex gap-6 text-sm shrink-0">
-                      <span className="text-gray-500">
-                        {t('patients.rdvTotal')}: <strong className="text-gray-900">{patient.totalAppointments ?? 0}</strong>
-                      </span>
-                      <span className="text-gray-500">
-                        {t('patients.rdvControl')}: <strong className="text-gray-900">{patient.controlDatesCount ?? 0}</strong>
-                      </span>
+                    <div>
+                      <span className="text-gray-500">{t('patients.rdvControl')}: </span>
+                      <span className="text-gray-900">{patient.controlDatesCount ?? 0}</span>
                     </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </main>
