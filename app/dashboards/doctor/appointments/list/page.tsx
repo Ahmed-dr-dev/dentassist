@@ -132,7 +132,7 @@ export default function DoctorAppointmentsListPage() {
   }, [appointments, searchQuery, periodFilter, typeFilter])
 
   const statusLabel: Record<string, string> = {
-    confirmed: 'Confirmé',
+    confirmed: 'Terminé',
     pending: 'En attente',
     completed: 'Terminé',
     rejected: 'Rejeté',
@@ -141,7 +141,7 @@ export default function DoctorAppointmentsListPage() {
   }
 
   const statusClass: Record<string, string> = {
-    confirmed: 'bg-green-100 text-green-800',
+    confirmed: 'bg-blue-100 text-blue-800',
     pending: 'bg-amber-100 text-amber-800',
     completed: 'bg-blue-100 text-blue-800',
     rejected: 'bg-red-100 text-red-800',
@@ -191,7 +191,7 @@ export default function DoctorAppointmentsListPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('appointments.list')}</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-2">{t('appointments.list')}</h1>
         <p className="text-gray-600 text-sm mb-6">{t('doctor.rdvReadOnly')}</p>
 
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
@@ -251,19 +251,19 @@ export default function DoctorAppointmentsListPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
                     {t('certificat.patientName')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
                     {t('appointments.date')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
                     {t('appointments.time')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
                     {t('appointments.type')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
                     {t('appointments.status')}
                   </th>
                 </tr>
