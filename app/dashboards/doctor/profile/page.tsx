@@ -14,20 +14,12 @@ export default function DoctorProfilePage() {
     fullName: '',
     email: '',
     phone: '',
-    specialty: '',
-    ribBankName: '',
-    ribAccountNumber: '',
-    ribIban: '',
-    ribBic: ''
+    specialty: ''
   })
   const [fieldErrors, setFieldErrors] = useState({
     fullName: '',
     phone: '',
-    specialty: '',
-    ribBankName: '',
-    ribAccountNumber: '',
-    ribIban: '',
-    ribBic: ''
+    specialty: ''
   })
 
   useEffect(() => {
@@ -46,11 +38,7 @@ export default function DoctorProfilePage() {
         fullName: data.user.fullName || '',
         email: data.user.email || '',
         phone: data.user.phone || '',
-        specialty: data.user.specialty || '',
-        ribBankName: data.user.ribBankName || '',
-        ribAccountNumber: data.user.ribAccountNumber || '',
-        ribIban: data.user.ribIban || '',
-        ribBic: data.user.ribBic || ''
+        specialty: data.user.specialty || ''
       })
     } catch (err: any) {
       setError(err.message)
@@ -107,11 +95,7 @@ export default function DoctorProfilePage() {
         body: JSON.stringify({
           fullName: formData.fullName.trim(),
           phone: formData.phone.trim(),
-          specialty: formData.specialty.trim(),
-          ribBankName: formData.ribBankName.trim() || null,
-          ribAccountNumber: formData.ribAccountNumber.trim() || null,
-          ribIban: formData.ribIban.trim() || null,
-          ribBic: formData.ribBic.trim() || null
+          specialty: formData.specialty.trim()
         })
       })
 
@@ -268,77 +252,6 @@ export default function DoctorProfilePage() {
             {fieldErrors.specialty && (
               <p className="mt-1 text-xs text-red-400">{fieldErrors.specialty}</p>
             )}
-          </div>
-
-          {/* Bank Information Section */}
-          <div className="pt-6 border-t border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <span>💳</span>
-              <span>Informations bancaires (RIB)</span>
-            </h2>
-            <p className="text-gray-500 text-sm mb-6">
-              Ces informations seront affichées aux patients lors de la demande de rendez-vous pour effectuer le paiement.
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom de la banque
-                </label>
-                <input
-                  type="text"
-                  value={formData.ribBankName}
-                  onChange={(e) => setFormData({ ...formData, ribBankName: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  placeholder="Ex: Banque de Tunisie, STB, BNA..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Numéro de compte
-                </label>
-                <input
-                  type="text"
-                  value={formData.ribAccountNumber}
-                  onChange={(e) => setFormData({ ...formData, ribAccountNumber: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
-                  placeholder="Ex: 12345678901234567"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  IBAN (International Bank Account Number)
-                </label>
-                <input
-                  type="text"
-                  value={formData.ribIban}
-                  onChange={(e) => setFormData({ ...formData, ribIban: e.target.value.toUpperCase() })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
-                  placeholder="Ex: TN5912345678901234567890"
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Format: 2 lettres (code pays) + 2 chiffres de contrôle + jusqu'à 30 caractères alphanumériques
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  BIC (Bank Identifier Code)
-                </label>
-                <input
-                  type="text"
-                  value={formData.ribBic}
-                  onChange={(e) => setFormData({ ...formData, ribBic: e.target.value.toUpperCase() })}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-300 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
-                  placeholder="Ex: STBKTNTT"
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Code unique d'identification de votre banque (optionnel)
-                </p>
-              </div>
-            </div>
           </div>
 
           <button
