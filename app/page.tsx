@@ -17,7 +17,7 @@ export default function Home() {
       .catch(() => setUser(null))
   }, [])
 
-  const dashboardHref = user?.role === 'doctor' ? '/dashboards/doctor' : user?.role === 'assistant' ? '/dashboards/assistant' : user?.role === 'patient' ? '/dashboards/patient' : null
+  const dashboardHref = user?.role === 'doctor' ? '/dashboards/doctor' : user?.role === 'assistant' ? '/dashboards/assistant' : user?.role === 'patient' ? '/dashboards/patient' : user?.role === 'admin' ? '/dashboards/admin' : null
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">

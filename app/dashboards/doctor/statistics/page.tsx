@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useI18n } from '@/lib/i18n'
 
 export default function DoctorStatisticsPage() {
+  const { t } = useI18n()
   const [stats, setStats] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -17,9 +19,7 @@ export default function DoctorStatisticsPage() {
     setLoading(true)
     try {
       const response = await fetch(`/api/statistics?period=${period}`)
-      if (!response.ok) {
-        throw new Error('Erreur lors du chargement')
-      }
+      if (!response.ok) throw new Error(t('statistics.title'))
       const data = await response.json()
       setStats(data.statistics)
     } catch (err: any) {
@@ -29,20 +29,95 @@ export default function DoctorStatisticsPage() {
     }
   }
 
-  const periodText: Record<string, string> = {
-    day: "Aujourd'hui",
-    week: 'Cette semaine',
-    month: 'Ce mois',
-    year: 'Cette année'
-  }
+  const periods: { key: 'day' | 'week' | 'month' | 'year'; label: string }[] = [
+    { key: 'day',   label: t('income.today') },
+    { key: 'week',  label: t('income.thisWeek') },
+    { key: 'month', label: t('income.thisMonth') },
+    { key: 'year',  label: t('income.thisYear') },
+  ]
+
+  const periodLabel = periods.find(p => p.key === period)?.label ?? ''
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Chargement...</div>
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
+
+  const statCards = stats ? [
+    {
+      title: t('statistics.totalAppointments'),
+      sub: t('statistics.totalAppointmentsSub'),
+      value: stats.totalAppointments ?? 0,
+      bg: 'from-blue-600 to-blue-500',
+      sub_color: 'text-blue-100',
+    },
+    {
+      title: t('statistics.rejectedAppointments'),
+      sub: t('statistics.rejectedSub'),
+      value: stats.rejectedAppointments ?? 0,
+      bg: 'from-orange-600 to-orange-500',
+      sub_color: 'text-orange-100',
+    },
+    {
+      title: t('statistics.cancelledAppointments'),
+      sub: t('statistics.cancelledSub'),
+      value: stats.cancelledAppointments ?? 0,
+      bg: 'from-red-600 to-red-500',
+      sub_color: 'text-red-100',
+    },
+    {
+      title: t('statistics.completedAppointments'),
+      sub: t('statistics.completedSub'),
+      value: stats.completedAppointments ?? 0,
+      bg: 'from-purple-600 to-purple-500',
+      sub_color: 'text-purple-100',
+    },
+    {
+      title: t('statistics.confirmedAppointments'),
+      sub: t('statistics.confirmedSub'),
+      value: stats.confirmedAppointments ?? 0,
+      bg: 'from-green-600 to-green-500',
+      sub_color: 'text-green-100',
+    },
+    {
+      title: t('statistics.totalPatients'),
+      sub: t('statistics.totalPatientsSub'),
+      value: stats.totalPatients ?? 0,
+      bg: 'from-yellow-600 to-yellow-500',
+      sub_color: 'text-yellow-100',
+    },
+    {
+      title: t('statistics.prescriptionsTitle'),
+      sub: t('statistics.prescriptionsSub'),
+      value: stats.prescriptionsCount ?? 0,
+      bg: 'from-teal-600 to-teal-500',
+      sub_color: 'text-teal-100',
+    },
+    {
+      title: t('statistics.certificatesTitle'),
+      sub: t('statistics.certificatesSub'),
+      value: stats.certificatCount ?? 0,
+      bg: 'from-cyan-600 to-cyan-500',
+      sub_color: 'text-cyan-100',
+    },
+    {
+      title: t('statistics.controlsTitle'),
+      sub: t('statistics.controlsSub'),
+      value: stats.controlDatesCount ?? 0,
+      bg: 'from-indigo-600 to-indigo-500',
+      sub_color: 'text-indigo-100',
+    },
+    {
+      title: t('statistics.rdvIncome'),
+      sub: `${periodLabel} — ${stats.paidAppointmentsCount ?? 0} ${t('statistics.incomeSub').replace('{price}', stats.rdvUnitPrice ?? 70)}`,
+      value: `${stats.totalIncome ?? 0} DT`,
+      bg: 'from-emerald-600 to-emerald-500',
+      sub_color: 'text-emerald-100',
+    },
+  ] : []
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,107 +126,48 @@ export default function DoctorStatisticsPage() {
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
               <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
-                DentAssist
+                {t('common.appName')}
               </Link>
-              <span className="text-gray-500">/ Statistiques</span>
+              <span className="text-gray-500">/ {t('statistics.title')}</span>
             </div>
-            <Link
-              href="/dashboards/doctor"
-              className="flex items-center text-gray-600 hover:text-gray-900"
-            >
-              Retour
+            <Link href="/dashboards/doctor" className="flex items-center text-gray-600 hover:text-gray-900">
+              {t('common.back')}
             </Link>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Statistiques</h1>
-          <div className="flex gap-2">
-            {(['day', 'week', 'month', 'year'] as const).map((p) => (
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">{t('statistics.title')}</h1>
+          <div className="flex gap-2 flex-wrap">
+            {periods.map(p => (
               <button
-                key={p}
-                onClick={() => setPeriod(p)}
+                key={p.key}
+                onClick={() => setPeriod(p.key)}
                 className={`px-4 py-2 rounded-lg transition ${
-                  period === p
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  period === p.key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                {periodText[p]}
+                {p.label}
               </button>
             ))}
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
         )}
 
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Total RDV</h3>
-              <p className="text-4xl font-bold">{stats.totalAppointments ?? 0}</p>
-              <p className="text-blue-100 text-sm mt-2">Tous les rendez-vous</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-orange-600 to-orange-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Rejetés</h3>
-              <p className="text-4xl font-bold">{stats.rejectedAppointments ?? 0}</p>
-              <p className="text-orange-100 text-sm mt-2">RDV rejetés</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-red-600 to-red-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Annulés</h3>
-              <p className="text-4xl font-bold">{stats.cancelledAppointments ?? 0}</p>
-              <p className="text-red-100 text-sm mt-2">RDV annulés</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Terminés</h3>
-              <p className="text-4xl font-bold">{stats.completedAppointments ?? 0}</p>
-              <p className="text-purple-100 text-sm mt-2">RDV terminés</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-600 to-green-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Confirmés</h3>
-              <p className="text-4xl font-bold">{stats.confirmedAppointments ?? 0}</p>
-              <p className="text-green-100 text-sm mt-2">RDV confirmés</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Total patients</h3>
-              <p className="text-4xl font-bold">{stats.totalPatients ?? 0}</p>
-              <p className="text-yellow-100 text-sm mt-2">Patients uniques</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-teal-600 to-teal-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Ordonnances</h3>
-              <p className="text-4xl font-bold">{stats.prescriptionsCount ?? 0}</p>
-              <p className="text-teal-100 text-sm mt-2">Ordonnances émises</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-cyan-600 to-cyan-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Certificats médicaux</h3>
-              <p className="text-4xl font-bold">{stats.certificatCount ?? 0}</p>
-              <p className="text-cyan-100 text-sm mt-2">Certificats générés</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-indigo-600 to-indigo-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Contrôles</h3>
-              <p className="text-4xl font-bold">{stats.controlDatesCount ?? 0}</p>
-              <p className="text-indigo-100 text-sm mt-2">Dates de contrôle</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Revenus RDV</h3>
-              <p className="text-4xl font-bold">{stats.totalIncome ?? 0} DT</p>
-              <p className="text-emerald-100 text-sm mt-2">{periodText[period]} — {stats.paidAppointmentsCount ?? 0} RDV payés × {stats.rdvUnitPrice ?? 70} DT</p>
-            </div>
+            {statCards.map((card, i) => (
+              <div key={i} className={`bg-gradient-to-br ${card.bg} rounded-xl p-6 text-white`}>
+                <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
+                <p className="text-4xl font-bold">{card.value}</p>
+                <p className={`${card.sub_color} text-sm mt-2`}>{card.sub}</p>
+              </div>
+            ))}
           </div>
         )}
       </main>

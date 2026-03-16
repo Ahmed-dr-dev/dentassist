@@ -40,6 +40,8 @@ export default function LoginPage() {
           router.push('/dashboards/patient')
         } else if (data.user.role === 'assistant') {
           router.push('/dashboards/assistant')
+        } else if (data.user.role === 'admin') {
+          router.push('/dashboards/admin')
         } else {
           router.push('/')
         }
@@ -74,6 +76,8 @@ export default function LoginPage() {
         router.push('/dashboards/patient')
       } else if (data.user.role === 'assistant') {
         router.push('/dashboards/assistant')
+      } else if (data.user.role === 'admin') {
+        router.push('/dashboards/admin')
       } else {
         router.push('/')
       }
