@@ -22,6 +22,7 @@ export default function AdminMessagesPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [replyModal, setReplyModal] = useState<{ name: string; email: string; phone?: string } | null>(null)
 
   useEffect(() => { fetchMessages() }, [statusFilter])
 
@@ -197,9 +198,12 @@ export default function AdminMessagesPage() {
                           {t('messages.markUnread')}
                         </button>
                       )}
-                      <a href={`mailto:${msg.email}`} className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-medium transition">
+                      <button
+                        onClick={() => setReplyModal({ name: msg.name, email: msg.email, phone: msg.phone })}
+                        className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-medium transition"
+                      >
                         Reply
-                      </a>
+                      </button>
                       <button
                         onClick={() => deleteMessage(msg.id)}
                         disabled={deletingId === msg.id}
@@ -215,6 +219,102 @@ export default function AdminMessagesPage() {
           </div>
         )}
       </main>
+
+      {/* Reply Modal */}
+      {replyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setReplyModal(null)} />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+            {/* Close */}
+            <button
+              onClick={() => setReplyModal(null)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Icon */}
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-50 mx-auto mb-4">
+              <svg className="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+
+            <h3 className="text-lg font-bold text-gray-900 text-center mb-1">Contacter le visiteur</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">
+              Choisissez comment contacter <span className="font-semibold text-gray-700">{replyModal.name}</span>
+            </p>
+
+            <div className="space-y-3">
+              {/* Email */}
+              <a
+                href={`mailto:${replyModal.email}`}
+                onClick={() => setReplyModal(null)}
+                className="flex items-center gap-4 w-full p-4 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition group"
+              >
+                <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-100 group-hover:bg-indigo-200 flex items-center justify-center transition">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </span>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Répondre par email</p>
+                  <p className="text-sm font-medium text-gray-900">{replyModal.email}</p>
+                </div>
+                <svg className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 ml-auto transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+
+              {/* Phone */}
+              {replyModal.phone ? (
+                <a
+                  href={`tel:${replyModal.phone.replace(/\s/g, '')}`}
+                  onClick={() => setReplyModal(null)}
+                  className="flex items-center gap-4 w-full p-4 rounded-xl border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition group"
+                >
+                  <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 flex items-center justify-center transition">
+                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </span>
+                  <div className="text-left">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Appeler par téléphone</p>
+                    <p className="text-sm font-medium text-gray-900">{replyModal.phone}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-emerald-500 ml-auto transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              ) : (
+                <div className="flex items-center gap-4 w-full p-4 rounded-xl border border-dashed border-gray-200 opacity-50 cursor-not-allowed">
+                  <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </span>
+                  <div className="text-left">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Appeler par téléphone</p>
+                    <p className="text-sm text-gray-400">Aucun numéro renseigné</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setReplyModal(null)}
+              className="mt-5 w-full py-2.5 text-sm text-gray-500 hover:text-gray-700 font-medium transition"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
