@@ -481,6 +481,46 @@
     "updateError": "خطأ في التحديث",
     "rejectError": "خطأ في الرفض"
   },
+  "contact": {
+    "title": "اتصل بنا",
+    "subtitle": "أرسل لنا رسالة وسنرد عليك في أقرب وقت.",
+    "name": "الاسم الكامل",
+    "namePlaceholder": "اسمك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "بريدك@email.com",
+    "phone": "الهاتف",
+    "phonePlaceholder": "+216 XX XXX XXX",
+    "subject": "الموضوع",
+    "subjectPlaceholder": "مثال: استفسار عام",
+    "message": "الرسالة",
+    "messagePlaceholder": "اوصف طلبك...",
+    "send": "إرسال الرسالة",
+    "sending": "جاري الإرسال...",
+    "success": "تم إرسال رسالتك! سنرد عليك في أقرب وقت.",
+    "error": "خطأ في الإرسال. يرجى المحاولة مجدداً.",
+    "required": "يرجى ملء جميع الحقول المطلوبة."
+  },
+  "messages": {
+    "title": "الرسائل والطلبات",
+    "breadcrumb": "الرسائل",
+    "noMessages": "لا توجد رسائل",
+    "unread": "غير مقروءة",
+    "read": "مقروءة",
+    "handled": "تمت المعالجة",
+    "all": "الكل",
+    "markRead": "تحديد كمقروء",
+    "markHandled": "تحديد كمعالج",
+    "markUnread": "تحديد كغير مقروء",
+    "delete": "حذف",
+    "deleteConfirm": "حذف هذه الرسالة؟ هذا الإجراء لا يمكن التراجع عنه.",
+    "from": "من",
+    "subject": "الموضوع",
+    "receivedAt": "تم الاستلام في",
+    "phone": "الهاتف",
+    "unreadBadge": "غير مقروء",
+    "manageDesc": "إدارة رسائل وطلبات الزوار",
+    "loadError": "خطأ في تحميل الرسائل"
+  },
   "admin": {
     "dashboard": "لوحة تحكم المدير",
     "title": "الإدارة",
@@ -537,6 +577,10 @@
       "doctor": "طبيب",
       "assistant": "مساعد",
       "patient": "مريض"
+    },
+    "messages": {
+      "title": "الرسائل والطلبات",
+      "desc": "قراءة وإدارة رسائل الزوار"
     }
   }
 }

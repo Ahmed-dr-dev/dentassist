@@ -61,14 +61,14 @@ export default function AssistantPatientsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/assistant" className="text-gray-600 hover:text-gray-900">
-                {t('common.back')}
-              </Link>
               <Link href="/dashboards/assistant" className="text-xl font-bold text-gray-900">
                 {t('common.appName')} - {t('dashboard.assistant')}
               </Link>
               <span className="text-gray-500">/ {t('patients.list')}</span>
             </div>
+            <Link href="/dashboards/assistant" className="text-gray-600 hover:text-gray-900">
+              {t('common.back')}
+            </Link>
           </div>
         </div>
       </nav>
@@ -126,39 +126,42 @@ export default function AssistantPatientsPage() {
             {searchQuery ? t('common.noMatch') : filterDate ? t('patients.noPatientsOnDate') : t('patients.noPatients')}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPatients.map((patient, idx) => {
               const schemes = [
-                'from-teal-100 to-cyan-200 border-teal-400',
-                'from-blue-100 to-indigo-200 border-blue-400',
-                'from-emerald-100 to-teal-200 border-emerald-400',
-                'from-violet-100 to-purple-200 border-violet-400',
-                'from-amber-100 to-orange-200 border-amber-400',
-                'from-rose-100 to-pink-200 border-rose-400',
+                { bg: 'from-teal-600 to-teal-500', shadow: 'hover:shadow-teal-600/50' },
+                { bg: 'from-blue-600 to-blue-500', shadow: 'hover:shadow-blue-600/50' },
+                { bg: 'from-emerald-600 to-emerald-500', shadow: 'hover:shadow-emerald-600/50' },
+                { bg: 'from-violet-600 to-violet-500', shadow: 'hover:shadow-violet-600/50' },
+                { bg: 'from-cyan-600 to-cyan-500', shadow: 'hover:shadow-cyan-600/50' },
+                { bg: 'from-indigo-600 to-indigo-500', shadow: 'hover:shadow-indigo-600/50' },
               ]
-              const s = schemes[idx % schemes.length]
+              const { bg, shadow } = schemes[idx % schemes.length]
               return (
                 <Link
                   key={patient.id}
                   href={`/dashboards/assistant/patients/${patient.id}`}
-                  className={`block rounded-xl p-6 border-2 bg-gradient-to-br ${s} shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer`}
+                  className={`flex items-start gap-4 bg-gradient-to-br ${bg} rounded-xl p-6 text-white hover:shadow-lg ${shadow} transition cursor-pointer`}
                 >
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{patient.full_name}</h3>
-                  <p className="text-gray-600 text-sm mb-1">{patient.email}</p>
-                  {patient.phone && (
-                    <p className="text-gray-600 text-sm mb-4">📞 {patient.phone}</p>
-                  )}
-                  {!patient.phone && <div className="mb-4" />}
-                  <div className="text-sm">
-                    <p className="text-gray-500 font-medium mb-2">{t('patients.rdvStatus')}</p>
-                    <div className="flex flex-col gap-1">
+                  <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-bold truncate">{patient.full_name}</h3>
+                    <p className="text-white/80 text-sm truncate">{patient.email}</p>
+                    {patient.phone && (
+                      <p className="text-white/80 text-sm">{patient.phone}</p>
+                    )}
+                    <div className="flex gap-4 mt-3 text-sm">
                       <div>
-                        <span className="text-gray-500">{t('patients.rdvTotal')}: </span>
-                        <span className="font-semibold text-gray-800">{patient.totalAppointments ?? 0}</span>
+                        <span className="text-white/70">{t('patients.rdvTotal')}</span>
+                        <span className="ml-1 font-bold">{patient.totalAppointments ?? 0}</span>
                       </div>
                       <div>
-                        <span className="text-gray-500">{t('patients.rdvControl')}: </span>
-                        <span className="font-semibold text-gray-800">{patient.controlDatesCount ?? 0}</span>
+                        <span className="text-white/70">{t('patients.rdvControl')}</span>
+                        <span className="ml-1 font-bold">{patient.controlDatesCount ?? 0}</span>
                       </div>
                     </div>
                   </div>

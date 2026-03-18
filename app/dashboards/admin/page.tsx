@@ -22,19 +22,22 @@ export default function AdminDashboardPage() {
   const { t } = useI18n()
   const [user, setUser] = useState<any>(null)
   const [stats, setStats] = useState<Stats | null>(null)
+  const [unreadMessages, setUnreadMessages] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
       fetch('/api/auth/user').then(r => r.ok ? r.json() : null),
       fetch('/api/admin/stats').then(r => r.ok ? r.json() : null),
-    ]).then(([userData, statsData]) => {
+      fetch('/api/admin/messages/list').then(r => r.ok ? r.json() : null),
+    ]).then(([userData, statsData, msgData]) => {
       if (!userData?.user || userData.user.role !== 'admin') {
         router.push('/login')
         return
       }
       setUser(userData.user)
       if (statsData) setStats(statsData)
+      if (msgData) setUnreadMessages(msgData.unreadCount ?? 0)
     }).finally(() => setLoading(false))
   }, [router])
 
@@ -60,8 +63,9 @@ export default function AdminDashboardPage() {
   ]
 
   const quickLinks = [
-    { href: '/dashboards/admin/users', label: t('admin.users.title'), desc: t('admin.users.manageDesc'), bg: 'from-blue-600 to-blue-500', shadow: 'hover:shadow-blue-600/50', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /> },
-    { href: '/dashboards/admin/users/create', label: t('admin.users.create'), desc: t('admin.users.createDesc'), bg: 'from-emerald-600 to-emerald-500', shadow: 'hover:shadow-emerald-600/50', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /> },
+    { href: '/dashboards/admin/users', label: t('admin.users.title'), desc: t('admin.users.manageDesc'), bg: 'from-blue-600 to-blue-500', shadow: 'hover:shadow-blue-600/50', badge: null, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /> },
+    { href: '/dashboards/admin/users/create', label: t('admin.users.create'), desc: t('admin.users.createDesc'), bg: 'from-emerald-600 to-emerald-500', shadow: 'hover:shadow-emerald-600/50', badge: null, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /> },
+    { href: '/dashboards/admin/messages', label: t('admin.messages.title'), desc: t('admin.messages.desc'), bg: 'from-pink-600 to-pink-500', shadow: 'hover:shadow-pink-600/50', badge: unreadMessages, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /> },
   ]
 
   return (
@@ -113,8 +117,13 @@ export default function AdminDashboardPage() {
             <Link
               key={i}
               href={link.href}
-              className={`flex items-center gap-4 bg-gradient-to-br ${link.bg} rounded-xl p-6 text-white hover:shadow-lg ${link.shadow} transition cursor-pointer`}
+              className={`flex items-center gap-4 bg-gradient-to-br ${link.bg} rounded-xl p-6 text-white hover:shadow-lg ${link.shadow} transition cursor-pointer relative`}
             >
+              {link.badge !== null && link.badge > 0 && (
+                <span className="absolute top-3 right-3 px-2 py-0.5 bg-white text-pink-600 text-xs font-bold rounded-full">
+                  {link.badge}
+                </span>
+              )}
               <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">{link.icon}</svg>
               </span>

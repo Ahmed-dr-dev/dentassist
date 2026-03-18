@@ -481,6 +481,46 @@
     "updateError": "Error updating",
     "rejectError": "Error rejecting"
   },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Send us a message and we'll get back to you shortly.",
+    "name": "Full name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+216 XX XXX XXX",
+    "subject": "Subject",
+    "subjectPlaceholder": "e.g. General inquiry",
+    "message": "Message",
+    "messagePlaceholder": "Describe your request...",
+    "send": "Send message",
+    "sending": "Sending...",
+    "success": "Message sent! We'll reply as soon as possible.",
+    "error": "Error sending message. Please try again.",
+    "required": "Please fill in all required fields."
+  },
+  "messages": {
+    "title": "Messages & Requests",
+    "breadcrumb": "Messages",
+    "noMessages": "No messages received",
+    "unread": "Unread",
+    "read": "Read",
+    "handled": "Handled",
+    "all": "All",
+    "markRead": "Mark as read",
+    "markHandled": "Mark as handled",
+    "markUnread": "Mark as unread",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this message? This action is irreversible.",
+    "from": "From",
+    "subject": "Subject",
+    "receivedAt": "Received on",
+    "phone": "Phone",
+    "unreadBadge": "unread",
+    "manageDesc": "Manage visitor messages and requests",
+    "loadError": "Error loading messages"
+  },
   "admin": {
     "dashboard": "Admin Dashboard",
     "title": "Administration",
@@ -537,6 +577,10 @@
       "doctor": "Doctor",
       "assistant": "Assistant",
       "patient": "Patient"
+    },
+    "messages": {
+      "title": "Messages & Requests",
+      "desc": "Read and manage visitor messages"
     }
   }
 }

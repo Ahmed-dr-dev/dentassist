@@ -6,6 +6,119 @@ import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
+function ContactForm() {
+  const { t } = useI18n()
+  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' })
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.name || !form.email || !form.subject || !form.message) {
+      setError(t('contact.required')); return
+    }
+    setLoading(true); setError(''); setSuccess(false)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error); }
+      setSuccess(true)
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' })
+    } catch (err: any) {
+      setError(err.message || t('contact.error'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <section id="contact-form" className="relative z-10 py-24 bg-gradient-to-br from-blue-50 to-indigo-50 border-y border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('contact.title')}</h2>
+          <p className="text-xl text-gray-600">{t('contact.subtitle')}</p>
+        </div>
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+            {success && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-center gap-2">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {t('contact.success')}
+              </div>
+            )}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.name')} *</label>
+                  <input
+                    type="text" required value={form.name}
+                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    placeholder={t('contact.namePlaceholder')}
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.email')} *</label>
+                  <input
+                    type="email" required value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    placeholder={t('contact.emailPlaceholder')}
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.phone')} <span className="text-gray-400">({t('common.optional')})</span></label>
+                  <input
+                    type="tel" value={form.phone}
+                    onChange={e => setForm({ ...form, phone: e.target.value })}
+                    placeholder={t('contact.phonePlaceholder')}
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.subject')} *</label>
+                  <input
+                    type="text" required value={form.subject}
+                    onChange={e => setForm({ ...form, subject: e.target.value })}
+                    placeholder={t('contact.subjectPlaceholder')}
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.message')} *</label>
+                <textarea
+                  required rows={5} value={form.message}
+                  onChange={e => setForm({ ...form, message: e.target.value })}
+                  placeholder={t('contact.messagePlaceholder')}
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition resize-none"
+                />
+              </div>
+              <button
+                type="submit" disabled={loading}
+                className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition shadow-md hover:shadow-lg disabled:opacity-50"
+              >
+                {loading ? t('contact.sending') : t('contact.send')}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   const { t } = useI18n()
   const [user, setUser] = useState<{ role: string } | null>(null)
@@ -21,11 +134,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
-      {/* Subtle background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-60"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-40"></div>
-      </div>
+  
 
       {/* Header */}
       <header className="relative z-50 border-b border-gray-200 bg-white/95 backdrop-blur-sm shadow-sm">
@@ -375,6 +484,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ContactForm />
 
       {/* Footer */}
       <footer className="relative z-10 bg-white border-t border-gray-200 text-gray-600 py-8">

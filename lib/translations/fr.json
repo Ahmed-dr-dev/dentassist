@@ -481,6 +481,46 @@
     "updateError": "Erreur lors de la mise à jour",
     "rejectError": "Erreur lors du rejet"
   },
+  "contact": {
+    "title": "Nous contacter",
+    "subtitle": "Envoyez-nous un message, nous vous répondrons rapidement.",
+    "name": "Nom complet",
+    "namePlaceholder": "Votre nom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "phone": "Téléphone",
+    "phonePlaceholder": "+216 XX XXX XXX",
+    "subject": "Sujet",
+    "subjectPlaceholder": "Ex. Demande de renseignement",
+    "message": "Message",
+    "messagePlaceholder": "Décrivez votre demande...",
+    "send": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "success": "Message envoyé ! Nous vous répondrons dans les plus brefs délais.",
+    "error": "Erreur lors de l'envoi. Veuillez réessayer.",
+    "required": "Veuillez remplir tous les champs obligatoires."
+  },
+  "messages": {
+    "title": "Messages & Demandes",
+    "breadcrumb": "Messages",
+    "noMessages": "Aucun message reçu",
+    "unread": "Non lu",
+    "read": "Lu",
+    "handled": "Traité",
+    "all": "Tous",
+    "markRead": "Marquer comme lu",
+    "markHandled": "Marquer comme traité",
+    "markUnread": "Marquer non lu",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ce message ? Cette action est irréversible.",
+    "from": "De",
+    "subject": "Sujet",
+    "receivedAt": "Reçu le",
+    "phone": "Téléphone",
+    "unreadBadge": "non lu(s)",
+    "manageDesc": "Gérer les messages et demandes des visiteurs",
+    "loadError": "Erreur lors du chargement des messages"
+  },
   "admin": {
     "dashboard": "Tableau de bord Admin",
     "title": "Administration",
@@ -537,6 +577,10 @@
       "doctor": "Médecin",
       "assistant": "Assistant",
       "patient": "Patient"
+    },
+    "messages": {
+      "title": "Messages & Demandes",
+      "desc": "Lire et gérer les messages des visiteurs"
     }
   }
 }
