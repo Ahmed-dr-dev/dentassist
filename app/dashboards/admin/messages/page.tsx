@@ -92,11 +92,13 @@ export default function AdminMessagesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/admin" className="text-gray-600 hover:text-gray-900 text-sm">← {t('common.back')}</Link>
               <span className="text-xl font-bold text-gray-900">{t('common.appName')} — <span className="text-red-600">Admin</span></span>
               <span className="text-gray-500 text-sm">/ {t('messages.breadcrumb')}</span>
             </div>
-            <LanguageSwitcher />
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher />
+              <Link href="/dashboards/admin" className="text-gray-600 hover:text-gray-900 text-sm">← {t('common.back')}</Link>
+            </div>
           </div>
         </div>
       </nav>
