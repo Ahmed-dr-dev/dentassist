@@ -243,7 +243,10 @@
     "nameMinChars": "Le nom doit contenir au moins 2 caractères",
     "nameNoNumbers": "Le nom ne peut pas contenir de chiffres",
     "phoneRequired": "Le numéro de téléphone est requis",
-    "phoneInvalid": "Format de téléphone invalide"
+    "phoneInvalid": "Format de téléphone invalide",
+    "specialtyRequired": "La spécialité est requise",
+    "specialtyMinChars": "La spécialité doit contenir au moins 2 caractères",
+    "specialtyPlaceholder": "Ex. Chirurgie dentaire, Orthodontie…"
   },
   "patients": {
     "title": "Patients",
@@ -279,7 +282,18 @@
     "download": "Télécharger",
     "viewPDF": "Voir le PDF",
     "myPrescriptions": "Mes Ordonnances",
-    "loadError": "Erreur lors du chargement des ordonnances"
+    "loadError": "Erreur lors du chargement des ordonnances",
+    "assignOne": "Assigner une ordonnance",
+    "pdfFile": "Fichier PDF",
+    "selectAppointmentEmpty": "Sélectionner un rendez-vous",
+    "fileSelected": "Fichier sélectionné : {name}",
+    "descriptionPlaceholderAssign": "Description de l'ordonnance…",
+    "uploading": "Envoi…",
+    "assignSubmit": "Assigner l'ordonnance",
+    "loadAppointmentsError": "Erreur lors du chargement des rendez-vous",
+    "pdfOnlyError": "Le fichier doit être un PDF",
+    "selectBothError": "Veuillez sélectionner un rendez-vous et un fichier PDF",
+    "appointmentField": "Rendez-vous"
   },
   "certificat": {
     "title": "Certificat médical",
@@ -325,7 +339,8 @@
     "period": "Période",
     "rdvIncome": "Revenus RDV",
     "paidRdvs": "RDV payés",
-    "incomeSub": "RDV payés × {price} DT"
+    "incomeSub": "RDV payés × {price} DT",
+    "fetchError": "Impossible de charger les statistiques"
   },
   "income": {
     "title": "Revenus RDV",

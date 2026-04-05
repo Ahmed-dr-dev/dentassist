@@ -243,7 +243,10 @@
     "nameMinChars": "Name must be at least 2 characters",
     "nameNoNumbers": "Name cannot contain numbers",
     "phoneRequired": "Phone number is required",
-    "phoneInvalid": "Invalid phone format"
+    "phoneInvalid": "Invalid phone format",
+    "specialtyRequired": "Specialty is required",
+    "specialtyMinChars": "Specialty must be at least 2 characters",
+    "specialtyPlaceholder": "e.g. Dental surgery, Orthodontics…"
   },
   "patients": {
     "title": "Patients",
@@ -279,7 +282,18 @@
     "download": "Download",
     "viewPDF": "View PDF",
     "myPrescriptions": "My Prescriptions",
-    "loadError": "Error loading prescriptions"
+    "loadError": "Error loading prescriptions",
+    "assignOne": "Assign a prescription",
+    "pdfFile": "PDF file",
+    "selectAppointmentEmpty": "Select an appointment",
+    "fileSelected": "Selected file: {name}",
+    "descriptionPlaceholderAssign": "Prescription description…",
+    "uploading": "Uploading…",
+    "assignSubmit": "Assign prescription",
+    "loadAppointmentsError": "Error loading appointments",
+    "pdfOnlyError": "The file must be a PDF",
+    "selectBothError": "Please select an appointment and a PDF file",
+    "appointmentField": "Appointment"
   },
   "certificat": {
     "title": "Medical certificate",
@@ -325,7 +339,8 @@
     "period": "Period",
     "rdvIncome": "Appointment income",
     "paidRdvs": "paid appointments",
-    "incomeSub": "paid appts × {price} DT"
+    "incomeSub": "paid appts × {price} DT",
+    "fetchError": "Could not load statistics"
   },
   "income": {
     "title": "RDV income",

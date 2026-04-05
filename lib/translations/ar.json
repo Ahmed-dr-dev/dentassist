@@ -243,7 +243,10 @@
     "nameMinChars": "يجب أن يحتوي الاسم على حرفين على الأقل",
     "nameNoNumbers": "لا يمكن أن يحتوي الاسم على أرقام",
     "phoneRequired": "رقم الهاتف مطلوب",
-    "phoneInvalid": "تنسيق الهاتف غير صحيح"
+    "phoneInvalid": "تنسيق الهاتف غير صحيح",
+    "specialtyRequired": "التخصص مطلوب",
+    "specialtyMinChars": "يجب أن يحتوي التخصص على حرفين على الأقل",
+    "specialtyPlaceholder": "مثال: جراحة الأسنان، تقويم الأسنان…"
   },
   "patients": {
     "title": "المرضى",
@@ -279,7 +282,18 @@
     "download": "تحميل",
     "viewPDF": "عرض PDF",
     "myPrescriptions": "وصفاتي الطبية",
-    "loadError": "خطأ في تحميل الوصفات"
+    "loadError": "خطأ في تحميل الوصفات",
+    "assignOne": "تعيين وصفة طبية",
+    "pdfFile": "ملف PDF",
+    "selectAppointmentEmpty": "اختر موعداً",
+    "fileSelected": "الملف المحدد: {name}",
+    "descriptionPlaceholderAssign": "وصف الوصفة الطبية…",
+    "uploading": "جاري الرفع…",
+    "assignSubmit": "تعيين الوصفة",
+    "loadAppointmentsError": "خطأ في تحميل المواعيد",
+    "pdfOnlyError": "يجب أن يكون الملف بصيغة PDF",
+    "selectBothError": "يرجى اختيار موعد وملف PDF",
+    "appointmentField": "الموعد"
   },
   "certificat": {
     "title": "الشهادة الطبية",
@@ -325,7 +339,8 @@
     "period": "الفترة",
     "rdvIncome": "إيرادات المواعيد",
     "paidRdvs": "مواعيد مدفوعة",
-    "incomeSub": "مواعيد مدفوعة × {price} DT"
+    "incomeSub": "مواعيد مدفوعة × {price} DT",
+    "fetchError": "تعذر تحميل الإحصائيات"
   },
   "income": {
     "title": "إيرادات المواعيد",

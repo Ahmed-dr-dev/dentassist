@@ -19,7 +19,7 @@ export default function DoctorStatisticsPage() {
     setLoading(true)
     try {
       const response = await fetch(`/api/statistics?period=${period}`)
-      if (!response.ok) throw new Error(t('statistics.title'))
+      if (!response.ok) throw new Error(t('statistics.fetchError'))
       const data = await response.json()
       setStats(data.statistics)
     } catch (err: any) {

@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
     // ── Patient info box ─────────────────────────────────────────────────────
     page.drawRectangle({ x: 42, y: 590, width: W - 84, height: 66, color: TEAL_LIGHT, borderColor: BORDER, borderWidth: 1 });
-    page.drawRectangle({ x: 42, y: 652, width: 4, height: 66, color: TEAL });
+    page.drawRectangle({ x: 42, y: 590, width: 4, height: 66, color: TEAL });
 
     page.drawText('INFORMATIONS DU PATIENT', { x: 54, y: 641, size: 8, font: fontB, color: TEAL });
     page.drawText(`Nom & Prénom :`, { x: 54, y: 626, size: 10, font, color: MID });

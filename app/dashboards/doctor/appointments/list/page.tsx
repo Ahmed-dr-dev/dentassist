@@ -166,24 +166,24 @@ export default function DoctorAppointmentsListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">{t('common.loading')}</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-300">{t('common.loading')}</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <nav className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
-              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
+              <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900 dark:text-white">
                 {t('common.appName')} - {t('dashboard.doctor')}
               </Link>
-              <span className="text-gray-500">/ {t('appointments.list')}</span>
+              <span className="text-gray-500 dark:text-gray-400">/ {t('appointments.list')}</span>
             </div>
-            <Link href="/dashboards/doctor" className="text-gray-600 hover:text-gray-900">
+            <Link href="/dashboards/doctor" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               {t('common.back')}
             </Link>
           </div>
@@ -191,8 +191,8 @@ export default function DoctorAppointmentsListPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-2">{t('appointments.list')}</h1>
-        <p className="text-gray-600 text-sm mb-6">{t('doctor.rdvReadOnly')}</p>
+        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">{t('appointments.list')}</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">{t('doctor.rdvReadOnly')}</p>
 
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
@@ -201,7 +201,7 @@ export default function DoctorAppointmentsListPage() {
               placeholder={t('common.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ export default function DoctorAppointmentsListPage() {
               <button
                 key={value}
                 onClick={() => setPeriodFilter(value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${periodFilter === value ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${periodFilter === value ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
               >
                 {label}
               </button>
@@ -224,7 +224,7 @@ export default function DoctorAppointmentsListPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800"
             >
               <option value="all">{t('appointments.filterTypeAll')}</option>
               <option value="rdv">{t('appointments.filterTypeRdv')}</option>
@@ -234,55 +234,55 @@ export default function DoctorAppointmentsListPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300">{error}</div>
         )}
 
-        <div className="text-sm text-black font-bold mb-4 flex flex-col gap-0.5">
+        <div className="text-sm text-gray-900 dark:text-white font-bold mb-4 flex flex-col gap-0.5">
           <span>{filteredAndSorted.filter(a => a.kind === 'rdv').length} {t('appointments.rdvShort')}</span>
           <span>{filteredAndSorted.filter(a => a.kind === 'control').length} {t('appointments.controlShort')}</span>
         </div>
 
         {filteredAndSorted.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-600">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center text-gray-600 dark:text-gray-300">
             {searchQuery || periodFilter !== 'all' ? t('common.noMatch') : t('appointments.noAppointments')}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900/80">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider sm:px-6">
                     {t('certificat.patientName')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider sm:px-6">
                     {t('appointments.date')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider sm:px-6">
                     {t('appointments.time')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider sm:px-6">
                     {t('appointments.type')}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider sm:px-6">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider sm:px-6">
                     {t('appointments.status')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {filteredAndSorted.map((apt) => {
                   const row = formatRow(apt)
                   return (
-                    <tr key={apt.id} className="hover:bg-gray-50 transition">
+                    <tr key={apt.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                       <td className="px-4 py-3 sm:px-6">
-                        <p className="font-medium text-gray-900 truncate">{row.name}</p>
+                        <p className="font-medium text-gray-900 dark:text-white truncate">{row.name}</p>
                         {apt.reason && (
-                          <p className="text-sm text-gray-500 truncate max-w-xs mt-0.5">{apt.reason}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs mt-0.5">{apt.reason}</p>
                         )}
                       </td>
-                      <td className="px-4 py-3 sm:px-6 text-gray-700">{row.dateStr}</td>
-                      <td className="px-4 py-3 sm:px-6 text-gray-700 tabular-nums">{row.timeStr}</td>
+                      <td className="px-4 py-3 sm:px-6 text-gray-700 dark:text-gray-200">{row.dateStr}</td>
+                      <td className="px-4 py-3 sm:px-6 text-gray-700 dark:text-gray-200 tabular-nums">{row.timeStr}</td>
                       <td className="px-4 py-3 sm:px-6">
-                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                           {row.kind === 'control' ? t('appointments.controlShort') : t('appointments.rdvShort')}
                         </span>
                       </td>

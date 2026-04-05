@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useI18n } from '@/lib/i18n'
 
 export default function DoctorPrescriptionsPage() {
-  const router = useRouter()
+  const { t, language } = useI18n()
+  const locale = language === 'fr' ? 'fr-FR' : language === 'ar' ? 'ar' : 'en-US'
   const [appointments, setAppointments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -22,11 +23,8 @@ export default function DoctorPrescriptionsPage() {
   const fetchAppointments = async () => {
     setLoading(true)
     try {
-      // Get confirmed or completed appointments (for which we can assign prescriptions)
       const response = await fetch('/api/appointments/doctor/list?period=month')
-      if (!response.ok) {
-        throw new Error('Erreur lors du chargement')
-      }
+      if (!response.ok) throw new Error(t('prescriptions.loadAppointmentsError'))
       const data = await response.json()
       const confirmedAppointments = (data.appointments || []).filter(
         (apt: any) => apt.status === 'confirmed' || apt.status === 'completed'
@@ -43,7 +41,7 @@ export default function DoctorPrescriptionsPage() {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0]
       if (selectedFile.type !== 'application/pdf') {
-        setError('Le fichier doit être un PDF')
+        setError(t('prescriptions.pdfOnlyError'))
         return
       }
       setFile(selectedFile)
@@ -53,9 +51,9 @@ export default function DoctorPrescriptionsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!selectedAppointment || !file) {
-      setError('Veuillez sélectionner un rendez-vous et un fichier PDF')
+      setError(t('prescriptions.selectBothError'))
       return
     }
 
@@ -67,29 +65,21 @@ export default function DoctorPrescriptionsPage() {
       const formData = new FormData()
       formData.append('appointmentId', selectedAppointment)
       formData.append('file', file)
-      if (description) {
-        formData.append('description', description)
-      }
+      if (description) formData.append('description', description)
 
       const response = await fetch('/api/prescriptions/create', {
         method: 'POST',
-        body: formData
+        body: formData,
       })
 
       const data = await response.json()
+      if (!response.ok) throw new Error(data.error || t('prescriptions.uploadError'))
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de l\'assignation')
-      }
-
-      setSuccess('Ordonnance assignée avec succès')
+      setSuccess(t('prescriptions.uploadSuccess'))
       setSelectedAppointment(null)
       setFile(null)
       setDescription('')
-
-      setTimeout(() => {
-        setSuccess('')
-      }, 3000)
+      setTimeout(() => setSuccess(''), 3000)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -100,15 +90,15 @@ export default function DoctorPrescriptionsPage() {
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString)
     return {
-      date: date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-      time: date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+      date: date.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+      time: date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
     }
   }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Chargement...</div>
+        <div className="text-gray-600">{t('common.loading')}</div>
       </div>
     )
   }
@@ -120,40 +110,31 @@ export default function DoctorPrescriptionsPage() {
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
               <Link href="/dashboards/doctor" className="text-xl font-bold text-gray-900">
-                DentAssist
+                {t('common.appName')}
               </Link>
-              <span className="text-gray-500">/ Assigner une ordonnance</span>
+              <span className="text-gray-500">/ {t('prescriptions.assignOne')}</span>
             </div>
-            <Link
-              href="/dashboards/doctor"
-              className="flex items-center text-gray-600 hover:text-gray-900"
-            >
-              Retour
+            <Link href="/dashboards/doctor" className="flex items-center text-gray-600 hover:text-gray-900">
+              {t('common.back')}
             </Link>
           </div>
         </div>
       </nav>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Assigner une ordonnance</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('prescriptions.assignOne')}</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
-            {error}
-          </div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">
-            {success}
-          </div>
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">{success}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rendez-vous
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('prescriptions.appointmentField')}</label>
             <select
               required
               value={selectedAppointment || ''}
@@ -161,7 +142,7 @@ export default function DoctorPrescriptionsPage() {
               disabled={uploading}
               className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             >
-              <option value="">Sélectionner un rendez-vous</option>
+              <option value="">{t('prescriptions.selectAppointmentEmpty')}</option>
               {appointments.map((appointment) => {
                 const patient = appointment.patient as any
                 const dateTime = appointment.confirmed_date_time
@@ -169,7 +150,7 @@ export default function DoctorPrescriptionsPage() {
                   : formatDateTime(appointment.requested_date_time)
                 return (
                   <option key={appointment.id} value={appointment.id}>
-                    {patient?.full_name} - {dateTime.date} à {dateTime.time}
+                    {patient?.full_name} — {dateTime.date} {t('common.at')} {dateTime.time}
                   </option>
                 )
               })}
@@ -177,9 +158,7 @@ export default function DoctorPrescriptionsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Fichier PDF
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('prescriptions.pdfFile')}</label>
             <input
               type="file"
               accept="application/pdf"
@@ -189,21 +168,19 @@ export default function DoctorPrescriptionsPage() {
               className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-500"
             />
             {file && (
-              <p className="mt-2 text-sm text-gray-500">Fichier sélectionné : {file.name}</p>
+              <p className="mt-2 text-sm text-gray-500">{t('prescriptions.fileSelected').replace('{name}', file.name)}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description (optionnel)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('prescriptions.description')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={uploading}
               rows={4}
               className="w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              placeholder="Description de l'ordonnance..."
+              placeholder={t('prescriptions.descriptionPlaceholderAssign')}
             />
           </div>
 
@@ -212,7 +189,7 @@ export default function DoctorPrescriptionsPage() {
             disabled={uploading || !selectedAppointment || !file}
             className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {uploading ? 'Upload...' : 'Assigner l\'ordonnance'}
+            {uploading ? t('prescriptions.uploading') : t('prescriptions.assignSubmit')}
           </button>
         </form>
       </main>
