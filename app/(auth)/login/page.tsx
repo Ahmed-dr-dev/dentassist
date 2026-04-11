@@ -151,7 +151,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-end">
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-700 font-medium">{t('auth.forgotPassword')}</a>
+              <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700 font-medium">{t('auth.forgotPassword')}</Link>
             </div>
 
             <button
