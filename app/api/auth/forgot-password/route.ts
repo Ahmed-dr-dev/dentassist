@@ -12,21 +12,29 @@ function hashToken(token: string): string {
 
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
-    console.log('[forgot-password] Received request for email:', email);
+    const body = await request.json();
+    const { email } = body;
+    console.log('[forgot-password] ── incoming request ──────────────────');
+    console.log('[forgot-password] Raw body:', JSON.stringify(body));
+    console.log('[forgot-password] Email value:', email);
+    console.log('[forgot-password] Email type:', typeof email);
 
     if (!email || typeof email !== 'string') {
+      console.warn('[forgot-password] Rejected: email missing or not a string');
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     const normalized = email.trim().toLowerCase();
+    console.log('[forgot-password] Normalized email:', normalized);
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(normalized)) {
-      console.log('[forgot-password] Invalid email format:', normalized);
+      console.warn('[forgot-password] Rejected: invalid email format:', normalized);
       return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
     const supabase = await createClient();
+    console.log('[forgot-password] Supabase client created — querying users table...');
 
     const { data: user, error: userError } = await supabase
       .from('users')
@@ -34,8 +42,10 @@ export async function POST(request: Request) {
       .ilike('email', normalized)
       .maybeSingle();
 
-    console.log('[forgot-password] User lookup result:', user ? `found id=${user.id}` : 'not found');
-    if (userError) console.error('[forgot-password] User lookup error:', userError);
+    console.log('[forgot-password] User lookup result:', user ? `found id=${user.id}, email=${user.email}` : 'not found');
+    if (userError) {
+      console.error('[forgot-password] User lookup DB error:', JSON.stringify(userError));
+    }
 
     const okBody = {
       message:
@@ -43,21 +53,22 @@ export async function POST(request: Request) {
     };
 
     if (!user) {
-      console.log('[forgot-password] No user found — returning generic ok');
+      console.log('[forgot-password] No account for this email — returning generic ok (no email sent)');
       return NextResponse.json(okBody, { status: 200 });
     }
 
+    console.log('[forgot-password] Deleting existing tokens for user:', user.id);
     const { error: deleteError } = await supabase
       .from('password_reset_tokens')
       .delete()
       .eq('user_id', user.id);
-    if (deleteError) console.error('[forgot-password] Token delete error:', deleteError);
+    if (deleteError) console.error('[forgot-password] Token delete error:', JSON.stringify(deleteError));
 
     const rawToken = randomBytes(TOKEN_BYTES).toString('hex');
     const tokenHash = hashToken(rawToken);
     const expiresAt = new Date(Date.now() + EXPIRY_MS).toISOString();
 
-    console.log('[forgot-password] Inserting token, expires_at:', expiresAt);
+    console.log('[forgot-password] Inserting new token — expires_at:', expiresAt);
 
     const { error: insertError } = await supabase.from('password_reset_tokens').insert({
       user_id: user.id,
@@ -66,7 +77,7 @@ export async function POST(request: Request) {
     });
 
     if (insertError) {
-      console.error('[forgot-password] Token insert error:', insertError);
+      console.error('[forgot-password] Token insert error:', JSON.stringify(insertError));
       return NextResponse.json(okBody, { status: 200 });
     }
 
@@ -75,12 +86,15 @@ export async function POST(request: Request) {
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'http://localhost:3000';
     const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(rawToken)}`;
+    console.log('[forgot-password] NEXT_PUBLIC_APP_URL env:', process.env.NEXT_PUBLIC_APP_URL ?? '(not set, using localhost fallback)');
     console.log('[forgot-password] Reset URL:', resetUrl);
 
     const displayName =
       typeof user.full_name === 'string' && user.full_name.trim()
         ? user.full_name.trim()
         : 'there';
+
+    console.log('[forgot-password] Display name:', displayName);
 
     const html = `
       <p>Hello ${escapeHtml(displayName)},</p>
@@ -90,15 +104,15 @@ export async function POST(request: Request) {
     `;
 
     try {
-      console.log('[forgot-password] Calling sendTransactionalEmail...');
+      console.log('[forgot-password] ── calling sendTransactionalEmail ────────');
       await sendTransactionalEmail({
         to: [{ email: user.email, name: displayName !== 'there' ? displayName : undefined }],
         subject: 'Reset your DentAssist password',
         html,
       });
-      console.log('[forgot-password] Email sent successfully');
+      console.log('[forgot-password] ✓ Email dispatched successfully');
     } catch (e) {
-      console.error('[forgot-password] Email send failed:', e);
+      console.error('[forgot-password] ✗ Email send failed:', e);
     }
 
     return NextResponse.json(okBody, { status: 200 });
