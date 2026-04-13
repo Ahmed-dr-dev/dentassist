@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
+import { sendAppointmentConfirmation, scheduleAppointmentReminder } from '@/lib/brevo';
 
 export async function POST(request: Request) {
   try {
@@ -164,6 +165,64 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
+
+      // Fetch patient info for email notifications
+      console.log('[Email] ── Starting email flow ──────────────────');
+      console.log('[Email] appointmentId:', appointmentId);
+      console.log('[Email] confirmed_date_time:', updatedAppointment.confirmed_date_time);
+
+      const { data: appointment_full, error: apptFetchError } = await supabase
+        .from('appointments')
+        .select('patient_id')
+        .eq('id', appointmentId)
+        .single();
+
+      console.log('[Email] appointment_full:', JSON.stringify(appointment_full));
+      if (apptFetchError) console.error('[Email] apptFetchError:', apptFetchError.message);
+
+      if (appointment_full) {
+        const { data: patient, error: patientError } = await supabase
+          .from('users')
+          .select('email, full_name')
+          .eq('id', appointment_full.patient_id)
+          .single();
+
+        console.log('[Email] patient:', JSON.stringify(patient));
+        if (patientError) console.error('[Email] patientError:', patientError.message);
+
+        const { data: doctor_info, error: doctorError } = await supabase
+          .from('users')
+          .select('full_name')
+          .eq('id', doctorId)
+          .single();
+
+        console.log('[Email] doctor_info:', JSON.stringify(doctor_info));
+        if (doctorError) console.error('[Email] doctorError:', doctorError.message);
+
+        if (patient?.email) {
+          const emailParams = {
+            patientEmail: patient.email,
+            patientName: patient.full_name || 'Patient',
+            doctorName: doctor_info?.full_name || 'Dr.',
+            appointmentIso: updatedAppointment.confirmed_date_time,
+          };
+
+          console.log('[Email] Sending to:', patient.email);
+          try {
+            await sendAppointmentConfirmation(emailParams);
+            console.log('[Email] ✓ Confirmation email sent');
+            await scheduleAppointmentReminder(emailParams);
+            console.log('[Email] ✓ Reminder email scheduled');
+          } catch (emailErr) {
+            console.error('[Email] ✗ Email error:', emailErr);
+          }
+        } else {
+          console.warn('[Email] ✗ No patient email found — skipping emails');
+        }
+      } else {
+        console.warn('[Email] ✗ Could not fetch appointment_full — skipping emails');
+      }
+      console.log('[Email] ── End email flow ────────────────────────');
 
       return NextResponse.json(
         {
