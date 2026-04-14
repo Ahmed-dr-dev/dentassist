@@ -198,7 +198,7 @@ export default function SignupPage() {
               <input
                 id="email"
                 type="email"
-                placeholder="nom@gmail.com"
+                placeholder="votre@email.com"
                 required
                 value={formData.email}
                 onChange={(e) => { setFormData({ ...formData, email: e.target.value }); if (fieldErrors.email) validateField('email', e.target.value) }}
@@ -214,7 +214,7 @@ export default function SignupPage() {
                 <input
                   id="lastName"
                   type="text"
-                  placeholder="Nom"
+                  placeholder="Votre nom"
                   required
                   value={formData.lastName}
                   onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); if (fieldErrors.lastName) validateField('lastName', e.target.value) }}
@@ -228,7 +228,7 @@ export default function SignupPage() {
                 <input
                   id="firstName"
                   type="text"
-                  placeholder="Prénom"
+                  placeholder="Votre prénom"
                   required
                   value={formData.firstName}
                   onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); if (fieldErrors.firstName) validateField('firstName', e.target.value) }}
@@ -244,7 +244,7 @@ export default function SignupPage() {
               <input
                 id="phone"
                 type="tel"
-                placeholder="00 000 000 "
+                placeholder="+216 XX XXX XXX"
                 required
                 value={formData.phone}
                 onChange={(e) => { setFormData({ ...formData, phone: e.target.value }); if (fieldErrors.phone) validateField('phone', e.target.value) }}
@@ -290,7 +290,7 @@ export default function SignupPage() {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-500 transition font-medium text-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? (t('common.loading') || 'Inscription...') : (t('auth.continue') || 'Continuer')}
+              {loading ? 'Inscription...' : "S'inscrire"}
             </button>
           </form>
 

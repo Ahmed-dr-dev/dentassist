@@ -58,7 +58,7 @@ function ContactForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.name')} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.name')}</label>
                   <input
                     type="text" required value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
@@ -67,7 +67,7 @@ function ContactForm() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.email')} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.email')}</label>
                   <input
                     type="email" required value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
@@ -87,7 +87,7 @@ function ContactForm() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.subject')} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.subject')}</label>
                   <input
                     type="text" required value={form.subject}
                     onChange={e => setForm({ ...form, subject: e.target.value })}
@@ -97,7 +97,7 @@ function ContactForm() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.message')} *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('contact.message')}</label>
                 <textarea
                   required rows={5} value={form.message}
                   onChange={e => setForm({ ...form, message: e.target.value })}
