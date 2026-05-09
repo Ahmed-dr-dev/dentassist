@@ -69,10 +69,13 @@ export async function GET(request: Request) {
       endDate.setHours(23, 59, 59, 999);
     }
 
-    // All appointments for doctor (all-time) for RDV breakdown
+    const isoStart = startDate.toISOString();
+    const isoEnd = endDate.toISOString();
+
+    // All appointments for doctor — metrics below are scoped to [isoStart, isoEnd]
     const { data: allAppointments, error: allAppointmentsError } = await supabase
       .from('appointments')
-      .select('id, status, confirmed_date_time, requested_date_time, payment_status')
+      .select('id, patient_id, status, confirmed_date_time, requested_date_time, payment_status')
       .eq('doctor_id', doctorId);
 
     if (allAppointmentsError) {
@@ -83,23 +86,24 @@ export async function GET(request: Request) {
     }
 
     const aptList = allAppointments || [];
-    const totalAppointments = aptList.length;
-    const rejectedCount = aptList.filter((a: { status: string }) => a.status === 'rejected').length;
-    const cancelledCount = aptList.filter((a: { status: string }) => a.status === 'cancelled').length;
-    const completedOnlyCount = aptList.filter((a: { status: string }) => a.status === 'completed').length;
-    const confirmedCount = aptList.filter((a: { status: string }) => a.status === 'confirmed').length;
-    const completedCount = completedOnlyCount + confirmedCount; // Terminés = completed + confirmé
-    const pendingCount = aptList.filter((a: { status: string }) => a.status === 'pending').length;
 
-    // Period-filtered: for income (paid in period)
-    const isoStart = startDate.toISOString();
-    const isoEnd = endDate.toISOString();
-    const inPeriod = aptList.filter((a: { confirmed_date_time: string | null; payment_status: string }) => {
-      const dt = a.confirmed_date_time;
+    type AptRow = (typeof aptList)[number];
+    const slotInPeriod = (a: AptRow) => {
+      const dt = a.confirmed_date_time || a.requested_date_time;
       if (!dt) return false;
       return dt >= isoStart && dt <= isoEnd;
-    });
-    const paidCount = inPeriod.filter((a: { payment_status: string }) => a.payment_status === 'paid').length;
+    };
+
+    const aptPeriod = aptList.filter(slotInPeriod);
+    const totalAppointments = aptPeriod.length;
+    const rejectedCount = aptPeriod.filter((a) => a.status === 'rejected').length;
+    const cancelledCount = aptPeriod.filter((a) => a.status === 'cancelled').length;
+    const completedOnlyCount = aptPeriod.filter((a) => a.status === 'completed').length;
+    const confirmedCount = aptPeriod.filter((a) => a.status === 'confirmed').length;
+    const completedCount = completedOnlyCount + confirmedCount;
+    const pendingCount = aptPeriod.filter((a) => a.status === 'pending').length;
+
+    const paidCount = aptPeriod.filter((a) => a.payment_status === 'paid').length;
 
     let totalIncome = 0;
     let rdvUnitPrice = 0;
@@ -111,30 +115,32 @@ export async function GET(request: Request) {
     rdvUnitPrice = (tariff?.price as number) ?? 70;
     totalIncome = paidCount * rdvUnitPrice;
 
-    // Total patients (all-time unique)
-    const uniquePatientIds = [...new Set(aptList.map((a: { patient_id: string }) => a.patient_id))];
+    const uniquePatientIds = [...new Set(aptPeriod.map((a) => a.patient_id))];
     const totalPatients = uniquePatientIds.length;
 
-    // Prescriptions count (all-time)
     const { data: prescriptions } = await supabase
       .from('prescriptions')
       .select('id')
-      .eq('doctor_id', doctorId);
+      .eq('doctor_id', doctorId)
+      .gte('created_at', isoStart)
+      .lte('created_at', isoEnd);
     const prescriptionsCount = prescriptions?.length || 0;
 
-    // Control dates count (all-time)
     const { data: controlDates } = await supabase
       .from('control_dates')
       .select('id')
-      .eq('doctor_id', doctorId);
+      .eq('doctor_id', doctorId)
+      .gte('control_date_time', isoStart)
+      .lte('control_date_time', isoEnd);
     const controlDatesCount = controlDates?.length || 0;
 
-    // Medical certificates count (all-time)
     let certificatCount = 0;
     const { data: certs } = await supabase
       .from('medical_certificates')
       .select('id')
-      .eq('doctor_id', doctorId);
+      .eq('doctor_id', doctorId)
+      .gte('created_at', isoStart)
+      .lte('created_at', isoEnd);
     if (certs) certificatCount = certs.length;
 
     return NextResponse.json(

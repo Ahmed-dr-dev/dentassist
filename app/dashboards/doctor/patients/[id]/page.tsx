@@ -136,7 +136,7 @@ export default function PatientDetailsPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
             {error}
           </div>
         )}
@@ -157,7 +157,9 @@ export default function PatientDetailsPage() {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Fixer une date de contrôle</h2>
               {controlSuccess && (
-                <p className="mb-4 p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-300 text-sm">{controlSuccess}</p>
+                <p className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-900 text-sm font-medium">
+                  {controlSuccess}
+                </p>
               )}
               <form onSubmit={handleSetControlDate} className="flex flex-wrap items-end gap-4">
                 <div>
@@ -200,16 +202,25 @@ export default function PatientDetailsPage() {
                 </button>
               </form>
               {controlDates.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-gray-700">
-                  <p className="text-gray-600 text-sm font-medium mb-2">Dates de contrôle enregistrées ({controlDates.length})</p>
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <p className="text-gray-800 text-sm font-semibold mb-2">Dates de contrôle enregistrées ({controlDates.length})</p>
                   <ul className="space-y-2">
                     {controlDates.map((c: any) => {
                       const dt = formatDateTime(c.control_date_time)
                       const isPast = new Date(c.control_date_time) < new Date()
                       return (
-                        <li key={c.id} className={`flex justify-between items-center py-2 px-3 rounded-lg text-sm ${isPast ? 'bg-white/50 text-gray-600' : 'bg-cyan-500/10 text-cyan-200 border border-cyan-500/30'}`}>
-                          <span>{dt.date} à {dt.time}</span>
-                          {c.notes && <span className="text-gray-600 truncate max-w-[200px]">{c.notes}</span>}
+                        <li
+                          key={c.id}
+                          className={`flex justify-between items-center gap-3 py-2.5 px-3 rounded-lg text-sm border ${
+                            isPast
+                              ? 'bg-gray-50 border-gray-200 text-gray-800'
+                              : 'bg-cyan-50 border-cyan-200 text-cyan-950'
+                          }`}
+                        >
+                          <span className="font-medium">{dt.date} à {dt.time}</span>
+                          {c.notes && (
+                            <span className="text-gray-700 truncate max-w-[200px] text-right">{c.notes}</span>
+                          )}
                         </li>
                       )
                     })}
